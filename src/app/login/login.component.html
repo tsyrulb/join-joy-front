@@ -1,0 +1,85 @@
+<div class="background">
+  <div class="shape"></div>
+  <div class="shape"></div>
+</div>
+
+<form (ngSubmit)="onLogin()" #loginForm="ngForm">
+  <h3>Login Here</h3>
+
+  <!-- Username field -->
+  <label for="username">Username</label>
+  <input
+    type="text"
+    placeholder="Email or Phone"
+    id="username"
+    [(ngModel)]="username"
+    name="username"
+    required
+    #usernameInput="ngModel"
+  />
+  <div *ngIf="usernameInput.invalid && usernameInput.touched" class="alert alert-danger">
+    Username is required
+  </div>
+
+  <!-- Password field -->
+  <label for="password">Password</label>
+  <input
+    type="password"
+    placeholder="Password"
+    id="password"
+    [(ngModel)]="password"
+    name="password"
+    required
+    #passwordInput="ngModel"
+  />
+  <div *ngIf="passwordInput.invalid && passwordInput.touched" class="alert alert-danger">
+    Password is required
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit" [disabled]="!loginForm.form.valid">Log In</button>
+
+  <p>
+    Don't have an account? <a [routerLink]="['/register']">Register here</a>
+  </p>
+
+  <!-- Social Login Buttons -->
+  <div class="social">
+    <div class="go"><i class="fab fa-google"></i> Google</div>
+    <div class="fb"><i class="fab fa-facebook"></i> Facebook</div>
+  </div>
+</form>
+
+
+
+<!--
+<div class="login-container">
+  <h2>Login</h2>
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <label for="username">Username:</label>
+    <input
+      type="text"
+      id="username"
+      [(ngModel)]="username"
+      name="username"
+      required
+    />
+
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      [(ngModel)]="password"
+      name="password"
+      required
+    />
+
+    <button type="submit" [disabled]="!loginForm.form.valid">Login</button>
+  </form>
+
+
+  <p>
+    Don't have an account? <a [routerLink]="['/register']">Register here</a>
+  </p>
+</div>
+-->
