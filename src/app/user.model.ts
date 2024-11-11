@@ -1,32 +1,40 @@
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    password: string;
-    profilePhoto?: string;
-    dateOfBirth?: Date;
-    isAdmin?: boolean;
-    location?: Location;  // You can define a Location interface if needed
-    userSubcategories?: UserSubcategory[];
-    userAvailabilities?: UserAvailability[];
-    distanceWillingToTravel?: number;
-    userActivities?: UserActivity[];
-    matches?: Match[];
-    sentMessages?: Message[];
-    receivedMessages?: Message[];
-    feedbacks?: Feedback[];
-    createdActivities?: Activity[];
-    sentChatMessages?: ChatMessage[];
-    receivedChatMessages?: ChatMessage[];
-  }
-  
-  // Define other related models (Location, UserSubcategory, etc.) similarly
-  // Define placeholders for the other types
 export interface Location {
-    latitude: number;
-    longitude: number;
-    address?: string;
-  }
+  id: number;
+  latitude: number;
+  longitude: number;
+  address: string;
+  placeId?: string;  // Optional if it can be null
+  activities?: any;  // Adjust this type based on your actual data structure
+}
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  profilePhoto?: string;
+  dateOfBirth?: Date | string;
+  gender?: string;
+  isAdmin?: boolean;
+  locationId?: number;        // Foreign key linking to Location
+  location?: Location;        // Full location object
+  distanceWillingToTravel?: number;
+  unavailableDay?: number;
+  unavailableStartTime?: string; // Matches SQL `time(7)`
+  unavailableEndTime?: string;
+  userSubcategories?: UserSubcategory[];
+  userAvailabilities?: UserAvailability[];
+  userActivities?: UserActivity[];
+  matches?: Match[];
+  sentMessages?: Message[];
+  receivedMessages?: Message[];
+  feedbacks?: Feedback[];
+  createdActivities?: Activity[];
+  sentChatMessages?: ChatMessage[];
+  receivedChatMessages?: ChatMessage[];
+}
+
+
   
   export interface UserSubcategory {
     subcategoryId: number;
@@ -73,7 +81,9 @@ export interface Location {
     email?: string;
     password?: string;
     profilePhoto?: string;
-    dateOfBirth?: string;  // Ensure dateOfBirth is a string to match the API
+    dateOfBirth?: Date;  // Ensure dateOfBirth is a string to match the API
     address?: string;
+    gender?: string; 
+    location?: Location; 
   }
   

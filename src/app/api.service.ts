@@ -25,11 +25,13 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/Users/profile`, { headers });
   }
 
-  // Register a new user
   registerUser(name: string, email: string, password: string): Observable<any> {
     const body = { name, email, password };
-    return this.http.post(`${this.apiUrl}/Users/register`, body);
+    return this.http.post(`${this.apiUrl}/Users/register`, body, { responseType: 'text' });
   }
+  
+
+  
 
   // Log in a user
   login(username: string, password: string): Observable<any> {
@@ -45,14 +47,8 @@ export class ApiService {
 
   // Update user details
   // Update the updateUser method in api.service.ts
-  updateUser(
-    userId: number,
-    updateUserRequest: UpdateUserRequest
-  ): Observable<any> {
-    return this.http.put(
-      `${this.apiUrl}/Users/${userId}/details`,
-      updateUserRequest
-    );
+  updateUser(userId: number, user: UpdateUserRequest): Observable<any> {
+    return this.http.put(`${this.apiUrl}/Users/${userId}/details`, user, { responseType: 'text' });
   }
 
   // Get all users
@@ -66,6 +62,11 @@ export class ApiService {
     const headers = this.getAuthHeaders();
     return this.http.delete(`${this.apiUrl}/Users/${userId}`, { headers });
   }
+  // Get user details by ID
+  getLocation(userId: number): Observable<Location> {
+    return this.http.get<Location>(`${this.apiUrl}/Users/${userId}/location`);
+  }
+  
 
   // Set user availability
   setAvailability(
@@ -104,4 +105,6 @@ export class ApiService {
       headers,
     });
   }
+
+
 }

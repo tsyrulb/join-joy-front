@@ -1,16 +1,16 @@
-<div class="register-container">
-    <h2>Register</h2>
-    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
-      <label for="username">Username:</label>
-      <input type="text" id="username" [(ngModel)]="username" name="username" required>
-  
-      <label for="password">Password:</label>
-      <input type="password" id="password" [(ngModel)]="password" name="password" required>
-  
-      <button type="submit" [disabled]="!registerForm.form.valid">Register</button>
-    </form>
-  
-    <!-- Add this link to navigate back to the Login page -->
-    <p>Already have an account? <a [routerLink]="['/login']">Login here</a></p>
-  </div>
-  
+<form (ngSubmit)="onSubmit()">
+  <h3>Register</h3>
+
+  <label for="username">Username</label>
+  <input type="text" id="username" [(ngModel)]="username" name="username" required />
+
+  <label for="email">Email</label>
+  <input type="email" id="email" [(ngModel)]="email" name="email" required />
+
+  <label for="password">Password</label>
+  <input type="password" id="password" [(ngModel)]="password" name="password" required />
+
+  <button type="submit" [disabled]="!username || !email || !password">Register</button>
+
+  <p *ngIf="registrationFailed" class="error-message">{{ errorMessage }}</p>
+</form>
