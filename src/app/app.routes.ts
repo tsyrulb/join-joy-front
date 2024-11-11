@@ -8,5 +8,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },  // Protect the profile route
+  { path: 'categories', loadComponent: () => import('./categories/categories.component').then(m => m.CategoriesComponent) },  // Add Categories route
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

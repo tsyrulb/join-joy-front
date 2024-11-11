@@ -1,0 +1,9 @@
+<div class="user-subcategories">
+    <h3>Your Subcategories</h3>
+    <ul>
+      <li *ngFor="let userSubcategory of userSubcategories">
+        {{ userSubcategory.subcategory?.name || 'Loading...' }}
+      </li>
+    </ul>
+  </div>
+  
