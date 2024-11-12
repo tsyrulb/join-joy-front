@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User, UpdateUserRequest, Category, Subcategory, UserSubcategory } from './user.model'; // Ensure this model exists
+import {
+  User,
+  UpdateUserRequest,
+  Category,
+  Subcategory,
+  UserSubcategory,
+} from './user.model'; // Ensure this model exists
 
 @Injectable({
   providedIn: 'root',
@@ -24,22 +30,43 @@ export class ApiService {
 
   // Get subcategories by category ID
   getSubcategoriesByCategoryId(categoryId: number): Observable<Subcategory[]> {
-    return this.http.get<Subcategory[]>(`${this.apiUrl}/Subcategory/${categoryId}`);
+    return this.http.get<Subcategory[]>(
+      `${this.apiUrl}/Subcategory/${categoryId}`
+    );
   }
 
-  addUserSubcategory(userId: number, subcategoryId: number): Observable<any> {
-    const body = { userId, subcategoryId };
-    return this.http.post(`${this.apiUrl}/Users/${userId}/subcategories`, body);
+  addUserSubcategory(
+    userId: number,
+    subcategoryId: number,
+    weight: number = 1
+  ): Observable<any> {
+    const body = [{ subcategoryId, weight }]; // Send as an array
+    return this.http.post(
+      `${this.apiUrl}/Users/${userId}/subcategories`,
+      body,
+      { responseType: 'text' }
+    );
   }
+
   getSubcategoryById(subcategoryId: number): Observable<Subcategory> {
-    return this.http.get<Subcategory>(`${this.apiUrl}/Subcategory/detail/${subcategoryId}`);
+    return this.http.get<Subcategory>(
+      `${this.apiUrl}/Subcategory/detail/${subcategoryId}`
+    );
   }
   getUserSubcategories(userId: number): Observable<UserSubcategory[]> {
-    return this.http.get<UserSubcategory[]>(`${this.apiUrl}/Users/${userId}/subcategories`);
+    return this.http.get<UserSubcategory[]>(
+      `${this.apiUrl}/Users/${userId}/subcategories`
+    );
   }
   // Remove a user subcategory
-  removeUserSubcategory(userId: number, subcategoryId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/Users/${userId}/subcategories/${subcategoryId}`);
+  removeUserSubcategory(
+    userId: number,
+    subcategoryId: number
+  ): Observable<any> {
+    return this.http.delete(
+      `${this.apiUrl}/Users/${userId}/subcategories/${subcategoryId}`,
+      { responseType: 'text' }
+    );
   }
   // Get profile (assuming the current user)
   getProfile(): Observable<any> {
@@ -74,6 +101,20 @@ export class ApiService {
     });
   }
 
+  uploadUserProfilePhoto(userId: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(
+      `${this.apiUrl}/Users/${userId}/profile-photo`,
+      formData
+    );
+  }
+
+  deleteUserProfilePhoto(userId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/Users/${userId}/profile-photo`, {
+      responseType: 'text',
+    });
+  }
   // Get all users
   getAllUsers(): Observable<User[]> {
     const headers = this.getAuthHeaders();

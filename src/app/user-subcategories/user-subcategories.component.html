@@ -1,1 +1,29 @@
-<p>user-subcategories works!</p>
+<div class="categories">
+    <h3>Categories</h3>
+    <ul>
+      <li *ngFor="let category of categories" (click)="onCategorySelect(category.id)">
+        {{ category.name }}
+      </li>
+    </ul>
+  </div>
+  
+  <div *ngIf="selectedCategoryId" class="subcategories">
+    <h3>Subcategories</h3>
+    <ul>
+      <li *ngFor="let subcategory of subcategories">
+        {{ subcategory.name }}
+        <button (click)="addUserSubcategory(subcategory.id)">Add</button>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="user-subcategories">
+    <h3>Your Subcategories</h3>
+    <ul>
+      <li *ngFor="let userSubcategory of userSubcategories">
+        {{ userSubcategory.subcategory?.name }}
+        <button (click)="removeUserSubcategory(userSubcategory.subcategoryId)">Remove</button>
+      </li>
+    </ul>
+  </div>
+  

@@ -17,11 +17,21 @@
       <button type="submit">Save Address</button>
     </form>
 
-    <form *ngIf="selectedSection === 'photo'" (ngSubmit)="updateProfile()">
+    
+    <form *ngIf="selectedSection === 'photo'" (ngSubmit)="uploadPhoto()">
       <h3>Upload Profile Photo</h3>
+      
+      <!-- Photo preview -->
+      <img *ngIf="photoPreview" [src]="photoPreview" alt="Photo Preview" style="width: 150px; height: auto; margin-bottom: 10px;" />
+      <img *ngIf="user.profilePhoto && !photoPreview" [src]="user.profilePhoto" alt="Current Profile Photo" style="width: 150px; height: auto; margin-bottom: 10px;" />
+      
       <input type="file" (change)="onFileSelected($event)" />
       <button type="submit">Save Photo</button>
+
+      <!-- Delete button, shown only if there's a profile photo -->
+      <button type="button" *ngIf="user.profilePhoto" (click)="deleteProfilePhoto()">Delete Photo</button>
     </form>
+    
 
     <form *ngIf="selectedSection === 'password'" (ngSubmit)="updateProfile()">
       <h3>Change Password</h3>
