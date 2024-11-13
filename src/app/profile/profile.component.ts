@@ -34,7 +34,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserData();
-    if (!this.user.location) {
+    if (!this.user?.location) {
       this.user.location = { id: 0, latitude: 0, longitude: 0, address: '' };
     }
   }
@@ -53,7 +53,7 @@ export class ProfileComponent implements OnInit {
           } else {
             this.user.location = { id: 0, latitude: 0, longitude: 0, address: '' };
           }
-          this.addressInput = this.user.location.address || '';
+          this.addressInput = this.user?.location?.address || '';
           if (this.user.dateOfBirth) {
             this.user.dateOfBirth = this.formatDateForInput(
               this.user.dateOfBirth
@@ -143,12 +143,7 @@ export class ProfileComponent implements OnInit {
         dateOfBirth: this.user.dateOfBirth
           ? new Date(this.user.dateOfBirth)
           : null,
-        location: this.user.location || {
-          id: 0,
-          latitude: 0,
-          longitude: 0,
-          address: '',
-        },
+        address: this.user.location?.address || ''
       };
 
       this.apiService.updateUser(this.user.id, updatedUser).subscribe({

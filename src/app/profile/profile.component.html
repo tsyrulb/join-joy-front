@@ -13,7 +13,14 @@
   <div class="content">
     <form *ngIf="selectedSection === 'address'" (ngSubmit)="updateProfile()">
       <h3>Update Address</h3>
-      <input type="text" [(ngModel)]="user.location.address" name="address" [placeholder]="user?.location?.address || 'Enter your address'" />
+      <input
+        type="text"
+        id="address"
+        class="form-control"
+        *ngIf="user.location?.address"
+        [(ngModel)]="user.location.address"
+        name="address"
+      />
       <button type="submit">Save Address</button>
     </form>
 
