@@ -39,37 +39,48 @@ export class MessagesComponent implements OnInit {
       console.error("Message content or user ID missing.");
       return;
     }
-    const participants = this.participants;
-    // Ensure only participants who are not the logged-in user are included in receiverIds
-    const receiverId = participants.findIndex(participant => participant.id === this.loggedInUserId);
-    if (receiverId !== -1) {
-      participants.splice(receiverId, 1);
-    }
-    const receiverIds = participants.map(participant => participant.id);
-
+  
+    // Explicitly convert to numbers for comparison
+    const receiverIds = this.participants
+      .filter((participant) => {
+        const isReceiver = Number(participant.id) !== Number(this.loggedInUserId);
+        console.log(`Checking participant ID: ${participant.id} (Is receiver: ${isReceiver})`);
+        return isReceiver;
+      })
+      .map(participant => Number(participant.id));
+  
+    console.log("Participants:", this.participants);
+    console.log("Logged-in User ID:", this.loggedInUserId);
     console.log("Sender ID:", this.loggedInUserId);
-    console.log("Receiver IDs after filtering:", receiverIds); // Debugging output
-
+    console.log("Receiver IDs after filtering:", receiverIds);
+  
     if (receiverIds.length === 0) {
-      console.error('No valid recipients for this message.');
+      console.error("No valid recipients for this message.");
       return;
     }
-
+  
     const messageData = {
       content: this.newMessageContent,
       senderId: this.loggedInUserId,
       conversationId: this.conversationId,
-      receiverIds: [7],
+      receiverIds
     };
-
+  
     this.apiService.sendMessage(messageData).subscribe({
       next: () => {
         this.newMessageContent = '';
         this.loadMessages(); // Reload messages after sending
       },
-      error: (error) => console.error('Error sending message:', error),
+      error: (error) => console.error('Error sending message:', error)
     });
   }
+  
+  getUserNameById(userId: number): string | null {
+    const participant = this.participants.find(p => p.id === userId);
+    return participant ? participant.name : null;
+  }
+  
+  
 
   private loadMessages(): void {
     this.apiService.getMessagesForConversation(this.conversationId).subscribe({

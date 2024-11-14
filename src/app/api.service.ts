@@ -95,7 +95,9 @@ export class ApiService {
 
   // Get user details by ID
   getUser(userId: number): Observable<User> {
-    const headers = this.getAuthHeaders();
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    
     return this.http.get<User>(`${this.apiUrl}/Users/${userId}`, { headers });
   }
 
