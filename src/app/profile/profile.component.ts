@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
   imports: [FormsModule, CommonModule, RouterModule],
 })
 export class ProfileComponent implements OnInit {
+  nameid: number | null = null;
   user: User = {
     id: 0,
     name: '',
@@ -23,19 +24,40 @@ export class ProfileComponent implements OnInit {
     dateOfBirth: '',
     location: { id: 0, latitude: 0, longitude: 0, address: '' },
   };
-  selectedFile: File | null = null; // For profile photo selection
-  selectedSection: string = 'details'; // Default section
-  addressInput: string = ''; // Temporary variable for address
+  selectedFile: File | null = null;
+  selectedSection: string = 'details';
+  addressInput: string = '';
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  photoPreview: string | ArrayBuffer | null = null; // Preview of the selected photo
+  photoPreview: string | ArrayBuffer | null = null;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    this.loadUserData();
-    if (!this.user?.location) {
-      this.user.location = { id: 0, latitude: 0, longitude: 0, address: '' };
+    
+    this.setUserId();
+    if (this.nameid) {
+      console.log('User ID found:', this.nameid);
+      this.loadUserData();
+    } else {
+      console.error('User ID not found in token');
+      this.errorMessage = 'User ID not found';
+    }
+  }
+
+  private setUserId(): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        this.nameid = tokenPayload.nameid;
+        console.log('Extracted userId from token:', this.nameid);
+      } catch (e) {
+        console.error('Failed to decode token', e);
+        this.errorMessage = 'Failed to decode token';
+      }
+    } else {
+      console.error('Token not found');
     }
   }
 
@@ -43,52 +65,33 @@ export class ProfileComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (token) {
       const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-      const userId = tokenPayload.id;
-
-      this.apiService.getUser(userId).subscribe({
-        next: (data) => {
-          this.user = data;
-          if (this.user.locationId) {
-            this.loadLocation(this.user.id);
-          } else {
-            this.user.location = { id: 0, latitude: 0, longitude: 0, address: '' };
-          }
-          this.addressInput = this.user?.location?.address || '';
-          if (this.user.dateOfBirth) {
-            this.user.dateOfBirth = this.formatDateForInput(
-              this.user.dateOfBirth
-            );
-          }
-        },
-        error: (error) => {
-          console.error('Error fetching user:', error);
-          this.errorMessage = 'Error fetching user data';
-        },
-      });
+      const userId = tokenPayload.nameid; // Correctly access nameid as userId
+  
+      if (userId) {
+        console.log('Extracted userId from token:', userId);
+        this.apiService.getUser(userId).subscribe({
+          next: (data) => {
+            this.user = data;
+            if (this.user.locationId) {
+              this.loadLocation(this.user.id);
+            } else {
+              this.user.location = { id: 0, latitude: 0, longitude: 0, address: '' };
+            }
+            this.addressInput = this.user?.location?.address || '';
+            if (this.user.dateOfBirth) {
+              this.user.dateOfBirth = this.formatDateForInput(this.user.dateOfBirth);
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching user:', error);
+            this.errorMessage = 'Error fetching user data';
+          },
+        });
+      } else {
+        console.error('User ID not found in token');
+      }
     }
   }
-
-  loadLocation(userId: number): void {
-    this.apiService.getLocation(userId).subscribe({
-      next: (locationData) => {
-        this.user!.location = locationData as unknown as Location;
-        this.addressInput = this.user!.location.address; // Update address input
-      },
-      error: (error) => {
-        console.error('Error fetching location:', error);
-        this.errorMessage = 'Could not fetch location details';
-      },
-    });
-  }
-
-  formatDateForInput(date: string | Date): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);
-    const day = ('0' + d.getDate()).slice(-2);
-    return `${year}-${month}-${day}`;
-  }
-
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     this.selectedFile = file;
@@ -103,7 +106,7 @@ export class ProfileComponent implements OnInit {
 
   uploadPhoto(): void {
     if (this.selectedFile && this.user) {
-      this.apiService.uploadUserProfilePhoto(this.user.id, this.selectedFile).subscribe({
+      this.apiService.uploadUserProfilePhoto(this.nameid, this.selectedFile).subscribe({
         next: (response) => {
           this.user.profilePhoto = response.photoUrl;
           this.photoPreview = null; // Clear the preview
@@ -130,6 +133,19 @@ export class ProfileComponent implements OnInit {
         },
       });
     }
+  }
+
+  loadLocation(userId: number): void {
+    this.apiService.getLocation(userId).subscribe({
+      next: (locationData) => {
+        this.user!.location = locationData as unknown as Location;
+        this.addressInput = this.user!.location.address; // Update address input
+      },
+      error: (error) => {
+        console.error('Error fetching location:', error);
+        this.errorMessage = 'Could not fetch location details';
+      },
+    });
   }
 
   updateProfile(): void {
@@ -160,7 +176,16 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  formatDateForInput(date: string | Date): string {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
   selectSection(section: string): void {
+    console.log(`Switching to section: ${section}`);
     this.selectedSection = section;
   }
 }

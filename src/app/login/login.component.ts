@@ -25,7 +25,7 @@ export class LoginComponent {
         if (response.token) {
           // Store the token in localStorage for future authenticated requests
           localStorage.setItem('token', response.token);
-  
+
           // Redirect the user to the profile or another secure page
           this.router.navigate(['/profile']);
         } else {

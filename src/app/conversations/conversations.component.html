@@ -1,0 +1,21 @@
+<div class="conversations-container">
+    <ul>
+      <li
+        *ngFor="let conversation of conversations"
+        (click)="loadMessagesForConversation(conversation.id)"
+        [class.selected]="conversation.id === selectedConversationId"
+      >
+        {{ conversation.title }}
+      </li>
+    </ul>
+  
+    <!-- Messages Component for displaying messages of the selected conversation -->
+    <div *ngIf="selectedConversationId" class="messages-container">
+      <app-messages
+        [conversationId]="selectedConversationId"
+        [participants]="participants"
+        [messages]="messages"
+      ></app-messages>
+    </div>
+  </div>
+  

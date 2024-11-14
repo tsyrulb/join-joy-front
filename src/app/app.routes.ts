@@ -5,6 +5,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { authGuard } from './auth.guard';  // Import the authGuard
 import { CategoriesComponent } from './categories/categories.component';
 import { UserSubcategoriesComponent } from './user-subcategories/user-subcategories.component';
+import { ConversationsComponent } from './conversations/conversations.component';
+import { MessagesComponent } from './messages/messages.component';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -12,5 +14,8 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },  // Protect the profile route
   { path: 'categories', component: CategoriesComponent },
   { path: 'user-subcategories', component: UserSubcategoriesComponent, canActivate: [authGuard] },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'conversations', component: ConversationsComponent },
+  { path: 'messages/:id', component: MessagesComponent } // Use conversationId as route param
+
 ];

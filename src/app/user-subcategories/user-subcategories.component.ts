@@ -26,7 +26,7 @@ export class UserSubcategoriesComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (token) {
       const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-      this.userId = tokenPayload.id;
+      this.userId = tokenPayload.nameid;
 
       if (this.userId) {
         this.loadUserSubcategories();

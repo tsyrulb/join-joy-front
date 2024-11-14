@@ -1,0 +1,15 @@
+<div class="messages-list">
+    <div *ngFor="let message of messages" class="message">
+      <strong>{{ message.senderId === loggedInUserId ? 'You' : 'Participant' }}:</strong>
+      {{ message.content }}
+    </div>
+  </div>
+  
+  <div class="send-message">
+    <input
+      [(ngModel)]="newMessageContent"
+      placeholder="Type a message..."
+    />
+    <button (click)="sendMessage()">Send</button>
+  </div>
+  

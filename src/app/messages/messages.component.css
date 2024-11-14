@@ -1,0 +1,60 @@
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  .messages-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+  }
+  
+  .messages-list .sent {
+    text-align: right;
+    background-color: #e6f7ff;
+    padding: 5px;
+    border-radius: 10px;
+    margin: 5px 0;
+  }
+  
+  .messages-list .received {
+    text-align: left;
+    background-color: #f2f2f2;
+    padding: 5px;
+    border-radius: 10px;
+    margin: 5px 0;
+  }
+  
+  .timestamp {
+    font-size: 0.8em;
+    color: gray;
+  }
+  
+  .send-message {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  
+  .send-message input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .send-message button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .send-message button:hover {
+    background-color: #0056b3;
+  }
+  

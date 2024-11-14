@@ -8,6 +8,10 @@ import {
   Subcategory,
   UserSubcategory,
 } from './user.model'; // Ensure this model exists
+import {
+  Message,
+  Conversation,
+} from './message.model'; // Ensure this model exists
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +25,11 @@ export class ApiService {
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
     });
-  }
+}
+
+
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.apiUrl}/Category`);
   }
@@ -104,11 +110,14 @@ export class ApiService {
   uploadUserProfilePhoto(userId: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(
-      `${this.apiUrl}/Users/${userId}/profile-photo`,
-      formData
-    );
-  }
+
+    return this.http.post(`${this.apiUrl}/Users/${userId}/profile-photo`, formData, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+}
+
 
   deleteUserProfilePhoto(userId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/Users/${userId}/profile-photo`, {
@@ -168,4 +177,27 @@ export class ApiService {
       headers,
     });
   }
+
+  getMessagesForConversation(conversationId: number): Observable<Message[]> {
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    
+    return this.http.get<Message[]>(`${this.apiUrl}/Messages/conversation/${conversationId}`, { headers });
+  }
+  
+  
+  sendMessage(messageData: { content: string; senderId: number; conversationId: number; receiverIds: number[] }): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    return this.http.post(`${this.apiUrl}/Messages/send`, messageData, { headers });
+  }
+  
+
+  getConversationsForUser(): Observable<Conversation[]> {
+    return this.http.get<Conversation[]>(`${this.apiUrl}/Messages/conversations`, {
+        headers: this.getAuthHeaders()
+    });
+}
+
+  
 }

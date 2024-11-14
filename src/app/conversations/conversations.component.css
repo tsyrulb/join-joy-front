@@ -1,0 +1,42 @@
+.conversations-container {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  li.selected {
+    background-color: #e0e0e0;
+    font-weight: bold;
+  }
+  
+  .messages-container {
+    margin-left: 20px;
+    flex: 1;
+  }
+  
+  .messages-list .message {
+    margin-bottom: 10px;
+  }
+  
+  .send-message-form {
+    margin-top: 20px;
+  }
+  
+  .send-message-form input {
+    width: calc(100% - 80px);
+    margin-right: 10px;
+  }
+  
+  .send-message-form button {
+    width: 70px;
+  }
+  
