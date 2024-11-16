@@ -1,0 +1,12 @@
+.map-container {
+    width: 80%; /* Width of the map area relative to the page */
+    height: 600px; /* Height of the map area */
+    margin: 0 auto; /* Center the container */
+    border: 1px solid #ddd; /* Optional: Add a border */
+  }
+  
+  #map {
+    width: 100%; /* Map should fill the container */
+    height: 100%; /* Map should fill the container */
+  }
+  

@@ -1,0 +1,12 @@
+<div class="activities">
+  <h2>All Activities</h2>
+
+  <ul>
+    <li *ngFor="let activity of activities">
+      <h3>{{ activity.name }}</h3>
+      <p>{{ activity.description }}</p>
+      <p><strong>Date:</strong> {{ activity.date }}</p>
+      <button (click)="deleteActivity(activity.id)">Delete</button>
+    </li>
+  </ul>
+</div>

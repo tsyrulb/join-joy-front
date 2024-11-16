@@ -1,0 +1,19 @@
+<div class="form-container">
+  <h3>Create Activity</h3>
+
+  <!-- Form Fields -->
+  <form>
+    <input type="text" placeholder="Activity Name" [(ngModel)]="activityData.name" name="name" />
+    <textarea placeholder="Description" [(ngModel)]="activityData.description" name="description"></textarea>
+    <input type="date" [(ngModel)]="activityData.date" name="date" />
+  </form>
+
+  <!-- Map Section -->
+  <div class="map-section">
+    <h4>Select Location on the Map:</h4>
+    <app-activity-map (locationSelected)="onLocationSelected($event)"></app-activity-map>
+  </div>
+
+  <!-- Submit Button -->
+  <button (click)="createActivity()">Create Activity</button>
+</div>

@@ -1,0 +1,10 @@
+.form-container {
+    max-width: 800px; /* Limit the width of the form */
+    margin: 0 auto; /* Center the form */
+    padding: 20px; /* Add some padding */
+  }
+  
+  .map-section {
+    margin-top: 20px; /* Add space above the map section */
+  }
+  
