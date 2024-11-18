@@ -1,12 +1,86 @@
 .map-container {
-    width: 80%; /* Width of the map area relative to the page */
-    height: 600px; /* Height of the map area */
-    margin: 0 auto; /* Center the container */
-    border: 1px solid #ddd; /* Optional: Add a border */
-  }
-  
-  #map {
-    width: 100%; /* Map should fill the container */
-    height: 100%; /* Map should fill the container */
-  }
-  
+  position: relative;
+}
+
+.search-section {
+  margin-bottom: 10px;
+}
+
+.map-section {
+  display: flex;
+}
+
+#map {
+  width: 75%;
+  height: 500px;
+  border: 1px solid #ccc;
+}
+
+.type-filters {
+  width: 20%;
+  margin-left: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.type-filters ul {
+  list-style: none;
+  padding: 0;
+}
+
+.type-filters li {
+  margin-bottom: 10px;
+}
+
+.type-filters label {
+  cursor: pointer;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.modal-content textarea,
+.modal-content input {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.modal-content button {
+  margin-right: 10px;
+}

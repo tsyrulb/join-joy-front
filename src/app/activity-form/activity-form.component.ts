@@ -26,18 +26,23 @@ export class ActivityFormComponent {
     this.setCreatedById();
   }
 
-  // Extracts the user ID from the JWT token
   private setCreatedById(): void {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-        this.activityData.createdById = tokenPayload.nameid;
+        this.activityData.createdById = tokenPayload?.nameid || null;
+        if (!this.activityData.createdById) {
+          console.error('No user ID found in token.');
+        }
       } catch (error) {
         console.error('Failed to parse token:', error);
       }
+    } else {
+      console.error('No token found.');
     }
   }
+  
 
   onLocationSelected(location: { latitude: number; longitude: number }): void {
     this.activityData.latitude = location.latitude;

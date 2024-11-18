@@ -35,7 +35,12 @@ export class ActivityService {
       Authorization: `Bearer ${token}`
     });
   }
-
+  getNearbyPlaces(latitude: number, longitude: number, userInput: string): Observable<any> {
+    const url = `https://localhost:7276/api/places/nearby-all`;
+    const body = { Latitude: latitude, Longitude: longitude, UserInput: userInput, Radius: 5000 };
+    return this.http.post(url, body, { headers: this.getAuthHeaders() });
+  }
+  
   getAllActivities(): Observable<Activity[]> {
     return this.http.get<Activity[]>(`${this.apiUrl}`, { headers: this.getAuthHeaders() });
   }

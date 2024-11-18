@@ -1,4 +1,63 @@
 <div class="map-container">
-    <div id="map"></div>
+  <div class="search-section">
+    <input
+      type="text"
+      placeholder="Search nearby (e.g., restaurant, pool)"
+      [(ngModel)]="searchInput"
+      class="search-box"
+    />
+    <button (click)="searchNearby()">Search</button>
   </div>
-  
+
+  <div class="map-section">
+    <div id="map"></div>
+
+    <div class="type-filters">
+      <h4>Filter Markers</h4>
+      <ul>
+        <li *ngFor="let type of typeFilters | keyvalue">
+          <label>
+            <input
+              type="checkbox"
+              [checked]="type.value.visible"
+              (change)="toggleMarkers(type.key)"
+            />
+            {{ type.key }}
+          </label>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Activity Creation -->
+<div
+  class="modal"
+  [class.show]="isModalVisible"
+  (click)="closeModal($event)"
+>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Create Activity</h3>
+    <label>
+      Name:
+      <input
+        type="text"
+        [(ngModel)]="activityFormData.name"
+        placeholder="Enter activity name"
+      />
+    </label>
+    <label>
+      Description:
+      <textarea
+        [(ngModel)]="activityFormData.description"
+        placeholder="Enter activity description"
+      ></textarea>
+    </label>
+    <label>
+      Date:
+      <input type="date" [(ngModel)]="activityFormData.date" />
+    </label>
+    <button (click)="submitActivity()">Create</button>
+    <button (click)="closeModal()">Cancel</button>
+  </div>
+</div>

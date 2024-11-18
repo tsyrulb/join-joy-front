@@ -8,7 +8,7 @@ import { UserSubcategoriesComponent } from './user-subcategories/user-subcategor
 import { ConversationsComponent } from './conversations/conversations.component';
 import { MessagesComponent } from './messages/messages.component';
 import { ActivitiesComponent } from './activities/activities.component';
-import { ActivityFormComponent } from './activity-form/activity-form.component';
+import { ActivityMapComponent } from './activity-map/activity-map.component';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -20,7 +20,7 @@ export const routes: Routes = [
   { path: 'conversations', component: ConversationsComponent },
   { path: 'messages/:id', component: MessagesComponent }, // Use conversationId as route param
   { path: 'activities', component: ActivitiesComponent },
-  { path: 'create-activity', component: ActivityFormComponent },
+  { path: 'create-activity', component: ActivityMapComponent },
   { path: '', redirectTo: '/activities', pathMatch: 'full' }
 
 ];
