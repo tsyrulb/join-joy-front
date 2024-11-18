@@ -101,7 +101,6 @@ export class ActivityMapComponent implements OnDestroy {
 
     this.activityService.createActivityWithCoordinates(activityData).subscribe({
       next: () => {
-        alert(`Activity "${name}" created successfully!`);
         this.isModalVisible = false;
       },
       error: (error) => {

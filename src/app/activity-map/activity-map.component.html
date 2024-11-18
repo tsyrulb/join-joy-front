@@ -1,63 +1,102 @@
-<div class="map-container">
-  <div class="search-section">
-    <input
-      type="text"
-      placeholder="Search nearby (e.g., restaurant, pool)"
-      [(ngModel)]="searchInput"
-      class="search-box"
-    />
-    <button (click)="searchNearby()">Search</button>
+<div class="container-fluid map-container py-3">
+  <!-- Search Section -->
+  <div class="row mb-3">
+    <div class="col-md-8">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search nearby (e.g., restaurant, pool)"
+          [(ngModel)]="searchInput"
+        />
+        <button class="btn btn-primary" (click)="searchNearby()">Search</button>
+      </div>
+    </div>
   </div>
 
-  <div class="map-section">
-    <div id="map"></div>
-
-    <div class="type-filters">
-      <h4>Filter Markers</h4>
-      <ul>
-        <li *ngFor="let type of typeFilters | keyvalue">
-          <label>
-            <input
-              type="checkbox"
-              [checked]="type.value.visible"
-              (change)="toggleMarkers(type.key)"
-            />
-            {{ type.key }}
-          </label>
-        </li>
-      </ul>
+  <!-- Map Section -->
+  <div class="row">
+    <div class="col-md-8">
+      <div id="map" class="border rounded" style="height: 500px;"></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Filter Markers</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let type of typeFilters | keyvalue">
+              <span>{{ type.key }}</span>
+              <input
+                type="checkbox"
+                class="form-check-input ms-2"
+                [checked]="type.value.visible"
+                (change)="toggleMarkers(type.key)"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Modal for Activity Creation -->
 <div
-  class="modal"
+  class="modal fade"
   [class.show]="isModalVisible"
-  (click)="closeModal($event)"
+  tabindex="-1"
+  role="dialog"
+  style="display: block;"
+  *ngIf="isModalVisible"
 >
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h3>Create Activity</h3>
-    <label>
-      Name:
-      <input
-        type="text"
-        [(ngModel)]="activityFormData.name"
-        placeholder="Enter activity name"
-      />
-    </label>
-    <label>
-      Description:
-      <textarea
-        [(ngModel)]="activityFormData.description"
-        placeholder="Enter activity description"
-      ></textarea>
-    </label>
-    <label>
-      Date:
-      <input type="date" [(ngModel)]="activityFormData.date" />
-    </label>
-    <button (click)="submitActivity()">Create</button>
-    <button (click)="closeModal()">Cancel</button>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create Activity</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="activityName" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="activityName"
+              [(ngModel)]="activityFormData.name"
+              name="activityName"
+              placeholder="Enter activity name"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="activityDescription" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              id="activityDescription"
+              rows="3"
+              [(ngModel)]="activityFormData.description"
+              name="activityDescription"
+              placeholder="Enter activity description"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="activityDate" class="form-label">Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="activityDate"
+              [(ngModel)]="activityFormData.date"
+              name="activityDate"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="submitActivity()">Create</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
