@@ -20,6 +20,9 @@ export class ActivityMapComponent implements OnDestroy {
   private map: L.Map | undefined;
   private markers = new L.LayerGroup();
   private selectedMarker: L.Marker | null = null;
+  isRecommendedUsersModalVisible = false;
+  recommendedUsers: any[] = [];
+  createdActivityId: number | null = null; // To store the created activity ID
 
   isModalVisible = false;
   activityFormData = {
@@ -31,9 +34,13 @@ export class ActivityMapComponent implements OnDestroy {
   };
 
   searchInput: string = '';
-  typeFilters: { [key: string]: { visible: boolean; markers: L.Marker[] } } = {};
+  typeFilters: { [key: string]: { visible: boolean; markers: L.Marker[] } } =
+    {};
 
-  constructor(private activityService: ActivityService, private http: HttpClient) {}
+  constructor(
+    private activityService: ActivityService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     if (this.map) {
@@ -61,9 +68,8 @@ export class ActivityMapComponent implements OnDestroy {
       this.locationSelected.emit({ latitude: lat, longitude: lng });
     });
 
-        // Assign the component instance to a global variable
-        window.angularComponent = this;
-
+    // Assign the component instance to a global variable
+    window.angularComponent = this;
   }
 
   openModal(lat: number, lon: number): void {
@@ -79,15 +85,45 @@ export class ActivityMapComponent implements OnDestroy {
     }
   }
   
-
+  isAnyUserSelected(): boolean {
+    return this.recommendedUsers.some(user => user.selected);
+  }
+  
+  sendSelectedInvitations(): void {
+    const selectedUsers = this.recommendedUsers.filter((user) => user.selected);
+    const receiverIds = selectedUsers.map((user) => user.userId);
+  
+    if (receiverIds.length === 0) {
+      alert('No users selected for invitation.');
+      return;
+    }
+  
+    if (this.createdActivityId === null) {
+      alert('Activity ID is missing. Cannot send invitations.');
+      return;
+    }
+  
+    this.activityService.sendInvitations(this.createdActivityId, receiverIds).subscribe({
+      next: () => {
+        alert('Invitations sent successfully!');
+        this.isRecommendedUsersModalVisible = false;
+      },
+      error: (error) => {
+        console.error('Error sending invitations:', error);
+        alert('Failed to send invitations. See console for details.');
+      },
+    });
+  }
+  
+  
   submitActivity(): void {
     const { name, description, date, latitude, longitude } = this.activityFormData;
-
+  
     if (!name || !description || !date) {
       alert('All fields are required!');
       return;
     }
-
+  
     const activityData = {
       name,
       description,
@@ -96,12 +132,30 @@ export class ActivityMapComponent implements OnDestroy {
       longitude,
       createdById: this.getCreatedById(),
     };
-
+  
     console.log('Creating activity:', activityData);
-
+  
     this.activityService.createActivityWithCoordinates(activityData).subscribe({
-      next: () => {
+      next: (createdActivity) => {
         this.isModalVisible = false;
+        this.createdActivityId = createdActivity.id;
+
+        console.log('Created activity:', createdActivity);
+  
+        // Fetch recommended users for the created activity
+        this.activityService.fetchRecommendedUsers(createdActivity.id).subscribe({
+          next: (recommendedUsers) => {
+            console.log('Recommended users:', recommendedUsers);
+  
+            // Show modal for user selection
+            this.recommendedUsers = recommendedUsers; // Set this in your component
+            this.isRecommendedUsersModalVisible = true; // Open the modal
+          },
+          error: (error) => {
+            console.error('Error fetching recommended users:', error);
+            alert('Failed to fetch recommended users. See console for details.');
+          },
+        });
       },
       error: (error) => {
         console.error('Error creating activity:', error);
@@ -109,6 +163,51 @@ export class ActivityMapComponent implements OnDestroy {
       },
     });
   }
+  
+  
+  
+  // Fetch recommended users for an activity
+  fetchRecommendedUsers(activityId: number): void {
+    this.activityService.getRecommendedUsersForActivity(activityId).subscribe({
+      next: (users) => {
+        console.log('Recommended users:', users);
+        this.showRecommendedUsers(users);
+      },
+      error: (error) => {
+        console.error('Error fetching recommended users:', error);
+        alert('Failed to fetch recommended users.');
+      },
+    });
+  }
+
+  showRecommendedUsers(users: any[]): void {
+    this.recommendedUsers = users;
+    this.isRecommendedUsersModalVisible = true;
+  }
+
+  get selectedUsers(): any[] {
+    return this.recommendedUsers.filter((user) => user.selected);
+  }
+
+  sendInvitations(activityId: number): void {
+    const receiverIds = this.selectedUsers.map((user) => user.userId);
+  
+    if (!receiverIds.length) {
+      alert('No users selected for invitations.');
+      return;
+    }
+  
+    this.activityService.sendInvitations(activityId, receiverIds).subscribe({
+      next: () => {
+        alert('Invitations sent successfully!');
+      },
+      error: (error) => {
+        console.error('Error sending invitations:', error);
+        alert('Failed to send invitations. Check console for details.');
+      },
+    });
+  }
+  
 
   getCreatedById(): number | null {
     const token = localStorage.getItem('token');
@@ -135,7 +234,11 @@ export class ActivityMapComponent implements OnDestroy {
     }
 
     this.activityService
-      .getNearbyPlaces(this.map.getCenter().lat, this.map.getCenter().lng, this.searchInput)
+      .getNearbyPlaces(
+        this.map.getCenter().lat,
+        this.map.getCenter().lng,
+        this.searchInput
+      )
       .subscribe({
         next: (places: any[]) => {
           console.log('Raw API response:', places);
@@ -159,7 +262,8 @@ export class ActivityMapComponent implements OnDestroy {
       const typeMatch = rawEntry.match(/Nearby places for (.*?) = (.*?):/);
 
       const primaryType = typeMatch ? typeMatch[1].trim() : 'Unknown';
-      const subType = typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
+      const subType =
+        typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
 
       const fullType = `${capitalize(primaryType)}, ${capitalize(subType)}`;
 
@@ -169,14 +273,22 @@ export class ActivityMapComponent implements OnDestroy {
         const longitudeMatch = line.match(/Longitude: ([^,]*)/);
 
         const name = nameMatch ? nameMatch[1].trim() : null;
-        const lat = latitudeMatch && latitudeMatch[1] ? parseFloat(latitudeMatch[1]) : NaN;
-        const lon = longitudeMatch && longitudeMatch[1] ? parseFloat(longitudeMatch[1]) : NaN;
+        const lat =
+          latitudeMatch && latitudeMatch[1]
+            ? parseFloat(latitudeMatch[1])
+            : NaN;
+        const lon =
+          longitudeMatch && longitudeMatch[1]
+            ? parseFloat(longitudeMatch[1])
+            : NaN;
 
         if (!name || isNaN(lat) || isNaN(lon)) {
           return;
         }
 
-        console.log(`Adding marker for: ${name} (${fullType}) at (${lat}, ${lon})`);
+        console.log(
+          `Adding marker for: ${name} (${fullType}) at (${lat}, ${lon})`
+        );
 
         const marker = L.marker([lat, lon], {
           icon: getColoredIcon(fullType),
@@ -242,6 +354,7 @@ function getColoredIcon(type: string): L.Icon {
     shadowSize: [41, 41],
   });
 }
+
 function getRandomColor(): string {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -250,6 +363,7 @@ function getRandomColor(): string {
   }
   return color;
 }
+
 function capitalize(word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }

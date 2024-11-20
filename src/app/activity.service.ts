@@ -25,7 +25,8 @@ interface ActivityRequestWithCoordinates {
   providedIn: 'root',
 })
 export class ActivityService {
-  private apiUrl = 'https://localhost:7276/api/Activities';
+  private apiActivityUrl = 'https://localhost:7276/api/Activities';
+  private apiUrl = 'https://localhost:7276/api';
 
   constructor(private http: HttpClient) {}
 
@@ -42,26 +43,42 @@ export class ActivityService {
   }
   
   getAllActivities(): Observable<Activity[]> {
-    return this.http.get<Activity[]>(`${this.apiUrl}`, { headers: this.getAuthHeaders() });
+    return this.http.get<Activity[]>(`${this.apiActivityUrl}`, { headers: this.getAuthHeaders() });
   }
 
   createActivityWithCoordinates(request: ActivityRequestWithCoordinates): Observable<any> {
-    return this.http.post(`${this.apiUrl}/create-with-coordinates`, request, { headers: this.getAuthHeaders() });
+    return this.http.post(`${this.apiActivityUrl}/create-with-coordinates`, request, { headers: this.getAuthHeaders() });
   }
 
   updateActivity(activityId: number, request: Activity): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${activityId}`, request, { headers: this.getAuthHeaders() });
+    return this.http.put(`${this.apiActivityUrl}/${activityId}`, request, { headers: this.getAuthHeaders() });
   }
 
   deleteActivity(activityId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${activityId}`, {
+    return this.http.delete(`${this.apiActivityUrl}/${activityId}`, {
       headers: this.getAuthHeaders(),
       responseType: 'text', // Explicitly specify the response type as text
     });
   }
-  
-
   addUsersToActivity(activityId: number, userIds: number[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${activityId}/addUsers`, userIds, { headers: this.getAuthHeaders() });
+    return this.http.post(`${this.apiActivityUrl}/${activityId}/addUsers`, userIds, { headers: this.getAuthHeaders() });
   }
+  getRecommendedUsersForActivity(activityId: number, topN: number = 100): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Matching/recommend-users?activityId=${activityId}&topN=${topN}`, { headers: this.getAuthHeaders() });
+  }
+
+  fetchRecommendedUsers(activityId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Matching/recommend-users?activityId=${activityId}&topN=100`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  
+  sendInvitations(activityId: number, receiverIds: number[]): Observable<any> {
+    const payload = { activityId, receiverIds };
+    return this.http.post(`${this.apiUrl}/Matching/send-invitations`, payload, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  
+  
 }
