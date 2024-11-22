@@ -9,23 +9,35 @@ export const authGuard: CanActivateFn = (route, state) => {
     // Decode token to check expiration and userId (for debugging)
     const tokenPayload = JSON.parse(atob(token.split('.')[1]));
     const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-    console.log('Decoded token payload:', tokenPayload);
-    console.log('Token expiration time:', tokenPayload.exp);
 
-    // Check if the token has expired
     if (tokenPayload.exp < currentTime) {
-      console.log('Token has expired.');
-      localStorage.removeItem('token'); // Remove expired token
+      // Token expired
+      localStorage.removeItem('token');
       const router = inject(Router);
-      router.navigate(['/login']); // Redirect to login if token expired
+      router.navigate(['/login']);
       return false;
     }
 
-    // If token is valid, allow access
-    return true;
+    return true; // User is authenticated
   } else {
-    const router = inject(Router);
-    router.navigate(['/login']); // Redirect to login if token is missing
-    return false;
+    return false; // User is not authenticated
   }
+};
+
+export const guestGuard: CanActivateFn = (route, state) => {
+  const token = localStorage.getItem('token');
+
+  // If a token exists and is valid, redirect to a protected route
+  if (token) {
+    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (tokenPayload.exp > currentTime) {
+      const router = inject(Router);
+      router.navigate(['/profile']);
+      return false; // Prevent access to login/signup
+    }
+  }
+
+  return true; // Allow access if no valid token
 };

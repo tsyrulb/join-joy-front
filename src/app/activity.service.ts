@@ -60,6 +60,11 @@ export class ActivityService {
       responseType: 'text', // Explicitly specify the response type as text
     });
   }
+
+  getUserActivitiesWithParticipants(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiActivityUrl}/user-activities`, { headers: this.getAuthHeaders() });
+  }
+
   addUsersToActivity(activityId: number, userIds: number[]): Observable<any> {
     return this.http.post(`${this.apiActivityUrl}/${activityId}/addUsers`, userIds, { headers: this.getAuthHeaders() });
   }
@@ -72,7 +77,20 @@ export class ActivityService {
       headers: this.getAuthHeaders(),
     });
   }
+
+  addUser(activityId: number, userId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiActivityUrl}/${activityId}/addUser`, userId);
+  }
+
+  removeUser(activityId: number, userId: number): Observable<any> {
+    const url = `${this.apiUrl}/Activities/${activityId}/removeUser`;
+    return this.http.delete(url, {
+      body: userId,
+      headers: this.getAuthHeaders(),
+    });
+  }
   
+
   sendInvitations(activityId: number, receiverIds: number[]): Observable<any> {
     const payload = { activityId, receiverIds };
     return this.http.post(`${this.apiUrl}/Matching/send-invitations`, payload, {

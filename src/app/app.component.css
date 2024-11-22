@@ -1,0 +1,35 @@
+.logout-container {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+  }
+  
+  
+  .sidenav {
+    width: 250px;
+    background-color: #f5f5f5;
+  }
+  
+  .sidenav-title {
+    padding: 16px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  mat-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  

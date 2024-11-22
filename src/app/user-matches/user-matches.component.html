@@ -1,0 +1,47 @@
+<div class="container my-4">
+    <h2>Your Matches</h2>
+  
+    <!-- Created Invitations -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5>Created Invitations</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let match of createdMatches">
+            <div>
+              <strong>Activity:</strong> {{ match.activity?.name || 'Unknown Activity' }}<br />
+              <strong>Sent To:</strong> {{ match.user2?.name || 'Unknown User' }}<br />
+              <strong>Status:</strong> {{ match.isAccepted ? 'Accepted' : 'Pending' }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  
+    <!-- Received Invitations -->
+    <div class="card">
+      <div class="card-header">
+        <h5>Received Invitations</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let match of receivedMatches">
+            <div>
+              <strong>Activity:</strong> {{ match.activity?.name || 'Unknown Activity' }}<br />
+              <strong>From:</strong> {{ match.user1?.name || 'Unknown User' }}<br />
+              <strong>Status:</strong> {{ match.isAccepted ? 'Accepted' : 'Pending' }}
+            </div>
+            <button
+              class="btn btn-primary mt-2"
+              *ngIf="!match.isAccepted"
+              (click)="acceptInvitation(match.id)"
+            >
+              Accept Invitation
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  

@@ -67,8 +67,15 @@ export interface UserActivity {
 }
 
 export interface Match {
-  matchId: number;
-  userId: number;
+  id: number;
+  userId1: number; // The ID of the user who created the match
+  user2Id: number; // The ID of the user who received the invitation
+  activityId: number; // The ID of the related activity
+  matchDate: string; // ISO 8601 string format for the match date
+  isAccepted: boolean; // Indicates if the invitation was accepted
+  user1?: User; // Details of the first user (optional)
+  user2?: User; // Details of the second user (optional)
+  activity?: Activity; // Details of the activity (optional)
 }
 
 export interface Message {

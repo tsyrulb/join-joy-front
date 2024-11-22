@@ -1,13 +1,24 @@
-<nav>
-    <a [routerLink]="['/profile']">Profile</a>
-    <a [routerLink]="['/login']">Login</a>
-    <a [routerLink]="['/register']">Register</a>
-    <a [routerLink]="['/user-subcategories']">Subcategories</a>
-    <a [routerLink]="['/conversations']">conversations</a>
-    <a [routerLink]="['/activities']">activities</a>
-    <a [routerLink]="['/create-activity']">create-activity</a>
+<div class="tab-container">
+  <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="onTabChange($event)">
+    <ng-container *ngIf="isAuthenticated(); else guestTabs">
+      <mat-tab label="Profile"></mat-tab>
+      <mat-tab label="Subcategories"></mat-tab>
+      <mat-tab label="Conversations"></mat-tab>
+      <mat-tab label="Activities"></mat-tab>
+      <mat-tab label="Create Activity"></mat-tab>
+      <mat-tab label="User Matches"></mat-tab>
+    </ng-container>
+    <ng-template #guestTabs>
+      <mat-tab label="Login"></mat-tab>
+      <mat-tab label="Register"></mat-tab>
+    </ng-template>
+  </mat-tab-group>
+</div>
 
-  </nav>
-  
-  <!-- This is where the routed components will be rendered -->
-  <router-outlet></router-outlet>
+<!-- Logout Button -->
+<div *ngIf="isAuthenticated()" class="logout-container">
+  <button mat-raised-button color="warn" (click)="logout()">Logout</button>
+</div>
+
+<!-- Routed components will be rendered here -->
+<router-outlet></router-outlet>

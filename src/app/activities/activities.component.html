@@ -1,12 +1,32 @@
 <div class="activities">
-  <h2>All Activities</h2>
+  <h2>Your Activities</h2>
 
-  <ul>
-    <li *ngFor="let activity of activities">
-      <h3>{{ activity.name }}</h3>
-      <p>{{ activity.description }}</p>
-      <p><strong>Date:</strong> {{ activity.date }}</p>
-      <button (click)="deleteActivity(activity.id)">Delete</button>
-    </li>
-  </ul>
+  <div *ngFor="let activity of activities" class="activity-card">
+    <h3>{{ activity.name }}</h3>
+    <p>{{ activity.description }}</p>
+    <p><strong>Date:</strong> {{ activity.date }}</p>
+    <p><strong>Location:</strong> {{ activity.location }}</p>
+
+    <!-- Participants Section -->
+    <h4>Participants</h4>
+    <ul class="participants-list">
+      <li *ngFor="let participant of activity.participants" class="participant-item">
+        <div class="participant-info">
+          <img
+            [src]="participant.pictureUrl"
+            alt="{{ participant.userName }}"
+            class="participant-image"
+          />
+          <span class="participant-name">{{ participant.userName }}</span>
+        </div>
+        <button
+          *ngIf="canRemoveParticipant(activity)"
+          class="btn btn-danger btn-sm"
+          (click)="removeParticipant(activity.activityId, participant.userId)"
+        >
+          Remove
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>
