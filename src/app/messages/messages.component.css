@@ -1,60 +1,63 @@
+/* Ensure the container layout remains intact */
 .messages-container {
-    display: flex;
-    flex-direction: column;
-    max-width: 400px;
-    margin: auto;
-  }
-  
-  .messages-list {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 10px;
-  }
-  
-  .messages-list .sent {
-    text-align: right;
-    background-color: #e6f7ff;
-    padding: 5px;
-    border-radius: 10px;
-    margin: 5px 0;
-  }
-  
-  .messages-list .received {
-    text-align: left;
-    background-color: #f2f2f2;
-    padding: 5px;
-    border-radius: 10px;
-    margin: 5px 0;
-  }
-  
-  .timestamp {
-    font-size: 0.8em;
-    color: gray;
-  }
-  
-  .send-message {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-  }
-  
-  .send-message input {
-    flex: 1;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .send-message button {
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .send-message button:hover {
-    background-color: #0056b3;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.messages-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+/* Adjust individual message styling */
+.my-message {
+  text-align: right;
+  margin: 5px 0;
+}
+
+.my-message p {
+  display: inline-block; /* Only wrap the text and padding */
+  background-color: #d1e7dd;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+.other-message {
+  text-align: left;
+  margin: 5px 0;
+}
+
+.other-message p {
+  display: inline-block; /* Only wrap the text and padding */
+  background-color: #f8d7da;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+/* Input and button for sending messages */
+.send-message {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+.send-message input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.send-message button {
+  margin-left: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+

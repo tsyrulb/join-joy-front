@@ -1,35 +1,43 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Align tabs on the left and button on the right */
+  padding: 0 16px;
+  background-color: #f5f5f5; /* Optional, for consistent styling */
+}
+
+.tab-container {
+  flex-grow: 1; /* Make the tab group take up all available space */
+}
+
+
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 .logout-container {
-    display: flex;
-    justify-content: flex-end;
-    margin: 10px;
-  }
-  
-  
-  .sidenav {
-    width: 250px;
-    background-color: #f5f5f5;
-  }
-  
-  .sidenav-title {
-    padding: 16px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 20px;
-  }
-  
-  .main-content {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  mat-toolbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  mat-icon {
-    margin-right: 8px;
-  }
-  
+  display: flex;
+  align-items: center;
+}
+
+.logout-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.logout-icon {
+  width: 24px; /* Adjust size as needed */
+  height: 24px;
+}
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}

@@ -19,11 +19,8 @@ export interface User {
   locationId?: number; // Foreign key linking to Location
   location?: Location; // Full location object
   distanceWillingToTravel?: number;
-  unavailableDay?: number;
-  unavailableStartTime?: string; // Matches SQL `time(7)`
-  unavailableEndTime?: string;
+  userUnavailabilities?: UserUnavailability[]; // List of unavailability periods
   userSubcategories?: UserSubcategory[];
-  userAvailabilities?: UserAvailability[];
   userActivities?: UserActivity[];
   matches?: Match[];
   sentMessages?: Message[];
@@ -32,6 +29,13 @@ export interface User {
   createdActivities?: Activity[];
   sentChatMessages?: ChatMessage[];
   receivedChatMessages?: ChatMessage[];
+}
+// Define the UserUnavailability interface
+export interface UserUnavailability {
+  id: number;
+  dayOfWeek: number; // 0 = Sunday, 6 = Saturday
+  startTime: string; // Matches SQL `time(7)`
+  endTime: string; // Matches SQL `time(7)`
 }
 
 export interface Subcategory {
@@ -54,11 +58,6 @@ export interface UserSubcategory {
   subcategoryId: number;
   subcategory?: Subcategory;
   weight: number;
-}
-
-export interface UserAvailability {
-  availabilityId: number;
-  userId: number;
 }
 
 export interface UserActivity {

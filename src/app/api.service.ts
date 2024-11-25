@@ -160,27 +160,6 @@ export class ApiService {
   getLocation(userId: number): Observable<Location> {
     return this.http.get<Location>(`${this.apiUrl}/Users/${userId}/location`);
   }
-
-  // Set user availability
-  setAvailability(
-    userId: number,
-    unavailableDay: string,
-    unavailableStartTime: string,
-    unavailableEndTime: string
-  ): Observable<any> {
-    const headers = this.getAuthHeaders();
-    const body = {
-      unavailableDay,
-      unavailableStartTime,
-      unavailableEndTime,
-    };
-    return this.http.post(
-      `${this.apiUrl}/Users/${userId}/set-availability`,
-      body,
-      { headers }
-    );
-  }
-
   // Update distance willing to travel
   updateDistance(userId: number, distance: number): Observable<any> {
     const headers = this.getAuthHeaders();
@@ -191,13 +170,23 @@ export class ApiService {
     );
   }
 
-  // Check user availability
-  checkUserAvailability(userId: number): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get(`${this.apiUrl}/Users/${userId}/availability`, {
-      headers,
+  addUnavailability(data: { dayOfWeek: number; startTime: string; endTime: string }): Observable<any> {
+    return this.http.post('https://localhost:7276/api/UserUnavailability', data, {
+      headers: this.getAuthHeaders(),
     });
   }
+  
+  removeUnavailability(id: number): Observable<any> {
+    return this.http.delete(`https://localhost:7276/api/UserUnavailability/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  
+  getUnavailabilities(): Observable<any> {
+    return this.http.get('https://localhost:7276/api/UserUnavailability', {
+        headers: this.getAuthHeaders(),
+      });
+  }  
 
   getMessagesForConversation(conversationId: number): Observable<Message[]> {
     const token = localStorage.getItem('token');

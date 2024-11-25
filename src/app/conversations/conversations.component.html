@@ -1,21 +1,26 @@
 <div class="conversations-container">
+  <!-- Conversations List -->
+  <div class="conversation-list">
     <ul>
       <li
         *ngFor="let conversation of conversations"
         (click)="loadMessagesForConversation(conversation.id)"
         [class.selected]="conversation.id === selectedConversationId"
       >
-        {{ conversation.title }}
+        <p>{{ getReceiverName(conversation.participants) }}</p>
+        <span *ngIf="conversation.unreadCount" class="unread-count">
+          {{ conversation.unreadCount }}
+        </span>
       </li>
     </ul>
-  
-    <!-- Messages Component for displaying messages of the selected conversation -->
-    <div *ngIf="selectedConversationId" class="messages-container">
-      <app-messages
-        [conversationId]="selectedConversationId"
-        [participants]="participants"
-        [messages]="messages"
-      ></app-messages>
-    </div>
   </div>
-  
+
+  <!-- Messages Window -->
+  <div class="messages-window" *ngIf="selectedConversationId">
+    <app-messages
+      [conversationId]="selectedConversationId"
+      [participants]="participants"
+      [messages]="messages"
+    ></app-messages>
+  </div>
+</div>

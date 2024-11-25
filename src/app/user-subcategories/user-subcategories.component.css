@@ -1,0 +1,27 @@
+.categories {
+    margin-bottom: 20px;
+  }
+  
+  .subcategories {
+    margin-bottom: 20px;
+  }
+  
+  .user-subcategories {
+    margin-top: 20px;
+  }
+  
+  button {
+    margin: 5px;
+  }
+  
+  .mat-tab-group {
+    margin-bottom: 20px;
+  }
+  
+  .mat-mini-fab {
+    background: none;
+    border: none;
+  }
+  
+
+  

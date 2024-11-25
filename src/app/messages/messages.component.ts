@@ -1,39 +1,50 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { MessageService } from '../message.service';
 import { Message } from '../message.model';
 import { ApiService } from '../api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../user.model';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-messages',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule,
+     FormsModule,
+     MatIconModule],
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.css'],
 })
-export class MessagesComponent implements OnInit {
+export class MessagesComponent implements OnInit, AfterViewChecked {
   @Input() conversationId!: number;
   @Input() messages: Message[] = [];
   @Input() participants: User[] = [];
   newMessageContent = '';
   loggedInUserId: number | null = null;
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.setLoggedInUserId();
   }
-
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
   private setLoggedInUserId(): void {
     const token = localStorage.getItem('token');
     if (token) {
-      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-      this.loggedInUserId = tokenPayload.nameid;
+      try {
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        this.loggedInUserId = Number(tokenPayload.nameid);
+        console.log('Logged in user ID:', this.loggedInUserId);
+      } catch (error) {
+        console.error('Error parsing token:', error);
+      }
     }
   }
-
+  
   sendMessage(): void {
     if (!this.newMessageContent.trim() || !this.loggedInUserId) {
       console.error("Message content or user ID missing.");
@@ -80,7 +91,11 @@ export class MessagesComponent implements OnInit {
     return participant ? participant.name : null;
   }
   
-  
+  private scrollToBottom(): void {
+    if (this.messagesContainer) {
+      this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+    }
+  }
 
   private loadMessages(): void {
     this.apiService.getMessagesForConversation(this.conversationId).subscribe({

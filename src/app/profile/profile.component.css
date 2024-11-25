@@ -1,36 +1,76 @@
-.profile-container {
-  display: flex;
+mat-icon {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
 }
 
-.sidebar {
-  width: 200px;
-  padding: 20px;
-  background-color: #f0f0f0;
-  border-right: 1px solid #ddd;
+.sidenav-container {
+  height: 100vh;
 }
 
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
+.sidenav {
+  width: 250px;
+  background-color: #f4f4f4;
 }
 
-.sidebar li {
-  cursor: pointer;
-  padding: 10px;
-  margin-bottom: 10px;
-  color: #333;
+.mat-nav-list .mat-list-item {
+  font-size: 16px;
 }
 
-.sidebar li.active {
+.mat-nav-list .mat-list-item.active {
   font-weight: bold;
-  background-color: #ddd;
+  color: #1976d2;
 }
 
 .content {
-  flex-grow: 1;
-  padding: 20px;
+  padding: 16px;
 }
 
-h3 {
-  margin-top: 0;
+.photo-preview {
+  width: 150px;
+  height: auto;
+  margin-bottom: 10px;
 }
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+mat-form-field {
+  display: block;
+}
+/* Transparent circle button */
+.icon-circle {
+  width: 30px; /* Smaller width */
+  height: 30px; /* Smaller height */
+  border-radius: 50%; /* Keep it circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc; /* Optional border for visibility */
+  outline: none; /* Remove focus outline */
+  cursor: pointer;
+  transition: border-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+  background-color: transparent; /* No background color */
+}
+
+.icon-circle:hover {
+  border-color: #888; /* Darker border on hover */
+  transform: scale(1.1); /* Slight scale on hover */
+}
+
+.icon-circle mat-icon {
+  color: #333; /* Icon color */
+  font-size: 16px; /* Smaller icon size */
+  transition: color 0.3s ease; /* Smooth hover effect for icon */
+}
+
+.icon-circle:hover mat-icon {
+  color: #555; /* Darker icon color on hover */
+}
+
+
+

@@ -1,29 +1,56 @@
 <div class="categories">
-    <h3>Categories</h3>
-    <ul>
-      <li *ngFor="let category of categories" (click)="onCategorySelect(category.id)">
+  <mat-tab-group
+    [(selectedIndex)]="selectedCategoryIndex"
+    (selectedIndexChange)="onCategorySelect($event)"
+  >
+    <mat-tab *ngFor="let category of categories">
+      <ng-template mat-tab-label>
         {{ category.name }}
-      </li>
-    </ul>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<div class="subcategories">
+  <h3>Subcategories</h3>
+  <div *ngIf="subcategories.length > 0">
+    <button
+      mat-raised-button
+      color="primary"
+      *ngFor="let subcategory of subcategories"
+      (click)="addUserSubcategory(subcategory.id)"
+    >
+      {{ subcategory.name }}
+    </button>
   </div>
-  
-  <div *ngIf="selectedCategoryId" class="subcategories">
-    <h3>Subcategories</h3>
-    <ul>
-      <li *ngFor="let subcategory of subcategories">
-        {{ subcategory.name }}
-        <button (click)="addUserSubcategory(subcategory.id)">Add</button>
-      </li>
-    </ul>
+  <div *ngIf="subcategories.length === 0">
+    <p>No subcategories available for this category.</p>
   </div>
-  
-  <div class="user-subcategories">
-    <h3>Your Subcategories</h3>
-    <ul>
-      <li *ngFor="let userSubcategory of userSubcategories">
-        {{ userSubcategory.subcategory?.name }}
-        <button (click)="removeUserSubcategory(userSubcategory.subcategoryId)">Remove</button>
-      </li>
-    </ul>
-  </div>
-  
+</div>
+
+<div class="user-subcategories">
+  <h3>Your Subcategories</h3>
+  <table mat-table [dataSource]="userSubcategories" class="mat-elevation-z8">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Subcategory</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.subcategory?.name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-mini-fab
+          (click)="removeUserSubcategory(element.subcategoryId)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['name', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name', 'actions']"></tr>
+  </table>
+</div>

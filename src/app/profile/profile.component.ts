@@ -1,16 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../api.service';
-import { User, Location, UpdateUserRequest } from '../user.model';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ApiService } from '../api.service';
+import { User, UpdateUserRequest, Location } from '../user.model';
+import { MatTableModule } from '@angular/material/table'  
+import {MatIconModule} from '@angular/material/icon';
+import {MatDividerModule} from '@angular/material/divider';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    MatSidenavModule,
+    MatListModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatTableModule,
+    MatIconModule,
+    MatDividerModule,
+  ],
 })
 export class ProfileComponent implements OnInit {
   nameid: number | null = null;
@@ -30,15 +52,32 @@ export class ProfileComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   photoPreview: string | ArrayBuffer | null = null;
+  unavailabilities: any[] = []; // List of unavailability periods
+  newUnavailability = {
+    dayOfWeek: 0,
+    startTime: '',
+    endTime: '',
+  }; // Model for adding new unavailability
+
+  daysOfWeek = [
+    { value: 0, viewValue: 'Sunday' },
+    { value: 1, viewValue: 'Monday' },
+    { value: 2, viewValue: 'Tuesday' },
+    { value: 3, viewValue: 'Wednesday' },
+    { value: 4, viewValue: 'Thursday' },
+    { value: 5, viewValue: 'Friday' },
+    { value: 6, viewValue: 'Saturday' },
+  ];
+  
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    
     this.setUserId();
     if (this.nameid) {
       console.log('User ID found:', this.nameid);
       this.loadUserData();
+      this.loadUnavailabilities();
     } else {
       console.error('User ID not found in token');
       this.errorMessage = 'User ID not found';
@@ -60,13 +99,69 @@ export class ProfileComponent implements OnInit {
       console.error('Token not found');
     }
   }
+    // Fetch all unavailabilities
+    loadUnavailabilities(): void {
+      this.apiService.getUnavailabilities().subscribe({
+        next: (data) => {
+          this.unavailabilities = data;
+        },
+        error: (error) => {
+          console.error('Error fetching unavailabilities:', error);
+        },
+      });
+    }
+  
+  // Add a new unavailability period
+  addUnavailability(): void {
+    if (
+      this.newUnavailability.dayOfWeek !== null &&
+      this.newUnavailability.startTime &&
+      this.newUnavailability.endTime
+    ) {
+      const payload = {
+        dayOfWeek: Number(this.newUnavailability.dayOfWeek), // Ensure it's a number
+        startTime: this.newUnavailability.startTime,
+        endTime: this.newUnavailability.endTime,
+      };
+
+      this.apiService.addUnavailability(payload).subscribe({
+        next: () => {
+          alert('Unavailability added successfully.');
+          this.loadUnavailabilities(); // Reload the list
+          this.newUnavailability = { dayOfWeek: 0, startTime: '', endTime: '' }; // Reset form
+        },
+        error: (error) => {
+          console.error('Error adding unavailability:', error);
+          alert('Failed to add unavailability.');
+        },
+      });
+    } else {
+      alert('Please fill out all fields.');
+    }
+  }
+  
+    // Remove an unavailability period
+    removeUnavailability(id: number): void {
+      if (confirm('Are you sure you want to delete this unavailability?')) {
+        this.apiService.removeUnavailability(id).subscribe({
+          next: () => {
+            alert('Unavailability removed successfully.');
+            this.loadUnavailabilities(); // Reload the list
+          },
+          error: (error) => {
+            console.error('Error removing unavailability:', error);
+            alert('Failed to remove unavailability.');
+          },
+        });
+      }
+    }
 
   loadUserData(): void {
     const token = localStorage.getItem('token');
     if (token) {
       const tokenPayload = JSON.parse(atob(token.split('.')[1]));
       const userId = tokenPayload.nameid; // Correctly access nameid as userId
-  
+
       if (userId) {
         console.log('Extracted userId from token:', userId);
         this.apiService.getUser(userId).subscribe({
@@ -75,11 +170,18 @@ export class ProfileComponent implements OnInit {
             if (this.user.locationId) {
               this.loadLocation(this.user.id);
             } else {
-              this.user.location = { id: 0, latitude: 0, longitude: 0, address: '' };
+              this.user.location = {
+                id: 0,
+                latitude: 0,
+                longitude: 0,
+                address: '',
+              };
             }
             this.addressInput = this.user?.location?.address || '';
             if (this.user.dateOfBirth) {
-              this.user.dateOfBirth = this.formatDateForInput(this.user.dateOfBirth);
+              this.user.dateOfBirth = this.formatDateForInput(
+                this.user.dateOfBirth
+              );
             }
           },
           error: (error) => {
@@ -92,6 +194,7 @@ export class ProfileComponent implements OnInit {
       }
     }
   }
+
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     this.selectedFile = file;
@@ -106,17 +209,19 @@ export class ProfileComponent implements OnInit {
 
   uploadPhoto(): void {
     if (this.selectedFile && this.user) {
-      this.apiService.uploadUserProfilePhoto(this.nameid, this.selectedFile).subscribe({
-        next: (response) => {
-          this.user.profilePhoto = response.photoUrl;
-          this.photoPreview = null; // Clear the preview
-          this.successMessage = 'Profile photo updated successfully';
-        },
-        error: (error) => {
-          console.error('Error uploading profile photo:', error);
-          this.errorMessage = 'Error uploading profile photo';
-        },
-      });
+      this.apiService
+        .uploadUserProfilePhoto(this.nameid, this.selectedFile)
+        .subscribe({
+          next: (response) => {
+            this.user.profilePhoto = response.photoUrl;
+            this.photoPreview = null; // Clear the preview
+            this.successMessage = 'Profile photo updated successfully';
+          },
+          error: (error) => {
+            console.error('Error uploading profile photo:', error);
+            this.errorMessage = 'Error uploading profile photo';
+          },
+        });
     }
   }
 
@@ -159,7 +264,7 @@ export class ProfileComponent implements OnInit {
         dateOfBirth: this.user.dateOfBirth
           ? new Date(this.user.dateOfBirth)
           : null,
-        address: this.user.location?.address || ''
+        address: this.user.location?.address || '',
       };
 
       this.apiService.updateUser(this.user.id, updatedUser).subscribe({
