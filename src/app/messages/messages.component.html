@@ -1,19 +1,22 @@
 <div class="messages-container">
   <div #messagesContainer class="messages-list">
-    <div
-      *ngFor="let message of messages"
-      [class.my-message]="message.senderId === loggedInUserId"
-      [class.other-message]="message.senderId !== loggedInUserId"
-    >
-      <p>
-        <strong>{{ getUserNameById(message.senderId) }}:</strong>
-        {{ message.content }}
-      </p>
-    </div>
+    <ng-container *ngFor="let message of messages; let i = index">
+      <div
+        *ngIf="!isDuplicateMessage(i)"
+        [class.my-message]="message.senderId === loggedInUserId"
+        [class.other-message]="message.senderId !== loggedInUserId"
+      >
+        <p>
+          <strong>{{ getUserNameById(message.senderId) }}:</strong>
+          {{ message.content }}
+        </p>
+      </div>
+    </ng-container>
   </div>
   <div class="send-message">
     <input [(ngModel)]="newMessageContent" placeholder="Type a message..." />
     <button mat-icon-button (click)="sendMessage()" aria-label="Send message">
       <mat-icon>send</mat-icon>
-    </button>  </div>
+    </button>
+  </div>
 </div>

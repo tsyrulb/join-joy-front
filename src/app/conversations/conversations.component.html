@@ -7,7 +7,17 @@
         (click)="loadMessagesForConversation(conversation.id)"
         [class.selected]="conversation.id === selectedConversationId"
       >
-        <p>{{ getReceiverName(conversation.participants) }}</p>
+        <div class="conversation-participants">
+          <p>
+            Participants:
+            <span
+              *ngFor="let participant of conversation.participants; let isLast = last"
+            >
+              {{ participant.user.name }}
+              <span *ngIf="!isLast">, </span>
+            </span>
+          </p>
+        </div>
         <span *ngIf="conversation.unreadCount" class="unread-count">
           {{ conversation.unreadCount }}
         </span>
