@@ -4,11 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivityService } from '../activity.service';
+import { MatTableModule } from '@angular/material/table'  
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-activity-map',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, MatTableModule, MatIconModule],
   templateUrl: './activity-map.component.html',
   styleUrls: ['./activity-map.component.css'],
 })

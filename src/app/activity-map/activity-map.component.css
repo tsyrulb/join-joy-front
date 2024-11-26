@@ -1,86 +1,53 @@
 .map-container {
-  position: relative;
-}
-
-.search-section {
-  margin-bottom: 10px;
-}
-
-.map-section {
-  display: flex;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
 }
 
 #map {
-  width: 75%;
-  height: 500px;
-  border: 1px solid #ccc;
-}
-
-.type-filters {
-  width: 20%;
-  margin-left: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.type-filters ul {
-  list-style: none;
-  padding: 0;
-}
-
-.type-filters li {
-  margin-bottom: 10px;
-}
-
-.type-filters label {
-  cursor: pointer;
-}
-
-/* Modal styles */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal.show {
-  display: flex;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
+  height: 600px; /* Increased map size for better visibility */
+  border: 2px solid #ccc;
   border-radius: 8px;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.modal-content h3 {
-  margin-top: 0;
-}
-
-.modal-content label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.modal-content textarea,
-.modal-content input {
-  width: 100%;
+.card {
   margin-bottom: 15px;
 }
 
-.modal-content button {
-  margin-right: 10px;
+.card-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.list-group-item {
+  cursor: pointer;
+  user-select: none;
+}
+
+.list-group-item:hover {
+  background-color: #f1f1f1;
+}
+
+.modal-content {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.input-group input {
+  border-radius: 0 5px 5px 0;
+}
+
+.input-group .btn {
+  border-radius: 0 5px 5px 0;
 }
