@@ -1,163 +1,195 @@
-<div class="container-fluid map-container py-3">
-  <!-- Search Section -->
-  <div class="row mb-3 align-items-center">
-    <div class="col-md-8">
-      <div class="input-group">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Search nearby (e.g., restaurant, pool)"
-          [(ngModel)]="searchInput"
-        />
-        <button class="btn btn-primary" (click)="searchNearby()">
-          <mat-icon>search</mat-icon>
-        </button>
-      </div>
+<div class="map-page">
+  <!-- Search Bar -->
+  <div class="search-container">
+    <div class="input-group search-bar">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="I want to..."
+        [(ngModel)]="searchInput"
+      />
+      <button class="btn btn-primary" (click)="searchNearby()">
+        <mat-icon>search</mat-icon>
+      </button>
     </div>
   </div>
 
-  <!-- Map and Filter Section -->
-  <div class="row">
-    <div class="col-lg-8">
-      <div id="map" class="border rounded shadow" style="height: 500px"></div>
-    </div>
-    <div class="col-lg-4">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h5 class="card-title mb-0">Filter Markers</h5>
-        </div>
-        <div class="card-body">
-          <ul class="list-group">
-            <li
-              class="list-group-item d-flex justify-content-between align-items-center"
-              *ngFor="let type of typeFilters | keyvalue"
-            >
-              <span>{{ type.key }}</span>
-              <input
-                type="checkbox"
-                class="form-check-input ms-2"
-                [checked]="type.value.visible"
-                (change)="toggleMarkers(type.key)"
-              />
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  <!-- Filter Toggle Button -->
+  <button class="filter-toggle-btn" (click)="toggleFilterMenu()">
+    <mat-icon>filter_list</mat-icon> Filters
+  </button>
+  <!-- Fetch Recommended Activities Button -->
+  <button class="recommend-activities-btn" (click)="getRecommendedActivities()">
+    <mat-icon>search</mat-icon> Find Activities
+  </button>
 
-<!-- Modal for Activity Creation -->
-<div
-  class="modal fade"
-  [class.show]="isModalVisible"
-  tabindex="-1"
-  role="dialog"
-  style="display: block"
-  *ngIf="isModalVisible"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Create Activity</h5>
-        <button type="button" class="btn-close" (click)="closeModal()"></button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="mb-3">
-            <label for="activityName" class="form-label">Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="activityName"
-              [(ngModel)]="activityFormData.name"
-              name="activityName"
-              placeholder="Enter activity name"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="activityDescription" class="form-label">Description</label>
-            <textarea
-              class="form-control"
-              id="activityDescription"
-              rows="3"
-              [(ngModel)]="activityFormData.description"
-              name="activityDescription"
-              placeholder="Enter activity description"
-            ></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="activityDate" class="form-label">Date</label>
-            <input
-              type="date"
-              class="form-control"
-              id="activityDate"
-              [(ngModel)]="activityFormData.date"
-              name="activityDate"
-            />
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="submitActivity()">Create</button>
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-      </div>
+  <!-- Filter Menu -->
+  <div class="filter-menu" [class.show]="isFilterMenuVisible">
+    <div class="filter-menu-header">
+      <h5>Filter Markers</h5>
+      <button class="btn-close" (click)="toggleFilterMenu()"></button>
     </div>
-  </div>
-</div>
-
-<!-- Modal for Recommended Users -->
-<div
-  class="modal fade"
-  [class.show]="isRecommendedUsersModalVisible"
-  tabindex="-1"
-  role="dialog"
-  style="display: block"
-  *ngIf="isRecommendedUsersModalVisible"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Recommended Users</h5>
-        <button type="button" class="btn-close" (click)="closeRecommendedUsersModal()"></button>
-      </div>
-      <div class="modal-body">
-        <div *ngIf="recommendedUsers.length; else noUsers">
-          <ul class="list-group">
-            <li
-              class="list-group-item d-flex align-items-center"
-              *ngFor="let user of recommendedUsers"
-            >
-              <input
-                type="checkbox"
-                class="form-check-input me-2"
-                [(ngModel)]="user.selected"
-                [name]="'user-' + user.userId"
-              />
-              <span>{{ user.userName }} ({{ user.similarityScore.toFixed(2) }}%)</span>
-            </li>
-          </ul>
-        </div>
-        <ng-template #noUsers>
-          <p>No recommended users found.</p>
-        </ng-template>
-      </div>
-      <div class="modal-footer">
-        <button
-          class="btn btn-success"
-          (click)="sendSelectedInvitations()"
-          [disabled]="!isAnyUserSelected()"
+    <div class="filter-menu-body">
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let type of typeFiltersMarker | keyvalue"
+          (click)="toggleFilterSelection(type.key)"
+          [class.active]="type.value.visible"
         >
-          Send Invitations
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="closeRecommendedUsersModal()"
+          {{ type.key }}
+        </li>
+      </ul>
+    </div>
+    
+    
+  </div>
+
+  <!-- Fullscreen Map -->
+  <div id="map" class="full-page-map"></div>
+  <!-- Recommended Activities Section -->
+  <div class="recommended-activities" *ngIf="isRecommendedActivitiesVisible">
+    <div class="recommended-header">
+      <h5>Recommended Activities</h5>
+      <button class="btn-close" (click)="closeRecommendedActivities()"></button>
+    </div>
+    <div class="recommended-body">
+      <ul class="list-group">
+        <li
+          class="list-group-item d-flex align-items-center"
+          *ngFor="let activity of recommendedActivities"
+          (click)="focusOnActivity(activity)"
         >
-          Cancel
-        </button>
+          <span>{{ activity.name }}</span>
+          <span class="ms-auto">{{ activity.date | date : "shortDate" }}</span>
+          <button class="btn btn-primary" (click)="sendRequest(activity.id)">
+            <mat-icon>send</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Modal for Activity Creation -->
+  <div
+    class="modal fade"
+    [class.show]="isModalVisible"
+    tabindex="-1"
+    role="dialog"
+    style="display: block"
+    *ngIf="isModalVisible"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Create Activity</h5>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="closeModal()"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="activityName" class="form-label">Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="activityName"
+                [(ngModel)]="activityFormData.name"
+                name="activityName"
+                placeholder="Enter activity name"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="activityDescription" class="form-label"
+                >Description</label
+              >
+              <textarea
+                class="form-control"
+                id="activityDescription"
+                rows="3"
+                [(ngModel)]="activityFormData.description"
+                name="activityDescription"
+                placeholder="Enter activity description"
+              ></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="activityDate" class="form-label">Date</label>
+              <input
+                type="date"
+                class="form-control"
+                id="activityDate"
+                [(ngModel)]="activityFormData.date"
+                name="activityDate"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="activityTime" class="form-label">Time</label>
+              <input
+                type="time"
+                class="form-control"
+                id="activityTime"
+                [(ngModel)]="activityFormData.time"
+                name="activityTime"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="submitActivity()"
+          >
+            Create
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal()"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
+    </div>
+  </div>
+  <div
+    class="recommended-users"
+    *ngIf="isRecommendedUsersModalVisible && recommendedUsers.length > 0"
+  >
+    <div class="recommended-header">
+      <h5>Recommended Users</h5>
+      <button class="btn-close" (click)="closeRecommendedUsersModal()"></button>
+    </div>
+    <div class="recommended-body">
+      <ul class="list-group">
+        <li
+          class="list-group-item d-flex align-items-center"
+          *ngFor="let user of visibleUsers; let i = index"
+          (click)="toggleUserSelection(i)"
+          [class.selected]="user.selected"
+          (contextmenu)="excludeUser(i, $event)"
+        >
+          <img
+            [src]="user.profilePhoto || 'assets/profile.png'"
+            alt="{{ user.userName }}"
+            class="user-avatar me-3"
+          />
+          <span class="user-name">{{ user.userName }}</span>
+        </li>
+      </ul>
+    </div>
+    <div class="recommended-footer">
+      <button
+        class="btn btn-success"
+        (click)="sendSelectedInvitations()"
+        [disabled]="!isAnyUserSelected()"
+      >
+        Send Invitations
+      </button>
     </div>
   </div>
 </div>

@@ -4,8 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivityService } from '../activity.service';
-import { MatTableModule } from '@angular/material/table'  
-import {MatIconModule} from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-activity-map',
@@ -23,14 +23,21 @@ export class ActivityMapComponent implements OnDestroy {
   private markers = new L.LayerGroup();
   private selectedMarker: L.Marker | null = null;
   isRecommendedUsersModalVisible = false;
+  recommendedActivities: any[] = []; // List of recommended activities
   recommendedUsers: any[] = [];
   createdActivityId: number | null = null; // To store the created activity ID
-
+  isFilterMenuVisible = false; // Track filter menu visibility
+  visibleUsers: any[] = []; // Top 10 visible users
+  excludedUsers: any[] = []; // Users excluded from the visible list
   isModalVisible = false;
+  loggedInUserId: number | null = null; // User ID for fetching recommendations
+  isRecommendedActivitiesVisible = false;
+
   activityFormData = {
     name: '',
     description: '',
     date: new Date().toISOString().split('T')[0],
+    time: '12:00', // Default time
     latitude: 0,
     longitude: 0,
   };
@@ -38,6 +45,7 @@ export class ActivityMapComponent implements OnDestroy {
   searchInput: string = '';
   typeFilters: { [key: string]: { visible: boolean; markers: L.Marker[] } } =
     {};
+  typeFiltersMarker: { [key: string]: { visible: boolean; markers: L.Marker[], selected: boolean } } = {};
 
   constructor(
     private activityService: ActivityService,
@@ -48,6 +56,7 @@ export class ActivityMapComponent implements OnDestroy {
     if (this.map) {
       this.map.remove();
     }
+    this.setLoggedInUserId();
 
     this.map = L.map('map').setView([40.7128, -74.006], 13); // Default to New York City
 
@@ -74,6 +83,166 @@ export class ActivityMapComponent implements OnDestroy {
     window.angularComponent = this;
   }
 
+  toggleUserSelection(index: number): void {
+    this.visibleUsers[index].selected = !this.visibleUsers[index].selected;
+  }
+  addActivityMarkers(activities: any[]): void {
+    this.markers.clearLayers(); // Clear existing markers
+
+    activities.forEach((activity) => {
+      const { latitude, longitude, address } = activity.location;
+      const { name, description, date } = activity;
+
+      if (latitude && longitude) {
+        const marker = L.marker([latitude, longitude], {
+          icon: L.icon({
+            iconUrl:
+              'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+            shadowUrl:
+              'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+          }),
+        })
+          .addTo(this.markers)
+          .bindPopup(
+            `<b>${name}</b><br>
+            ${description}<br>
+            Date: ${new Date(date).toLocaleDateString()}<br>
+            Address: ${address}`
+          );
+
+        marker.on('click', () => {
+          console.log(`Clicked on activity: ${name}`);
+        });
+      }
+    });
+
+    this.map?.addLayer(this.markers); // Add updated markers to the map
+  }
+
+  setLoggedInUserId(): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        this.loggedInUserId = payload.nameid;
+      } catch (error) {
+        console.error('Error parsing token:', error);
+      }
+    }
+  }
+
+  getRecommendedActivities(): void {
+    if (!this.loggedInUserId) {
+      alert('User not logged in!');
+      return;
+    }
+
+    this.activityService
+      .getRecommendedActivities(this.loggedInUserId)
+      .subscribe({
+        next: (activities) => {
+          console.log('Recommended activities:', activities);
+          this.recommendedActivities = activities;
+          this.isRecommendedActivitiesVisible = true;
+          this.addActivityMarkers(activities); // Add markers for recommended activities
+        },
+        error: (error) => {
+          console.error('Error fetching recommended activities:', error);
+          alert(
+            'Failed to fetch recommended activities. See console for details.'
+          );
+        },
+      });
+  }
+  focusOnActivity(activity: any): void {
+    const { name, description, date, location } = activity;
+
+    if (location && location.latitude && location.longitude) {
+      const { latitude, longitude, address } = location;
+      // Format date and time
+      const formattedDate = new Date(date).toLocaleDateString();
+      const formattedTime = new Date(date).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      const marker = L.marker([latitude, longitude], {
+        icon: L.icon({
+          iconUrl:
+            'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+          shadowUrl:
+            'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+        }),
+      })
+        .addTo(this.markers)
+        .bindPopup(
+          `<b>${name}</b><br>
+          ${description}<br>
+          Date: ${formattedDate} ${formattedTime}<br>
+          Address: ${address || 'No address provided'}`
+        );
+
+      // Open the popup and focus on the marker
+      this.map?.setView([latitude, longitude], 14);
+      marker.openPopup();
+    } else {
+      alert('Location data not available for this activity.');
+    }
+  }
+
+  closeRecommendedActivities(): void {
+    this.isRecommendedActivitiesVisible = false;
+  }
+  sendRequest(activityId: number): void {
+    if (!activityId) {
+      alert('Invalid activity.');
+      return;
+    }
+  
+    const requestPayload = { ActivityId: activityId };
+  
+    this.activityService.requestApproval(requestPayload).subscribe({
+      next: (response) => {
+        console.log('Request response:', response);
+      },
+      error: (error) => {
+        console.error('Error sending request:', error);
+        alert('Failed to send request. Please try again.');
+      },
+    });
+  }
+  
+  excludeUser(index: number, event: MouseEvent): void {
+    event.preventDefault(); // Prevent the default context menu
+
+    // Remove the excluded user from the visible list
+    const excludedUser = this.visibleUsers.splice(index, 1)[0];
+    this.excludedUsers.push(excludedUser); // Add to excluded users list
+
+    // Find the next user from the full list who is not currently visible or excluded
+    const remainingUsers = this.recommendedUsers.filter(
+      (user) =>
+        !this.visibleUsers.includes(user) && !this.excludedUsers.includes(user)
+    );
+
+    if (remainingUsers.length > 0) {
+      this.visibleUsers.push(remainingUsers[0]);
+    } else {
+      console.warn('No more users to add.');
+    }
+
+    console.log(`Excluded user: ${excludedUser.userName}`);
+    console.log('Updated visible users:', this.visibleUsers);
+    console.log('Excluded users:', this.excludedUsers);
+  }
+
+  toggleFilterMenu(): void {
+    this.isFilterMenuVisible = !this.isFilterMenuVisible;
+  }
+
   openModal(lat: number, lon: number): void {
     this.activityFormData.latitude = lat;
     this.activityFormData.longitude = lon;
@@ -86,78 +255,78 @@ export class ActivityMapComponent implements OnDestroy {
       event.stopPropagation(); // Optionally handle the event if passed
     }
   }
-  
+
   isAnyUserSelected(): boolean {
-    return this.recommendedUsers.some(user => user.selected);
+    return this.visibleUsers.some((user) => user.selected);
   }
-  
+
   sendSelectedInvitations(): void {
     const selectedUsers = this.recommendedUsers.filter((user) => user.selected);
     const receiverIds = selectedUsers.map((user) => user.userId);
-  
+
     if (receiverIds.length === 0) {
       alert('No users selected for invitation.');
       return;
     }
-  
+
     if (this.createdActivityId === null) {
       alert('Activity ID is missing. Cannot send invitations.');
       return;
     }
-  
-    this.activityService.sendInvitations(this.createdActivityId, receiverIds).subscribe({
-      next: () => {
-        alert('Invitations sent successfully!');
-        this.isRecommendedUsersModalVisible = false;
-      },
-      error: (error) => {
-        console.error('Error sending invitations:', error);
-        alert('Failed to send invitations. See console for details.');
-      },
-    });
+
+    this.activityService
+      .sendInvitations(this.createdActivityId, receiverIds)
+      .subscribe({
+        next: () => {
+          this.isRecommendedUsersModalVisible = false;
+        },
+        error: (error) => {
+          console.error('Error sending invitations:', error);
+          alert('Failed to send invitations. See console for details.');
+        },
+      });
   }
-  
-  
+
   submitActivity(): void {
-    const { name, description, date, latitude, longitude } = this.activityFormData;
-  
-    if (!name || !description || !date) {
+    const { name, description, date, time, latitude, longitude } =
+    this.activityFormData;
+
+    if (!name || !description || !date || !time) {
       alert('All fields are required!');
       return;
     }
-  
+    const combinedDateTime = new Date(`${date}T${time}`);
+
     const activityData = {
       name,
       description,
-      date,
+      date: combinedDateTime.toISOString(),
       latitude,
       longitude,
       createdById: this.getCreatedById(),
     };
-  
+
     console.log('Creating activity:', activityData);
-  
+
     this.activityService.createActivityWithCoordinates(activityData).subscribe({
       next: (createdActivity) => {
         this.isModalVisible = false;
         this.createdActivityId = createdActivity.id;
 
         console.log('Created activity:', createdActivity);
-  
-        // Fetch recommended users for the created activity
-        this.activityService.fetchRecommendedUsers(createdActivity.id).subscribe({
-          next: (recommendedUsers) => {
-            console.log('Recommended users:', recommendedUsers);
-  
-            // Show modal for user selection
-            this.recommendedUsers = recommendedUsers; // Set this in your component
-            this.isRecommendedUsersModalVisible = true; // Open the modal
-          },
-          error: (error) => {
-            console.error('Error fetching recommended users:', error);
-            alert('Failed to fetch recommended users. See console for details.');
-          },
-        });
+
+        this.activityService
+          .fetchRecommendedUsers(createdActivity.id)
+          .subscribe({
+            next: (recommendedUsers) =>
+              this.showRecommendedUsers(recommendedUsers),
+            error: (error) => {
+              console.error('Error fetching recommended users:', error);
+              alert(
+                'Failed to fetch recommended users. See console for details.'
+              );
+            },
+          });
       },
       error: (error) => {
         console.error('Error creating activity:', error);
@@ -165,10 +334,7 @@ export class ActivityMapComponent implements OnDestroy {
       },
     });
   }
-  
-  
-  
-  // Fetch recommended users for an activity
+
   fetchRecommendedUsers(activityId: number): void {
     this.activityService.getRecommendedUsersForActivity(activityId).subscribe({
       next: (users) => {
@@ -183,8 +349,27 @@ export class ActivityMapComponent implements OnDestroy {
   }
 
   showRecommendedUsers(users: any[]): void {
-    this.recommendedUsers = users;
+    if (!users || users.length === 0) {
+      console.warn('No recommended users found.');
+      this.recommendedUsers = [];
+      this.visibleUsers = [];
+      this.isRecommendedUsersModalVisible = false;
+      return;
+    }
+
+    this.recommendedUsers = users.map((user) => ({
+      ...user,
+      selected: false,
+    }));
+    this.excludedUsers = []; // Clear excluded users when fetching new recommendations
+
+    // Initialize the top 10 users as visible
+    this.visibleUsers = this.recommendedUsers.slice(0, 10);
     this.isRecommendedUsersModalVisible = true;
+  }
+
+  closeRecommendedUsersModal(): void {
+    this.isRecommendedUsersModalVisible = false;
   }
 
   get selectedUsers(): any[] {
@@ -192,16 +377,20 @@ export class ActivityMapComponent implements OnDestroy {
   }
 
   sendInvitations(activityId: number): void {
+    const selectedUsers = this.recommendedUsers.filter((user) => user.selected);
     const receiverIds = this.selectedUsers.map((user) => user.userId);
-  
-    if (!receiverIds.length) {
-      alert('No users selected for invitations.');
+
+    if (receiverIds.length === 0) {
+      alert('No users selected for invitation.');
       return;
     }
-  
+    if (this.createdActivityId === null) {
+      alert('Activity ID is missing. Cannot send invitations.');
+      return;
+    }
     this.activityService.sendInvitations(activityId, receiverIds).subscribe({
       next: () => {
-        alert('Invitations sent successfully!');
+        this.closeRecommendedUsersModal();
       },
       error: (error) => {
         console.error('Error sending invitations:', error);
@@ -209,8 +398,17 @@ export class ActivityMapComponent implements OnDestroy {
       },
     });
   }
-  
 
+  toggleFilterSelection(filterKey: string): void {
+    const filter = this.typeFiltersMarker[filterKey];
+    if (filter) {
+      filter.visible = !filter.visible; // Toggle visibility
+      console.log(`Filter ${filterKey} visibility: ${filter.visible}`);
+      this.toggleMarkers(filterKey);
+    }
+  }
+  
+  
   getCreatedById(): number | null {
     const token = localStorage.getItem('token');
     if (!token) return null;
@@ -250,80 +448,71 @@ export class ActivityMapComponent implements OnDestroy {
       });
   }
 
+
   addMarkersToMap(rawResponse: string[]): void {
     if (!this.map) {
       console.error('Map is not initialized!');
       return;
     }
-
+  
     this.markers.clearLayers();
-    this.typeFilters = {};
-
+    this.typeFiltersMarker = {}; // Reset type filters
+  
     rawResponse.forEach((rawEntry) => {
       const lines = rawEntry.split('\n');
       const typeMatch = rawEntry.match(/Nearby places for (.*?) = (.*?):/);
-
+  
       const primaryType = typeMatch ? typeMatch[1].trim() : 'Unknown';
-      const subType =
-        typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
-
+      const subType = typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
+  
       const fullType = `${capitalize(primaryType)}, ${capitalize(subType)}`;
-
+  
       lines.forEach((line) => {
         const nameMatch = line.match(/Name: (.*?),/);
         const latitudeMatch = line.match(/Latitude: ([^,]*)/);
         const longitudeMatch = line.match(/Longitude: ([^,]*)/);
-
+  
         const name = nameMatch ? nameMatch[1].trim() : null;
         const lat =
-          latitudeMatch && latitudeMatch[1]
-            ? parseFloat(latitudeMatch[1])
-            : NaN;
+          latitudeMatch && latitudeMatch[1] ? parseFloat(latitudeMatch[1]) : NaN;
         const lon =
-          longitudeMatch && longitudeMatch[1]
-            ? parseFloat(longitudeMatch[1])
-            : NaN;
-
+          longitudeMatch && longitudeMatch[1] ? parseFloat(longitudeMatch[1]) : NaN;
+  
         if (!name || isNaN(lat) || isNaN(lon)) {
           return;
         }
-
-        console.log(
-          `Adding marker for: ${name} (${fullType}) at (${lat}, ${lon})`
-        );
-
+  
         const marker = L.marker([lat, lon], {
           icon: getColoredIcon(fullType),
         }).bindPopup(
-          `<b>${name}</b><br>Type: ${fullType}<br>Latitude: ${lat}, Longitude: ${lon}<br>
-           <button onclick="angularComponent.openModal(${lat}, ${lon})">I want this place!</button>`
+          `<b>${name}</b><br>Type: ${fullType}<br>Latitude: ${lat}, Longitude: ${lon}
+          <button onclick="angularComponent.openModal(${lat}, ${lon})">Make Activity</button>`
         );
-
+  
         this.markers.addLayer(marker);
-
-        if (!this.typeFilters[fullType]) {
-          this.typeFilters[fullType] = { visible: true, markers: [] };
+  
+        if (!this.typeFiltersMarker[fullType]) {
+          this.typeFiltersMarker[fullType] = { visible: true, markers: [], selected: false };
         }
-        this.typeFilters[fullType].markers.push(marker);
+        this.typeFiltersMarker[fullType].markers.push(marker);
       });
     });
-
+  
     this.map.addLayer(this.markers);
   }
-
+  
   toggleMarkers(type: string): void {
-    const filter = this.typeFilters[type];
+    const filter = this.typeFiltersMarker[type];
     if (!filter) return;
-
-    filter.visible = !filter.visible;
-    filter.markers.forEach((marker) => {
-      if (filter.visible) {
-        this.markers.addLayer(marker);
-      } else {
-        this.markers.removeLayer(marker);
-      }
-    });
+  
+    if (filter.visible) {
+      filter.markers.forEach((marker) => this.markers.addLayer(marker));
+    } else {
+      filter.markers.forEach((marker) => this.markers.removeLayer(marker));
+    }
   }
+  
+  
 
   ngOnDestroy(): void {
     if (this.map) {

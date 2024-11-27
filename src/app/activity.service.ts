@@ -45,7 +45,10 @@ export class ActivityService {
   getAllActivities(): Observable<Activity[]> {
     return this.http.get<Activity[]>(`${this.apiActivityUrl}`, { headers: this.getAuthHeaders() });
   }
-
+  requestApproval(request: { ActivityId: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Matching/request-approval`, request, { headers: this.getAuthHeaders() });
+  }
+  
   createActivityWithCoordinates(request: ActivityRequestWithCoordinates): Observable<any> {
     return this.http.post(`${this.apiActivityUrl}/create-with-coordinates`, request, { headers: this.getAuthHeaders() });
   }
@@ -98,5 +101,8 @@ export class ActivityService {
     });
   }
   
+  getRecommendedActivities(userId: number, topN: number = 100): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Matching/recommend-activities?userId=${userId}&topN=${topN}`, { headers: this.getAuthHeaders() });
+  }
   
 }
