@@ -33,4 +33,10 @@ export class MatchingService {
       headers: this.getAuthHeaders(),
     });
   }
+
+  cancelInvitation(matchId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/cancel-invitation/${matchId}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 }

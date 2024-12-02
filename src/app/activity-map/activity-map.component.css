@@ -177,26 +177,47 @@
   position: fixed;
   top: 20%;
   right: 20px;
-  width: 250px;
-  max-height: 60vh;
+  width: 280px; /* Adjusted width for compact layout */
+  max-height: 50vh;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  overflow-y: auto; /* Allows smooth scrolling for overflowing content */
   z-index: 1001;
+  font-family: Arial, sans-serif;
+  scrollbar-width: thin; /* Make the scrollbar thinner for modern browsers */
+  scrollbar-color: #007bff #f1f1f1; /* Custom scrollbar colors */
 }
+/* Recommended Activities Custom Scrollbar for Webkit Browsers */
+.recommended-activities::-webkit-scrollbar {
+  width: 8px; /* Narrow scrollbar width */
+}
+
+.recommended-activities::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light background for the scrollbar track */
+  border-radius: 10px;
+}
+
+.recommended-activities::-webkit-scrollbar-thumb {
+  background-color: #007bff; /* Blue scrollbar thumb for alignment with the theme */
+  border-radius: 10px;
+  border: 2px solid #f1f1f1; /* Adds a gap between thumb and track for a sleek look */
+}
+
+
 .recommended-body {
   padding: 10px;
 }
 
-.recommended-body .list-group-item {
+.recommended-activities .list-group-item {
   display: flex;
   align-items: center;
-  cursor: pointer;
-  padding: 10px;
+  justify-content: space-between;
+  padding: 10px 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  margin-bottom: 10px;
   transition: background-color 0.3s ease;
 }
 
@@ -254,4 +275,26 @@
 
 .list-group-item:hover {
   background-color: #f8f9fa;
+}
+/* Activity Details */
+.activity-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Space between name and date */
+  flex: 1; /* Ensure it takes available space */
+}
+
+.activity-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.activity-date {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Button */
+.activity-button {
+  margin-left: 15px; /* Space between date and button */
 }

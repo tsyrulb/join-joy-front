@@ -1,20 +1,26 @@
 import { Component, OnInit } from '@angular/core';
+import { MatchingService } from '../matching.service';
+import { Match } from '../user.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatchingService } from '../matching.service';
-import { Match } from '../user.model'; 
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-user-matches',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, MatExpansionModule, MatTabsModule],
   templateUrl: './user-matches.component.html',
-  styleUrls: ['./user-matches.component.css'], // Fixed typo
+  styleUrls: ['./user-matches.component.css'],
 })
 export class UserMatchesComponent implements OnInit {
   createdMatches: Match[] = [];
   receivedMatches: Match[] = [];
+  filteredCreatedMatches: Match[] = [];
+  filteredReceivedMatches: Match[] = [];
   nameid: number = 0;
+  createdSearch: string = '';
+  receivedSearch: string = '';
 
   constructor(private matchingService: MatchingService) {}
 
@@ -35,20 +41,12 @@ export class UserMatchesComponent implements OnInit {
   fetchUserMatches(): void {
     this.matchingService.getUserMatches().subscribe({
       next: (matches: Match[]) => {
-        console.log(matches);
-        console.log('User ID:', this.nameid);
+        const userIdNumber = Number(this.nameid);
+        this.createdMatches = matches.filter((match) => match.userId1 === userIdNumber);
+        this.receivedMatches = matches.filter((match) => match.user2Id === userIdNumber);
 
-        const userIdNumber = Number(this.nameid); // Convert nameid to a number
-
-        this.createdMatches = matches.filter(
-          (match) => match.userId1 === userIdNumber
-        );
-        this.receivedMatches = matches.filter(
-          (match) => match.user2Id === userIdNumber
-        );
-
-        console.log('Created Matches:', this.createdMatches);
-        console.log('Received Matches:', this.receivedMatches);
+        this.filteredCreatedMatches = [...this.createdMatches];
+        this.filteredReceivedMatches = [...this.receivedMatches];
       },
       error: (error) => {
         console.error('Error fetching matches:', error);
@@ -61,7 +59,7 @@ export class UserMatchesComponent implements OnInit {
     this.matchingService.acceptInvitation(matchId).subscribe({
       next: () => {
         alert('Invitation accepted successfully.');
-        this.fetchUserMatches(); // Refresh the list after accepting
+        this.fetchUserMatches();
       },
       error: (error) => {
         console.error('Error accepting invitation:', error);
@@ -70,14 +68,39 @@ export class UserMatchesComponent implements OnInit {
     });
   }
 
+  cancelInvitation(matchId: number): void {
+    this.matchingService.cancelInvitation(matchId).subscribe({
+      next: () => {
+        alert('Invitation canceled successfully.');
+        this.fetchUserMatches(); // Refresh the list after canceling
+      },
+      error: (error) => {
+        console.error('Error canceling invitation:', error);
+        alert('Failed to cancel invitation. Please try again.');
+      },
+    });
+  }
+
+  filterCreatedMatches(): void {
+    this.filteredCreatedMatches = this.createdMatches.filter((match) =>
+      match.activity?.name?.toLowerCase().includes(this.createdSearch.toLowerCase()) ||
+      match.user2?.name?.toLowerCase().includes(this.createdSearch.toLowerCase())
+    );
+  }
+
+  filterReceivedMatches(): void {
+    this.filteredReceivedMatches = this.receivedMatches.filter((match) =>
+      match.activity?.name?.toLowerCase().includes(this.receivedSearch.toLowerCase()) ||
+      match.user1?.name?.toLowerCase().includes(this.receivedSearch.toLowerCase())
+    );
+  }
+
   private setUserId(): void {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const tokenPayload = JSON.parse(atob(token.split('.')[1]));
         this.nameid = tokenPayload.nameid;
-        console.log('hello', this.nameid);
-        console.log('Extracted userId from token:', this.nameid);
       } catch (e) {
         console.error('Failed to decode token', e);
       }

@@ -56,18 +56,21 @@
     <div class="recommended-body">
       <ul class="list-group">
         <li
-          class="list-group-item d-flex align-items-center"
+          class="list-group-item"
           *ngFor="let activity of recommendedActivities"
           (click)="focusOnActivity(activity)"
         >
-          <span>{{ activity.name }}</span>
-          <span class="ms-auto">{{ activity.date | date : "shortDate" }}</span>
-          <button class="btn btn-primary" (click)="sendRequest(activity.id)">
+          <div class="activity-details">
+            <div class="activity-name">{{ activity.name }}</div>
+            <div class="activity-date">{{ activity.date | date: 'shortDate' }}</div>
+          </div>
+          <button class="btn btn-primary activity-button" (click)="sendRequest(activity.id, activity.date)">
             <mat-icon>send</mat-icon>
           </button>
         </li>
       </ul>
     </div>
+    
   </div>
 
   <!-- Modal for Activity Creation -->

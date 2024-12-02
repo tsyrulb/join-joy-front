@@ -1,15 +1,65 @@
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .card {
-    margin-bottom: 20px;
-  }
-  
-  .list-group-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
+  margin-top: 20px;
+}
+
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+}
+
+.list-group-item {
+  border: none;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.badge {
+  font-size: 12px;
+}
+
+button {
+  border-radius: 5px;
+}
+mat-expansion-panel {
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+mat-expansion-panel-header {
+  background-color: #f8f9fa;
+}
+
+.badge {
+  font-size: 0.8rem;
+}
+/* Ensure mat-accordion panels display properly inside Bootstrap cards */
+.mat-accordion {
+  margin-top: 1rem;
+}
+
+.mat-expansion-panel {
+  background-color: #f8f9fa;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.mat-expansion-panel-header {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.badge {
+  font-size: 0.8rem;
+}
