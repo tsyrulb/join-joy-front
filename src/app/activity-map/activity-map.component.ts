@@ -45,7 +45,9 @@ export class ActivityMapComponent implements OnDestroy {
   searchInput: string = '';
   typeFilters: { [key: string]: { visible: boolean; markers: L.Marker[] } } =
     {};
-  typeFiltersMarker: { [key: string]: { visible: boolean; markers: L.Marker[], selected: boolean } } = {};
+  typeFiltersMarker: {
+    [key: string]: { visible: boolean; markers: L.Marker[]; selected: boolean };
+  } = {};
 
   constructor(
     private activityService: ActivityService,
@@ -69,13 +71,35 @@ export class ActivityMapComponent implements OnDestroy {
     this.map.on('click', (event: L.LeafletMouseEvent) => {
       const { lat, lng } = event.latlng;
 
+      // Remove the previous marker if it exists
       if (this.selectedMarker) {
-        this.selectedMarker.setLatLng(event.latlng);
-      } else {
-        this.selectedMarker = L.marker(event.latlng).addTo(this.map);
+        this.map.removeLayer(this.selectedMarker);
       }
 
-      console.log(`Selected coordinates: ${lat}, ${lng}`);
+      // Add a new custom marker at the clicked location
+      this.selectedMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'modern-marker',
+          html: `
+          <div style="
+            background-color: #75006c;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+          ">
+            📍
+          </div>
+        `,
+          iconSize: [40, 40],
+          iconAnchor: [20, 40],
+        }),
+      }).addTo(this.map);
       this.locationSelected.emit({ latitude: lat, longitude: lng });
     });
 
@@ -94,23 +118,51 @@ export class ActivityMapComponent implements OnDestroy {
       const { name, description, date } = activity;
 
       if (latitude && longitude) {
+        const customIcon = L.divIcon({
+          className: 'custom-marker', // Custom marker class for styling
+          html: `
+            <div style="
+              background-color: #75006c;
+              color: white;
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+              font-size: 16px;
+              font-weight: bold;
+              ">
+              🏷
+            </div>
+          `,
+          iconSize: [40, 40],
+          iconAnchor: [20, 40],
+        });
+
         const marker = L.marker([latitude, longitude], {
-          icon: L.icon({
-            iconUrl:
-              'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-            shadowUrl:
-              'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-          }),
-        })
-          .addTo(this.markers)
-          .bindPopup(
-            `<b>${name}</b><br>
-            ${description}<br>
-            Date: ${new Date(date).toLocaleDateString()}<br>
-            Address: ${address}`
-          );
+          icon: customIcon,
+        }).addTo(this.markers).bindPopup(`
+            <div style="
+              padding: 10px; 
+              max-width: 250px; 
+              font-family: Arial, sans-serif; 
+              border-radius: 8px; 
+              box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+              background-color: #fff; 
+              text-align: left;
+            ">
+              <h4 style="margin: 0; color: #75006c; font-size: 18px;">${name}</h4>
+              <p style="margin: 8px 0; font-size: 14px; color: #555;">
+                ${description || 'No description available'}<br>
+                <strong>Date:</strong> ${new Date(
+                  date
+                ).toLocaleDateString()}<br>
+                <strong>Address:</strong> ${address || 'No address provided'}
+              </p>
+            </div>
+          `);
 
         marker.on('click', () => {
           console.log(`Clicked on activity: ${name}`);
@@ -161,33 +213,53 @@ export class ActivityMapComponent implements OnDestroy {
 
     if (location && location.latitude && location.longitude) {
       const { latitude, longitude, address } = location;
+
       // Format date and time
       const formattedDate = new Date(date).toLocaleDateString();
       const formattedTime = new Date(date).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
       });
-      const marker = L.marker([latitude, longitude], {
-        icon: L.icon({
-          iconUrl:
-            'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-          shadowUrl:
-            'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-        }),
-      })
-        .addTo(this.markers)
-        .bindPopup(
-          `<b>${name}</b><br>
-          ${description}<br>
-          Date: ${formattedDate} ${formattedTime}<br>
-          Address: ${address || 'No address provided'}`
-        );
 
-      // Open the popup and focus on the marker
-      this.map?.setView([latitude, longitude], 14);
-      marker.openPopup();
+      // Find the existing marker
+      const marker = this.markers.getLayers().find((layer: any) => {
+        return (
+          layer instanceof L.Marker &&
+          layer.getLatLng().lat === latitude &&
+          layer.getLatLng().lng === longitude
+        );
+      });
+
+      if (marker) {
+        // Bind and update the popup content
+        marker
+          .bindPopup(
+            `
+          <div style="
+            padding: 10px; 
+            max-width: 250px; 
+            font-family: Arial, sans-serif; 
+            border-radius: 8px; 
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+            background-color: #fff; 
+            text-align: left;
+          ">
+            <h4 style="margin: 0; color: #75006c; font-size: 18px;">${name}</h4>
+            <p style="margin: 8px 0; font-size: 14px; color: #555;">
+              ${description || 'No description available'}<br>
+              <strong>Date:</strong> ${formattedDate} ${formattedTime}<br>
+              <strong>Address:</strong> ${address || 'No address provided'}
+            </p>
+          </div>
+        `
+          )
+          .openPopup();
+
+        // Focus on the marker
+        this.map?.setView([latitude, longitude], 14);
+      } else {
+        alert('Marker not found for the specified activity.');
+      }
     } else {
       alert('Location data not available for this activity.');
     }
@@ -201,9 +273,9 @@ export class ActivityMapComponent implements OnDestroy {
       alert('Invalid activity.');
       return;
     }
-  
+
     const requestPayload = { ActivityId: activityId };
-  
+
     this.activityService.requestApproval(requestPayload).subscribe({
       next: (response) => {
         console.log('Request response:', response);
@@ -214,7 +286,7 @@ export class ActivityMapComponent implements OnDestroy {
       },
     });
   }
-  
+
   excludeUser(index: number, event: MouseEvent): void {
     event.preventDefault(); // Prevent the default context menu
 
@@ -289,7 +361,7 @@ export class ActivityMapComponent implements OnDestroy {
 
   submitActivity(): void {
     const { name, description, date, time, latitude, longitude } =
-    this.activityFormData;
+      this.activityFormData;
 
     if (!name || !description || !date || !time) {
       alert('All fields are required!');
@@ -407,8 +479,7 @@ export class ActivityMapComponent implements OnDestroy {
       this.toggleMarkers(filterKey);
     }
   }
-  
-  
+
   getCreatedById(): number | null {
     const token = localStorage.getItem('token');
     if (!token) return null;
@@ -448,71 +519,131 @@ export class ActivityMapComponent implements OnDestroy {
       });
   }
 
-
   addMarkersToMap(rawResponse: string[]): void {
     if (!this.map) {
       console.error('Map is not initialized!');
       return;
     }
-  
+
     this.markers.clearLayers();
     this.typeFiltersMarker = {}; // Reset type filters
-  
+
     rawResponse.forEach((rawEntry) => {
       const lines = rawEntry.split('\n');
       const typeMatch = rawEntry.match(/Nearby places for (.*?) = (.*?):/);
-  
+
       const primaryType = typeMatch ? typeMatch[1].trim() : 'Unknown';
-      const subType = typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
-  
+      const subType =
+        typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
+
       const fullType = `${capitalize(primaryType)}, ${capitalize(subType)}`;
-  
+
       lines.forEach((line) => {
         const nameMatch = line.match(/Name: (.*?),/);
         const latitudeMatch = line.match(/Latitude: ([^,]*)/);
         const longitudeMatch = line.match(/Longitude: ([^,]*)/);
-  
+
         const name = nameMatch ? nameMatch[1].trim() : null;
         const lat =
-          latitudeMatch && latitudeMatch[1] ? parseFloat(latitudeMatch[1]) : NaN;
+          latitudeMatch && latitudeMatch[1]
+            ? parseFloat(latitudeMatch[1])
+            : NaN;
         const lon =
-          longitudeMatch && longitudeMatch[1] ? parseFloat(longitudeMatch[1]) : NaN;
-  
+          longitudeMatch && longitudeMatch[1]
+            ? parseFloat(longitudeMatch[1])
+            : NaN;
+
         if (!name || isNaN(lat) || isNaN(lon)) {
           return;
         }
-  
+
+        // Custom Icon
+        const customIcon = L.divIcon({
+          className: 'modern-marker',
+          html: `
+            <div style="
+              background-color: #75006c;
+              color: #fff;
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 16px;
+              box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            ">
+              📍
+            </div>
+          `,
+          iconSize: [40, 40],
+          iconAnchor: [20, 40],
+        });
+
         const marker = L.marker([lat, lon], {
-          icon: getColoredIcon(fullType),
-        }).bindPopup(
-          `<b>${name}</b><br>Type: ${fullType}<br>Latitude: ${lat}, Longitude: ${lon}
-          <button onclick="angularComponent.openModal(${lat}, ${lon})">Make Activity</button>`
-        );
-  
+          icon: customIcon,
+        }).bindPopup(`
+          <div style="
+            padding: 12px; 
+            max-width: 260px; 
+            font-family: Arial, sans-serif; 
+            border-radius: 10px; 
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15); 
+            background-color: #fff; 
+            text-align: center;
+          ">
+            <h3 style="margin: 0; color: #75006c; font-size: 18px;">${name}</h3>
+            <p style="margin: 10px 0; font-size: 14px; color: #333;">
+              <strong>Type:</strong> ${fullType}<br>
+              <strong>Latitude:</strong> ${lat.toFixed(4)}<br>
+              <strong>Longitude:</strong> ${lon.toFixed(4)}
+            </p>
+            <button 
+              style="
+                background-color: #75006c; 
+                color: #fff; 
+                border: none; 
+                padding: 8px 16px; 
+                font-size: 14px; 
+                border-radius: 8px; 
+                cursor: pointer; 
+                transition: background-color 0.3s ease;
+              " 
+              onmouseover="this.style.backgroundColor='#590053'" 
+              onmouseout="this.style.backgroundColor='#75006c'" 
+              onclick="angularComponent.openModal(${lat}, ${lon})"
+            >
+              Make Activity
+            </button>
+          </div>
+        `);
+
         this.markers.addLayer(marker);
-  
+
         if (!this.typeFiltersMarker[fullType]) {
-          this.typeFiltersMarker[fullType] = { visible: true, markers: [], selected: false };
+          this.typeFiltersMarker[fullType] = {
+            visible: true,
+            markers: [],
+            selected: false,
+          };
         }
         this.typeFiltersMarker[fullType].markers.push(marker);
       });
     });
-  
+
     this.map.addLayer(this.markers);
   }
-  
+
   toggleMarkers(type: string): void {
     const filter = this.typeFiltersMarker[type];
     if (!filter) return;
-  
+
     if (filter.visible) {
       filter.markers.forEach((marker) => this.markers.addLayer(marker));
     } else {
       filter.markers.forEach((marker) => this.markers.removeLayer(marker));
     }
   }
-  
-  
 
   ngOnDestroy(): void {
     if (this.map) {

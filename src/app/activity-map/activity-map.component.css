@@ -36,7 +36,7 @@
   bottom: 20px;
   left: 20px;
   z-index: 1000;
-  background-color: #007bff;
+  background-color: #75006c;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -53,7 +53,7 @@
 }
 
 .filter-toggle-btn:hover {
-  background-color: #0056b3;
+  background-color: #590053;
 }
 
 /* Filter Menu */
@@ -82,7 +82,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #007bff;
+  background-color: #75006c;
   color: white;
   font-weight: bold;
 }
@@ -109,7 +109,7 @@
 }
 
 .filter-menu .list-group-item.active {
-  background-color: #007bff;
+  background-color: #75006c;
   color: white;
 }
 
@@ -141,7 +141,7 @@
 }
 
 .recommended-header {
-  background-color: #007bff;
+  background-color: #75006c;
   color: #fff;
   padding: 10px;
   display: flex;
@@ -156,7 +156,7 @@
   bottom: 80px;
   left: 20px;
   z-index: 1000;
-  background-color: #28a745;
+  background-color: #75006c;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -169,7 +169,7 @@
 }
 
 .recommend-activities-btn:hover {
-  background-color: #218838;
+  background-color: #590053;
 }
 
 /* Recommended Activities Section */
@@ -187,7 +187,7 @@
   z-index: 1001;
   font-family: Arial, sans-serif;
   scrollbar-width: thin; /* Make the scrollbar thinner for modern browsers */
-  scrollbar-color: #007bff #f1f1f1; /* Custom scrollbar colors */
+  scrollbar-color: #75006c #f1f1f1; /* Custom scrollbar colors */
 }
 /* Recommended Activities Custom Scrollbar for Webkit Browsers */
 .recommended-activities::-webkit-scrollbar {
@@ -200,7 +200,7 @@
 }
 
 .recommended-activities::-webkit-scrollbar-thumb {
-  background-color: #007bff; /* Blue scrollbar thumb for alignment with the theme */
+  background-color: #75006c; /* Blue scrollbar thumb for alignment with the theme */
   border-radius: 10px;
   border: 2px solid #f1f1f1; /* Adds a gap between thumb and track for a sleek look */
 }
@@ -226,7 +226,7 @@
 }
 
 .recommended-body .list-group-item.selected {
-  background-color: #007bff;
+  background-color: #75006c;
   color: #fff;
 }
 
@@ -235,7 +235,7 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #007bff;
+  border: 2px solid #75006c;
 }
 
 .user-name {
@@ -255,7 +255,7 @@
   width: 100%;
 }
 .recommended-header {
-  background-color: #007bff;
+  background-color: #75006c;
   color: #fff;
   padding: 10px;
   display: flex;
@@ -297,4 +297,57 @@
 /* Button */
 .activity-button {
   margin-left: 15px; /* Space between date and button */
+}
+.rounded-btn {
+  background-color: #75006c; /* Apply the desired color */
+  border-radius: 50%; /* Makes the button circular */
+  width: 40px; /* Adjust size as needed */
+  height: 40px; /* Adjust size as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 16px; /* Icon size */
+  color: white; /* White text/icon for better contrast */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow for modern design */
+  border: none; /* Removes any border */
+}
+
+.rounded-btn:hover {
+  background-color: #590053; /* Darker shade for hover effect */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+.modern-marker {
+  width: 40px;
+  height: 40px;
+  background-color: #75006c;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.modern-marker:hover {
+  background-color: #590053; /* Slightly darker on hover */
+}
+.custom-marker {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #75006c;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.custom-marker:hover {
+  background-color: #590053; /* Darker shade on hover */
+  cursor: pointer;
 }

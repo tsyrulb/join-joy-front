@@ -8,9 +8,10 @@
         placeholder="I want to..."
         [(ngModel)]="searchInput"
       />
-      <button class="btn btn-primary" (click)="searchNearby()">
+      <button class="btn btn-primary rounded-btn" (click)="searchNearby()">
         <mat-icon>search</mat-icon>
       </button>
+      
     </div>
   </div>
 
@@ -64,7 +65,7 @@
             <div class="activity-name">{{ activity.name }}</div>
             <div class="activity-date">{{ activity.date | date: 'shortDate' }}</div>
           </div>
-          <button class="btn btn-primary activity-button" (click)="sendRequest(activity.id, activity.date)">
+          <button class="btn btn-primary rounded-btn" (click)="sendRequest(activity.id, activity.date)">
             <mat-icon>send</mat-icon>
           </button>
         </li>
