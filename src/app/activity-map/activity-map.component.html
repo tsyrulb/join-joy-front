@@ -65,7 +65,7 @@
             <div class="activity-name">{{ activity.name }}</div>
             <div class="activity-date">{{ activity.date | date: 'shortDate' }}</div>
           </div>
-          <button class="btn btn-primary rounded-btn" (click)="sendRequest(activity.id, activity.date)">
+          <button class="btn btn-primary rounded-btn" (click)="sendRequest(activity.id)">
             <mat-icon>send</mat-icon>
           </button>
         </li>

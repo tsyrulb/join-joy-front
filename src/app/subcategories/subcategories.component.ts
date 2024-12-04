@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input  } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Subcategory, UserSubcategory, Category } from '../user.model';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +17,7 @@ export class SubcategoriesComponent implements OnInit {
   userSubcategories: UserSubcategory[] = [];
   selectedCategoryId: number | null = null;
   userId: number = 8; // Replace with actual user ID
+  @Input() categoryId: number | null = null; // Accept categoryId from parent
 
   constructor(private apiService: ApiService) {}
 

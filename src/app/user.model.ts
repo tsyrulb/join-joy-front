@@ -1,3 +1,5 @@
+import { Conversation } from '../app/message.model'
+
 export interface Location {
   id: number;
   latitude: number;
@@ -30,6 +32,7 @@ export interface User {
   sentChatMessages?: ChatMessage[];
   receivedChatMessages?: ChatMessage[];
 }
+
 // Define the UserUnavailability interface
 export interface UserUnavailability {
   id: number;
@@ -83,9 +86,20 @@ export interface Message {
 }
 
 export interface Activity {
-  activityId: number;
-  name: string;
+  id: number; // Matches the database 'Id' field
+  name: string; // Matches the database 'Name' field
+  description?: string; // Matches the optional 'Description' field
+  date: Date; // Matches the database 'Date' field
+  locationId: number; // Matches the database 'LocationId' field
+  location: Location; // Matches the 'Location' navigation property
+  createdById: number; // Matches the database 'CreatedById' field
+  conversationId: number; // Matches the database 'ConversationId' field
+  conversation: Conversation; // Matches the 'Conversation' navigation property
+  createdBy: User; // Matches the 'CreatedBy' navigation property
+  userActivities: UserActivity[]; // Matches the 'UserActivities' navigation property
+  matches: Match[]; // Matches the 'Matches' navigation property
 }
+
 
 export interface ChatMessage {
   chatMessageId: number;

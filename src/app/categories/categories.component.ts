@@ -1,5 +1,5 @@
 // categories.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Category } from '../user.model';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,7 @@ import { SubcategoriesComponent } from '../subcategories/subcategories.component
 export class CategoriesComponent implements OnInit {
   categories: Category[] = [];
   selectedCategory: Category | null = null;
+  @Input() categoryId!: number; // Use ! to indicate it will be initialized later
 
   constructor(private apiService: ApiService) {}
 

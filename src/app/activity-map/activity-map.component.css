@@ -6,17 +6,22 @@
   margin: 0;
   padding: 0;
   background-color: #f8f9fa;
-}
+  padding-top: 50px;
 
-/* Search Bar */
+}
+/* Search Bar at Bottom */
 .search-container {
-  position: absolute;
-  top: 10px;
+  position: fixed; /* Stick it to the bottom */
+  bottom: 20px; /* Adjust distance from the bottom edge */
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
   width: 90%;
   max-width: 600px;
+  background: rgba(255, 255, 255, 0.9); /* Light overlay for visibility */
+  border-radius: 20px; /* Rounded corners for a modern look */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  padding: 10px; /* Padding for inner spacing */
 }
 
 .search-bar {
@@ -27,8 +32,30 @@
 
 .search-bar input {
   flex: 1;
-  border-radius: 0.25rem;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  font-size: 14px;
 }
+
+.search-bar button {
+  background-color: #ffaaaa;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+  background-color: #ff5e00;
+  cursor: pointer;
+}
+
 
 /* Filter Toggle Button */
 .filter-toggle-btn {
@@ -36,7 +63,7 @@
   bottom: 20px;
   left: 20px;
   z-index: 1000;
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -53,7 +80,7 @@
 }
 
 .filter-toggle-btn:hover {
-  background-color: #590053;
+  background-color: #ff5e00;
 }
 
 /* Filter Menu */
@@ -71,8 +98,21 @@
   transform: scaleY(0); /* Initial state: collapsed */
   transform-origin: bottom;
   transition: transform 0.3s ease-in-out;
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+.filter-menu::-webkit-scrollbar {
+  width: 6px;
 }
 
+.filter-menu::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 5px;
+}
+
+.filter-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 164, 111, 0.8);
+  border-radius: 5px;
+}
 .filter-menu.show {
   transform: scaleY(1); /* Expanded state */
 }
@@ -81,8 +121,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background-color: #75006c;
+  padding: 5px;
+  background-color: #ff5e00;
   color: white;
   font-weight: bold;
 }
@@ -109,7 +149,7 @@
 }
 
 .filter-menu .list-group-item.active {
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: white;
 }
 
@@ -139,9 +179,14 @@
   overflow-y: auto;
   z-index: 1001;
 }
+.recommended-users .btn-success {
+  background: #ff5e00; /* Primary button color */
+  color: white;
+  transition: background-color 0.3s ease;
+}
 
 .recommended-header {
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: #fff;
   padding: 10px;
   display: flex;
@@ -156,7 +201,7 @@
   bottom: 80px;
   left: 20px;
   z-index: 1000;
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -169,7 +214,7 @@
 }
 
 .recommend-activities-btn:hover {
-  background-color: #590053;
+  background-color: #ff5e00;
 }
 
 /* Recommended Activities Section */
@@ -187,7 +232,7 @@
   z-index: 1001;
   font-family: Arial, sans-serif;
   scrollbar-width: thin; /* Make the scrollbar thinner for modern browsers */
-  scrollbar-color: #75006c #f1f1f1; /* Custom scrollbar colors */
+  scrollbar-color: #ffaaaa #f1f1f1; /* Custom scrollbar colors */
 }
 /* Recommended Activities Custom Scrollbar for Webkit Browsers */
 .recommended-activities::-webkit-scrollbar {
@@ -200,7 +245,7 @@
 }
 
 .recommended-activities::-webkit-scrollbar-thumb {
-  background-color: #75006c; /* Blue scrollbar thumb for alignment with the theme */
+  background-color: #ffaaaa; /* Blue scrollbar thumb for alignment with the theme */
   border-radius: 10px;
   border: 2px solid #f1f1f1; /* Adds a gap between thumb and track for a sleek look */
 }
@@ -226,7 +271,7 @@
 }
 
 .recommended-body .list-group-item.selected {
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: #fff;
 }
 
@@ -235,7 +280,7 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #75006c;
+  border: 2px solid #ffaaaa;
 }
 
 .user-name {
@@ -255,7 +300,7 @@
   width: 100%;
 }
 .recommended-header {
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: #fff;
   padding: 10px;
   display: flex;
@@ -299,7 +344,7 @@
   margin-left: 15px; /* Space between date and button */
 }
 .rounded-btn {
-  background-color: #75006c; /* Apply the desired color */
+  background-color: #ffaaaa; /* Apply the desired color */
   border-radius: 50%; /* Makes the button circular */
   width: 40px; /* Adjust size as needed */
   height: 40px; /* Adjust size as needed */
@@ -314,13 +359,13 @@
 }
 
 .rounded-btn:hover {
-  background-color: #590053; /* Darker shade for hover effect */
+  background-color: #ff5e00; /* Darker shade for hover effect */
   cursor: pointer; /* Pointer cursor on hover */
 }
 .modern-marker {
   width: 40px;
   height: 40px;
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -331,7 +376,7 @@
 }
 
 .modern-marker:hover {
-  background-color: #590053; /* Slightly darker on hover */
+  background-color: #ff5e00; /* Slightly darker on hover */
 }
 .custom-marker {
   position: relative;
@@ -341,13 +386,172 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #75006c;
+  background-color: #ffaaaa;
   color: white;
   font-size: 16px;
   font-weight: bold;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 .custom-marker:hover {
-  background-color: #590053; /* Darker shade on hover */
+  background-color: #ff5e00; /* Darker shade on hover */
   cursor: pointer;
+}
+/* Modal Overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+/* Modal Dialog */
+.modal-dialog {
+  background: #fff; /* White modal background */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  overflow: hidden; /* Prevent content overflow */
+  width: 90%;
+  max-width: 500px; /* Maximum modal width */
+}
+
+/* Modal Header */
+.modal-header {
+  background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc); /* Pastel gradient header */
+  color: #333; /* Neutral text color */
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header .btn-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+  color: #e679de; /* Hover color for close button */
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 20px;
+}
+
+.modal-body .form-group {
+  margin-bottom: 15px;
+}
+
+.modal-body .form-group label {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.modal-body .form-group input,
+.modal-body .form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9; /* Light background for inputs */
+  transition: border-color 0.3s ease;
+}
+
+.modal-body .form-group input:focus,
+.modal-body .form-group textarea:focus {
+  border-color: #ff5e00; /* Highlight border on focus */
+  outline: none;
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: #f8f9fa; /* Light background for footer */
+  border-top: 1px solid #ddd;
+}
+
+.modal-footer .btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal-footer .btn-success {
+  background: #ff5e00; /* Primary button color */
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.modal-footer .btn-success:hover {
+  background: #590053; /* Darker shade on hover */
+}
+
+.modal-footer .btn-secondary {
+  background: #ddd; /* Secondary button color */
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.modal-footer .btn-secondary:hover {
+  background: #bbb; /* Darker shade on hover */
+}
+/* Outer Popup Styling */
+.custom-popup-outer {
+  background: rgba(255, 255, 255, 0.95); /* Semi-transparent white for the outer popup */
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  border: none; /* Remove any default border */
+  padding: 0; /* Reset padding for full control */
+}
+
+/* Popup Tip Styling */
+.custom-popup-outer .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.95); /* Match the outer popup background */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+/* Inner Content Styling */
+.custom-popup {
+  padding: 10px;
+  max-width: 250px;
+  font-family: Arial, sans-serif;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+  background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc); /* Gradient background */
+  color: #333; /* Neutral text color */
+  text-align: left;
+}
+
+/* Title Styling */
+.custom-popup h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333; /* Ensure contrast */
+}
+
+/* Paragraph Styling */
+.custom-popup p {
+  margin: 8px 0;
+  font-size: 14px;
 }

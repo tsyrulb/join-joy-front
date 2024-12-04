@@ -3,11 +3,12 @@ import { ActivityService } from '../activity.service';
 import { CommonModule } from '@angular/common';
 import { GoogleSearchService } from '../google-search.service';
 import { FeedbackService } from '../feedback.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-activities',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './activities.component.html',
   styleUrls: ['./activities.component.css'],
 })

@@ -82,8 +82,6 @@ export class ActivityMapComponent implements OnDestroy {
           className: 'modern-marker',
           html: `
           <div style="
-            background-color: #75006c;
-            color: white;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -93,7 +91,7 @@ export class ActivityMapComponent implements OnDestroy {
             font-size: 18px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
           ">
-            📍
+            🔵
           </div>
         `,
           iconSize: [40, 40],
@@ -122,8 +120,8 @@ export class ActivityMapComponent implements OnDestroy {
           className: 'custom-marker', // Custom marker class for styling
           html: `
             <div style="
-              background-color: #75006c;
-              color: white;
+              background-color: #ff5e00;
+              color: #ff5e00;
               border-radius: 50%;
               width: 40px;
               height: 40px;
@@ -131,38 +129,41 @@ export class ActivityMapComponent implements OnDestroy {
               align-items: center;
               justify-content: center;
               box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-              font-size: 16px;
-              font-weight: bold;
-              ">
-              🏷
+            ">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 4.48 6 11 6 11s6-6.52 6-11c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
             </div>
           `,
           iconSize: [40, 40],
           iconAnchor: [20, 40],
         });
+        
 
         const marker = L.marker([latitude, longitude], {
           icon: customIcon,
         }).addTo(this.markers).bindPopup(`
-            <div style="
-              padding: 10px; 
-              max-width: 250px; 
-              font-family: Arial, sans-serif; 
-              border-radius: 8px; 
-              box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
-              background-color: #fff; 
-              text-align: left;
-            ">
-              <h4 style="margin: 0; color: #75006c; font-size: 18px;">${name}</h4>
-              <p style="margin: 8px 0; font-size: 14px; color: #555;">
-                ${description || 'No description available'}<br>
-                <strong>Date:</strong> ${new Date(
-                  date
-                ).toLocaleDateString()}<br>
-                <strong>Address:</strong> ${address || 'No address provided'}
-              </p>
-            </div>
-          `);
+           <div class="custom-popup">
+          <div style="
+            padding: 10px; 
+            max-width: 250px; 
+            font-family: Arial, sans-serif; 
+            border-radius: 8px; 
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+            background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc); /* Pastel gradient */
+            color: black; /* White text for contrast */
+            text-align: left;
+          ">
+            <h4 style="margin: 0; font-size: 18px;">${name}</h4>
+            <p style="margin: 8px 0; font-size: 14px;">
+              ${description || 'No description available'}<br>
+              <strong>Date:</strong> ${new Date(date).toLocaleDateString()}<br>
+              <strong>Address:</strong> ${address || 'No address provided'}
+            </p>
+          </div>
+          </div>
+        `, { className: 'custom-popup-outer' });
+        
 
         marker.on('click', () => {
           console.log(`Clicked on activity: ${name}`);
@@ -244,7 +245,7 @@ export class ActivityMapComponent implements OnDestroy {
             background-color: #fff; 
             text-align: left;
           ">
-            <h4 style="margin: 0; color: #75006c; font-size: 18px;">${name}</h4>
+            <h4 style="margin: 0; color: #ffaaaa; font-size: 18px;">${name}</h4>
             <p style="margin: 8px 0; font-size: 14px; color: #555;">
               ${description || 'No description available'}<br>
               <strong>Date:</strong> ${formattedDate} ${formattedTime}<br>
@@ -562,8 +563,6 @@ export class ActivityMapComponent implements OnDestroy {
           className: 'modern-marker',
           html: `
             <div style="
-              background-color: #75006c;
-              color: #fff;
               border-radius: 50%;
               width: 40px;
               height: 40px;
@@ -592,7 +591,7 @@ export class ActivityMapComponent implements OnDestroy {
             background-color: #fff; 
             text-align: center;
           ">
-            <h3 style="margin: 0; color: #75006c; font-size: 18px;">${name}</h3>
+            <h3 style="margin: 0; color: #ffaaaa; font-size: 18px;">${name}</h3>
             <p style="margin: 10px 0; font-size: 14px; color: #333;">
               <strong>Type:</strong> ${fullType}<br>
               <strong>Latitude:</strong> ${lat.toFixed(4)}<br>
@@ -600,7 +599,7 @@ export class ActivityMapComponent implements OnDestroy {
             </p>
             <button 
               style="
-                background-color: #75006c; 
+                background-color: #ffaaaa; 
                 color: #fff; 
                 border: none; 
                 padding: 8px 16px; 
@@ -610,7 +609,7 @@ export class ActivityMapComponent implements OnDestroy {
                 transition: background-color 0.3s ease;
               " 
               onmouseover="this.style.backgroundColor='#590053'" 
-              onmouseout="this.style.backgroundColor='#75006c'" 
+              onmouseout="this.style.backgroundColor='#ffaaaa'" 
               onclick="angularComponent.openModal(${lat}, ${lon})"
             >
               Make Activity
