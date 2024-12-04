@@ -1,63 +1,308 @@
-/* Ensure the container layout remains intact */
+/* Container for the entire messenger */
 .messages-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh; /* Full viewport height */
+  background: linear-gradient(135deg, #d8eafd, #f8d8e4, #ffe5cc); /* Pastel gradient */
+  background-size: 400% 400%;
+  animation: gradientAnimation 10s ease infinite;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
+/* Animated gradient effect */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Messages list takes up remaining space */
 .messages-list {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
-}
-
-/* Adjust individual message styling */
-.my-message {
-  text-align: right;
-  margin: 5px 0;
-}
-
-.my-message p {
-  display: inline-block; /* Only wrap the text and padding */
-  background-color: #d1e7dd;
-  padding: 5px 10px;
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  scroll-behavior: smooth; /* Smooth scrolling */
+  max-height: calc(100vh - 26%); /* Set the max-height to ensure it doesn't overlap with the input area */
+  margin-bottom: 10px;
+}
+.messages-list::-webkit-scrollbar {
+  width: 6px;
 }
 
-.other-message {
-  text-align: left;
-  margin: 5px 0;
+.messages-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 5px;
 }
 
-.other-message p {
-  display: inline-block; /* Only wrap the text and padding */
-  background-color: #f8d7da;
-  padding: 5px 10px;
-  border-radius: 8px;
+.messages-list::-webkit-scrollbar-thumb {
+  background: rgba(117, 0, 108, 0.8);
+  border-radius: 5px;
 }
 
-/* Input and button for sending messages */
+/* Individual message styling */
+.message {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+/* Styling for received messages */
+/* Styling for received messages */
+.message.received {
+  flex-direction: row; /* Avatar on the left */
+}
+
+/* Styling for sent messages */
+.message.sent {
+  flex-direction: row-reverse; /* Avatar on the right */
+}
+
+.message.sent .message-avatar {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/* Shared styles for avatars */
+.message .message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(237, 186, 252, 0.9);
+}
+.message-avatar {
+  margin-right: 10px; /* Space between avatar and message bubble */
+}
+/* Shared styles for message content */
+.message .message-content {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 12px;
+  word-wrap: break-word;
+  word-break: break-word; /* Ensures words break properly */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgba(253, 229, 253, 0.9); /* Purple for sent messages */
+  position: relative;
+  overflow-wrap: break-word; /* Handles very long unbroken text */
+
+}
+
+.message.received .message-content {
+  margin-left: 10px; /* Add spacing between avatar and bubble */
+  background-color: rgba(237, 186, 252, 0.9); /* Purple for received messages */
+  color: rgb(0, 0, 0);
+}
+
+.message.sent .message-content {
+  background-color: rgba(237, 186, 252, 0.9); /* Purple for sent messages */
+  color: rgb(0, 0, 0);
+}
+
+/* Sender name under the message */
+.message .message-content .message-sender {
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.message.sent .message-content .message-sender {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+/* Input area for sending messages */
 .send-message {
   display: flex;
   padding: 10px;
-  border-top: 1px solid #ccc;
-  background-color: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
 }
 
 .send-message input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 14px;
 }
 
 .send-message button {
-  margin-left: 10px;
-  background-color: #007bff;
+  background-color: rgba(237, 186, 252, 0.9);
   color: white;
   border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
   cursor: pointer;
 }
 
+.send-message button mat-icon {
+  font-size: 20px;
+}
+
+/* Date Separator */
+.date-separator {
+  display: flex;
+  justify-content: center; /* Center the separator horizontally */
+  align-items: center; /* Vertically align content */
+  font-size: 14px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(255, 255, 255, 0.8); /* Slightly translucent background */
+  padding: 5px 10px;
+  border-radius: 12px; /* Rounded edges */
+  margin: 10px 0; /* Space around the separator */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  max-width: fit-content; /* Adjust width based on text */
+  margin-left: auto; /* Center align */
+  margin-right: auto; /* Center align */
+}
+
+/* Message footer styling */
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #555; /* Neutral gray for text */
+}
+/* Message time */
+.message-time {
+  font-style: italic;
+  color: #888; /* Subtle gray for time */
+  margin-right: 10px;
+}
+.conversation-panel {
+  margin-top: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin-bottom: 12px;
+
+}
+
+.conversation-panel h3 {
+  margin: 0 0 10px 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #75006c;
+  padding: 10px;
+
+}
+
+.conversation-panel p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #333;
+  padding: 10px;
+  margin-bottom: 10px;
+
+}
+
+.conversation-panel .message-search {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px;
+
+  
+}
+.panel-icons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.panel-content ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  max-height: 150px; /* Limit height for better scrolling */
+  overflow-y: auto; /* Enable scrolling if content exceeds height */
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+.panel-content ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-content ul::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 5px;
+}
+
+.panel-content ul::-webkit-scrollbar-thumb {
+  background: rgba(117, 0, 108, 0.8);
+  border-radius: 5px;
+}
+
+.panel-content li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.participant-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.panel-content li span {
+  font-size: 14px;
+  color: #333;
+}
+.panel-content input.form-control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.panel-content input.form-control:focus {
+  border-color: #75006c;
+  box-shadow: 0 0 6px rgba(117, 0, 108, 0.5);
+  outline: none;
+}
+.panel-icons button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.panel-icons button:hover {
+  transform: scale(1.1);
+  color: #75006c;
+}
+
+.panel-icons mat-icon {
+  font-size: 24px;
+}

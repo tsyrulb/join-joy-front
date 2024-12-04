@@ -6,7 +6,7 @@ export interface Message {
     receiverId: number;
     conversationId: number;
     content: string;
-    timestamp?: Date;
+    timestamp?: string;
     isRead?: boolean;
   }
   
@@ -15,5 +15,7 @@ export interface Message {
     title: string;
     participants: { userId: number; user: User }[];
     messages?: Message[];
+    unreadCount?: number; // Optional field for unread messages
+
   }
   

@@ -25,29 +25,103 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   @Input() conversationId!: number;
   @Input() messages: Message[] = [];
   @Input() participants: User[] = [];
+  @Input() conversationTitle: string = '';
+
   newMessageContent = '';
   loggedInUserId: number | null = null;
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
-
+  messageSearchQuery: string = '';
+  filteredMessages: Message[] = [];
+  isSearchVisible = false;
+  isParticipantsVisible = false;
+  
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.setLoggedInUserId();
+    this.filteredMessages = [...this.messages];
+    this.loadMessages(); // Load messages on component initialization
   }
+
   ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
+
   private setLoggedInUserId(): void {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const tokenPayload = JSON.parse(atob(token.split('.')[1]));
         this.loggedInUserId = Number(tokenPayload.nameid);
-        console.log('Logged in user ID:', this.loggedInUserId);
       } catch (error) {
         console.error('Error parsing token:', error);
       }
     }
+  }
+
+  filterMessages(): void {
+    const query = this.messageSearchQuery.trim().toLowerCase();
+    this.filteredMessages = this.messages.filter((message) =>
+      message.content.toLowerCase().includes(query)
+    );
+  }
+  
+  getUserProfilePicture(userId: number): string {
+    const user = this.participants.find(
+      (participant) => participant.id === userId
+    );
+    return user && user.profilePhoto ? user.profilePhoto : 'assets/profile.png';
+  }
+
+  isNewDay(index: number): boolean {
+    if (index === 0) return true;
+  
+    const currentMessage = this.messages[index];
+    const previousMessage = this.messages[index - 1];
+
+    if (!currentMessage?.timestamp) {
+      console.log(currentMessage, '1', index, this.filteredMessages);
+      return false; // Prevent errors if timestamp is missing
+    }
+    if (!previousMessage?.timestamp) {
+      console.log(previousMessage, '2');
+      return false; // Prevent errors if timestamp is missing
+    }
+    const currentMessageDate = new Date(currentMessage.timestamp).toDateString();
+    const previousMessageDate = new Date(previousMessage.timestamp).toDateString();
+  
+    return currentMessageDate !== previousMessageDate;
+  }
+  
+
+  getValidDate(date: string | undefined): Date | null {
+    if (!date) return null;
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      console.warn('Invalid date found:', date);
+      return null;
+    }
+    return parsedDate;
+  }
+
+
+  getMessageDate(timestamp: string | undefined): string {
+    if (!timestamp) return 'Unknown Date';
+    const validDate = this.getValidDate(timestamp);
+    return validDate ? validDate.toDateString() : 'Unknown Date';
+  }
+  
+
+  getMessageTime(date: string | undefined): string {
+    const validDate = this.getValidDate(date);
+    return validDate
+      ? validDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : 'Invalid Time';
+  }
+
+  toggleSearch(): void {
+    this.isSearchVisible = !this.isSearchVisible;
+    this.isParticipantsVisible = false; // Hide participants if visible
   }
 
   isDuplicateMessage(index: number): boolean {
@@ -72,17 +146,9 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       .filter((participant) => {
         const isReceiver =
           Number(participant.id) !== Number(this.loggedInUserId);
-        console.log(
-          `Checking participant ID: ${participant.id} (Is receiver: ${isReceiver})`
-        );
         return isReceiver;
       })
       .map((participant) => Number(participant.id));
-
-    console.log('Participants:', this.participants);
-    console.log('Logged-in User ID:', this.loggedInUserId);
-    console.log('Sender ID:', this.loggedInUserId);
-    console.log('Receiver IDs after filtering:', receiverIds);
 
     if (receiverIds.length === 0) {
       console.error('No valid recipients for this message.');
@@ -117,9 +183,17 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  toggleParticipants(): void {
+    this.isParticipantsVisible = !this.isParticipantsVisible;
+    this.isSearchVisible = false; // Hide search if visible
+  }
+
   private loadMessages(): void {
     this.apiService.getMessagesForConversation(this.conversationId).subscribe({
-      next: (messages) => (this.messages = messages),
+      next: (messages) => {
+        this.messages = messages;
+        this.filteredMessages = [...this.messages]; // Initialize filtered list
+      },
       error: (error) => console.error('Error loading messages:', error),
     });
   }

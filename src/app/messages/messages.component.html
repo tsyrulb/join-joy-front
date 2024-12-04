@@ -1,18 +1,68 @@
 <div class="messages-container">
+  <!-- Conversation Panel -->
+  <div class="conversation-panel">
+    <div class="panel-icons">
+      <button mat-icon-button (click)="toggleSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+      <h4>{{ conversationTitle }}</h4>
+      <button mat-icon-button (click)="toggleParticipants()">
+        <mat-icon>contacts</mat-icon>
+      </button>
+    </div>
+
+    <!-- Search Messages -->
+    <div *ngIf="isSearchVisible" class="panel-content">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search messages..."
+        [(ngModel)]="messageSearchQuery"
+        (input)="filterMessages()"
+      />
+    </div>
+
+    <!-- Participants List -->
+    <div *ngIf="isParticipantsVisible" class="panel-content">
+      <h4>Participants</h4>
+      <ul>
+        <li *ngFor="let participant of participants">
+          <img
+            [src]="participant.profilePhoto || 'assets/profile.png'"
+            alt="{{ participant.name }}"
+            class="participant-avatar"
+          />
+          <span>{{ participant.name }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Messages List -->
   <div #messagesContainer class="messages-list">
-    <ng-container *ngFor="let message of messages; let i = index">
-      <div
-        *ngIf="!isDuplicateMessage(i)"
-        [class.my-message]="message.senderId === loggedInUserId"
-        [class.other-message]="message.senderId !== loggedInUserId"
-      >
-        <p>
-          <strong>{{ getUserNameById(message.senderId) }}:</strong>
-          {{ message.content }}
-        </p>
+    <ng-container *ngFor="let message of (messageSearchQuery ? filteredMessages : messages); let i = index">
+      <!-- Show date separator when day changes -->
+      <div *ngIf="isNewDay(i)" class="date-separator">
+        {{ getMessageDate(message.timestamp) }}
+      </div>
+      <div class="message" [class.sent]="message.senderId === loggedInUserId">
+        <img
+          [src]="getUserProfilePicture(message.senderId)"
+          class="message-avatar"
+          alt="User avatar"
+        />
+        <div class="message-content">
+          <div class="message-text">{{ message.content }}</div>
+          <div class="message-footer">
+            <span class="message-time">{{ getMessageTime(message.timestamp) }}</span>
+            <span class="message-sender">{{ getUserNameById(message.senderId) }}</span>
+          </div>
+        </div>
       </div>
     </ng-container>
   </div>
+
+  <!-- Message Input -->
   <div class="send-message">
     <input [(ngModel)]="newMessageContent" placeholder="Type a message..." />
     <button mat-icon-button (click)="sendMessage()" aria-label="Send message">

@@ -27,6 +27,6 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": false,  // Temporarily disable strict DI checks
     "strictInputAccessModifiers": false,  // Temporarily disable strict input checks
-    "strictTemplates": false  // Disable strict template checks
+    "strictTemplates": true  // Disable strict template checks
   }
 }
