@@ -1,0 +1,19 @@
+<div class="activities-with-sidenav">
+    <!-- Activities Section -->
+    <div class="activities-main">
+      <app-user-activities></app-user-activities>
+    </div>
+  
+    <!-- Sidebar Toggle Button (Outside Sidebar) -->
+    <div class="toggle-button" (click)="toggleSidebar()">
+      <mat-icon>{{ isSidebarOpen ? 'close' : 'arrow_forward' }}</mat-icon>
+    </div>
+  
+    <!-- User Matches Sidebar -->
+    <div class="user-matches-sidebar" [class.open]="isSidebarOpen">
+      <div class="user-matches-content">
+        <app-user-matches></app-user-matches>
+      </div>
+    </div>
+  </div>
+  

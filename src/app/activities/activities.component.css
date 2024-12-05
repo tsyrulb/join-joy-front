@@ -1,190 +1,352 @@
-/* Activities Container */
+/* Activities Page Container */
 .activities-container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+  background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc);
+  animation: gradientAnimation 10s ease infinite;
 }
 
-/* Title */
+/* Page Title */
 .page-title {
-  text-align: center;
+  font-family: 'Poppins', sans-serif;
   font-size: 24px;
-  margin-bottom: 20px;
   font-weight: bold;
   color: #333;
+  margin-bottom: 20px;
 }
 
 /* Activities Feed */
 .activities-feed {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-  align-items: center;
 }
 
 /* Activity Card */
 .activity-card {
-  width: 90%;
-  max-width: 600px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Background Image */
+.activity-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Background Image Section with Overlay */
 .activity-background {
-  width: 100%;
   height: 200px;
   background-size: cover;
   background-position: center;
+  position: relative;
+}
+
+.activity-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+}
+
+.activity-title {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: bold;
+  z-index: 2;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 }
 
 /* Content Section */
 .activity-content {
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
+  padding: 20px;
 }
 
-/* Header */
 .card-header {
-  background-color: #007bff;
-  color: #fff;
-  padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 18px;
-  font-weight: bold;
+  margin-bottom: 15px;
 }
 
-/* Body */
-.card-body {
-  padding: 15px;
+.activity-date {
   font-size: 14px;
-  color: #333;
+  color: #999;
 }
 
-.card-description {
-  margin-bottom: 10px;
-  line-height: 1.6;
+.activity-description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 15px;
+  line-height: 1.5;
 }
 
 /* Participants Section */
 .card-participants {
-  padding: 15px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: 15px;
 }
 
+.card-participants h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Participants List */
 .participants-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 0;
+  flex-wrap: wrap; /* Allow participants to wrap if they don't fit */
+  gap: 15px; /* Space between participant items */
+  list-style: none; /* Remove default bullet points */
   padding: 0;
-  list-style: none;
+  margin: 0;
 }
 
 .participant-item {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  padding: 10px;
+  flex-direction: column; /* Stack avatar and name vertically */
+  align-items: center; /* Center-align items */
+  text-align: center; /* Center-align text */
+  width: 100px; /* Fixed width to avoid inconsistent layouts */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.participant-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.participant-item:hover {
+  transform: scale(1.05); /* Slightly enlarge on hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Add shadow for hover effect */
 }
 
+/* Avatar Styles */
 .participant-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #007bff;
+  width: 60px; /* Circular avatar size */
+  height: 60px;
+  border-radius: 50%; /* Make it circular */
+  border: 2px solid #75006c; /* Add a border for better visibility */
+  object-fit: cover; /* Ensure the image fits nicely */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  transition: transform 0.3s ease; /* Add hover animation */
 }
-
+.participant-image:hover {
+  transform: scale(1.1);
+}
+/* Name Styles */
 .participant-name {
+  margin-top: 10px; /* Space between avatar and name */
   font-size: 14px;
   font-weight: bold;
-  color: #333;
+  color: #333; /* Neutral text color */
+  text-align: center; /* Center the name */
+  overflow: hidden; /* Prevent text overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+  white-space: nowrap; /* Prevent text wrapping */
+  width: 100%; /* Ensure consistent width with the container */
 }
-
-/* Footer */
-.card-footer {
-  padding: 15px;
-  border-top: 1px solid #ddd;
+.participant-actions {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
+  gap: 10px;
+  margin-left: auto; /* Push actions to the right */
+  animation: fadeIn 0.3s ease;
 }
 
-.card-footer .btn {
-  padding: 8px 15px;
-  font-size: 14px;
+/* General Button Styles */
+.participant-actions .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Circular button */
+  font-size: 18px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for modern look */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  border: none; /* Remove default border */
+  cursor: pointer;
 }
 
-.btn-danger {
-  background-color: #dc3545;
-  border-color: #dc3545;
-  color: #fff;
+/* "Rate User" Button (Favorite Icon) */
+.participant-actions .btn.btn-primary {
+  background: linear-gradient(135deg, #f48fb1, #ec407a); /* Pink gradient */
 }
 
-.btn-danger:hover {
-  background-color: #c82333;
-  border-color: #bd2130;
-}
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1050;
-  display: block;
+.participant-actions .btn.btn-primary:hover {
+  background: linear-gradient(135deg, #ec407a, #d81b60); /* Darker on hover */
+  transform: scale(1.1); /* Slightly enlarge */
 }
 
-.modal-dialog {
-  max-width: 500px;
-  margin: 1.75rem auto;
+/* "Remove Participant" Button (Person Remove Icon) */
+.participant-actions .btn.btn-danger {
+  background: linear-gradient(135deg, #ff8a65, #d84315); /* Orange gradient */
 }
 
-.modal-header {
+.participant-actions .btn.btn-danger:hover {
+  background: linear-gradient(135deg, #d84315, #bf360c); /* Darker on hover */
+  transform: scale(1.1); /* Slightly enlarge */
+}
+
+/* Icon Styling */
+.participant-actions .btn mat-icon {
+  font-size: 20px; /* Adjust icon size */
+  pointer-events: none; /* Ensure the icon doesn’t interfere with button click */
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Footer Section */
+.card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid #e9ecef;
-  background-color: #007bff;
-  color: #fff;
+  padding: 10px 20px;
+  border-top: 1px solid #eee;
 }
 
-.modal-body {
-  padding: 1rem;
-}
-
-.modal-footer {
+/* General Button Styles */
+.card-footer .btn {
   display: flex;
-  justify-content: flex-end;
-  padding: 1rem;
-  border-top: 1px solid #e9ecef;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 15px; /* Space around the text and icon */
+  border-radius: 8px; /* Rounded corners */
+  font-size: 16px; /* Text and icon size */
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for modern look */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  border: none; /* Remove default border */
+  cursor: pointer;
+  gap: 8px; /* Space between icon and text */
 }
 
-.modal .btn-close {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.25rem;
+/* Add Participant Button */
+.card-footer .btn.btn-primary {
+  background: linear-gradient(135deg, #64b5f6, #1e88e5); /* Blue gradient */
 }
-.participant-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #007bff;
+
+.card-footer .btn.btn-primary:hover {
+  background: linear-gradient(135deg, #1e88e5, #1565c0); /* Darker on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Delete Activity Button */
+.card-footer .btn.btn-danger {
+  background: linear-gradient(135deg, #ef5350, #e53935); /* Red gradient */
+}
+
+.card-footer .btn.btn-danger:hover {
+  background: linear-gradient(135deg, #e53935, #b71c1c); /* Darker on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Icon Styling */
+.card-footer .btn mat-icon {
+  font-size: 20px; /* Adjust icon size */
+  pointer-events: none; /* Prevent mouse interaction with the icon */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .activity-background {
+    height: 150px;
+  }
+
+  .activity-title {
+    font-size: 18px;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Gradient Animation */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+/* Participant Actions */
+.participant-actions {
+  margin-top: 10px; /* Space above the buttons */
+  display: flex;
+  gap: 8px; /* Space between buttons */
+  justify-content: center; /* Center align the buttons */
+  visibility: hidden; /* Initially hidden */
+  opacity: 0; /* Make them invisible */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
+}
+
+/* Show Buttons on Hover */
+.participant-item:hover .participant-actions {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Button Styles */
+.participant-actions button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.participant-actions button:hover {
+  transform: scale(1.1); /* Slight enlargement on hover */
+}
+
+/* Primary Button */
+.participant-actions .btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.participant-actions .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Danger Button */
+.participant-actions .btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.participant-actions .btn-danger:hover {
+  background-color: #a71d2a;
 }

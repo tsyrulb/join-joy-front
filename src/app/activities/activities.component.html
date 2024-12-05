@@ -1,9 +1,8 @@
 <div class="activities-container">
   <h2 class="page-title">My Activities</h2>
 
-  <!-- Activities Feed -->
   <div class="activities-feed">
-    <div *ngFor="let activity of activities" class="activity-card">
+    <div *ngFor="let activity of activities; let activityIndex = index" class="activity-card">
       <!-- Background Image -->
       <div
         class="activity-background"
@@ -11,30 +10,32 @@
           'background-image':
             'url(' + (activityImages[activity.name] || defaultImageUrl) + ')'
         }"
-      ></div>
+      >
+        <h3 class="activity-title">{{ activity.name }}</h3>
+      </div>
 
       <!-- Content Section -->
       <div class="activity-content">
         <div class="card-header">
-          <h3 class="activity-title">{{ activity.name }}</h3>
           <span class="activity-date">{{
             activity.date | date : "mediumDate"
           }}</span>
         </div>
-        <div class="card-body">
-          <p class="activity-description">{{ activity.description }}</p>
-          <p><strong>Location:</strong> {{ activity.location }}</p>
-        </div>
+        <p class="activity-description">{{ activity.description }}</p>
+        <p><strong>Location:</strong> {{ activity.location }}</p>
 
         <!-- Participants Section -->
         <div class="card-participants">
           <h4>Participants</h4>
           <ul class="participants-list">
             <li
-              *ngFor="let participant of activity.participants"
+              *ngFor="let participant of activity.participants; let i = index"
               class="participant-item"
             >
-              <div class="participant-info">
+              <div
+                class="participant-info"
+                (click)="toggleActionsVisibility(activityIndex, i)"
+              >
                 <img
                   [src]="
                     participant.pictureUrl
@@ -46,105 +47,48 @@
                 />
                 <span class="participant-name">{{ participant.userName }}</span>
               </div>
-              <div class="participant-actions">
+          
+              <div
+                class="participant-actions"
+                *ngIf="activity.visibleActionsIndex === i"
+              >
                 <button
                   *ngIf="+participant.userId !== +currentUserId"
-                  class="btn btn-primary btn-sm"
-                  (click)="
-                    openFeedbackModal(
-                      activity.activityId,
-                      participant.userId,
-                      'user'
-                    )
-                  "
+                  class="btn btn-primary"
+                  (click)="submitFeedbackAutomatically(activity.activityId, participant.userId)"
                 >
-                  Rate User
-                </button>
+                <mat-icon>favorite</mat-icon>
+              </button>
                 <button
                   *ngIf="canRemoveParticipant(activity)"
-                  class="btn btn-danger btn-sm"
+                  class="btn btn-danger"
                   (click)="
                     removeParticipant(activity.activityId, participant.userId)
                   "
                 >
-                  Remove
+                <mat-icon>person_remove</mat-icon>
                 </button>
               </div>
             </li>
           </ul>
-        </div>
-
-        <!-- Footer Section -->
-        <div class="card-footer">
-          <button
-            class="btn btn-primary"
-            (click)="addParticipant(activity.activityId)"
-          >
-            Add Participant
-          </button>
-          <button
-            class="btn btn-danger"
-            (click)="deleteActivity(activity.activityId)"
-          >
-            Delete Activity
-          </button>
+          
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Feedback Modal -->
-  <div
-    class="modal fade"
-    [class.show]="isFeedbackModalVisible"
-    tabindex="-1"
-    role="dialog"
-    style="display: block"
-    *ngIf="isFeedbackModalVisible"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            Rate {{ feedbackType === "user" ? "User" : "Activity" }}
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            (click)="closeFeedbackModal()"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <label for="rating" class="form-label">Rating (1-5):</label>
-            <select
-              id="rating"
-              class="form-control"
-              [(ngModel)]="feedbackData.rating"
-              name="rating"
-            >
-              <option *ngFor="let rating of [1, 2, 3, 4, 5]" [value]="rating">
-                {{ rating }}
-              </option>
-            </select>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-primary"
-            (click)="submitFeedback()"
-          >
-            Submit
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="closeFeedbackModal()"
-          >
-            Cancel
-          </button>
-        </div>
+      <!-- Footer Section -->
+      <div class="card-footer">
+        <button
+          class="btn btn-primary"
+          (click)="addParticipant(activity.activityId)"
+        >
+          <mat-icon>person_add</mat-icon> 
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="deleteActivity(activity.activityId)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
     </div>
   </div>

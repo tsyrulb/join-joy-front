@@ -4,19 +4,21 @@ import { CommonModule } from '@angular/common';
 import { GoogleSearchService } from '../google-search.service';
 import { FeedbackService } from '../feedback.service';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-user-activities',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './activities.component.html',
   styleUrls: ['./activities.component.css'],
 })
 export class ActivitiesComponent implements OnInit {
   activities: any[] = [];
   currentUserId: number = 0;
-  defaultImageUrl = './assets/defaultbackground.jpg';
+  defaultImageUrl = './assets/images/image.png';
   activityImages: { [key: string]: string } = {};
+  visibleActionsIndex: number | null = null; // Index of the participant whose actions are visible
 
   // Feedback Modal State
   isFeedbackModalVisible = false;
@@ -36,11 +38,26 @@ export class ActivitiesComponent implements OnInit {
     this.setUserId();
     this.loadUserActivities();
   }
-
+  // Toggle visibility for specific activity and participant
+  toggleActionsVisibility(
+    activityIndex: number,
+    participantIndex: number
+  ): void {
+    const activity = this.activities[activityIndex];
+    if (activity) {
+      activity.visibleActionsIndex =
+        activity.visibleActionsIndex === participantIndex
+          ? null
+          : participantIndex;
+    }
+  }
   loadUserActivities(): void {
     this.activityService.getUserActivitiesWithParticipants().subscribe({
       next: (data) => {
-        this.activities = data;
+        this.activities = data.map((activity) => ({
+          ...activity,
+          visibleActionsIndex: null, // Initialize a visibility index for each activity
+        }));
         this.activities.forEach((activity) =>
           this.fetchActivityImage(activity.name)
         );
@@ -52,6 +69,7 @@ export class ActivitiesComponent implements OnInit {
     });
   }
   openFeedbackModal(activityId: number, targetUserId: number | null, type: 'user' | 'activity'): void {
+    console.log('Opening feedback modal:', { activityId, targetUserId, type }); // Debug log
     this.isFeedbackModalVisible = true;
     this.feedbackType = type;
     this.feedbackData = {
@@ -60,14 +78,36 @@ export class ActivitiesComponent implements OnInit {
       targetUserId,
     };
   }
-
+  
+  submitFeedbackAutomatically(activityId: number, userId: number): void {
+    const feedbackRequest = {
+      userId: this.currentUserId,
+      activityId,
+      targetUserId: userId,
+      rating: 1, // Automatically send feedback with a rating of 1
+    };
+  
+    this.feedbackService.submitFeedback(feedbackRequest).subscribe({
+      next: () => {
+      },
+      error: (error) => {
+        console.error('Error sending feedback:', error);
+        alert('Failed to send feedback. Please try again.');
+      },
+    });
+  }
+  
   closeFeedbackModal(): void {
     this.isFeedbackModalVisible = false;
     this.feedbackType = null;
   }
 
   submitFeedback(): void {
-    if (!this.feedbackData.rating || this.feedbackData.rating < 1 || this.feedbackData.rating > 5) {
+    if (
+      !this.feedbackData.rating ||
+      this.feedbackData.rating < 1 ||
+      this.feedbackData.rating > 5
+    ) {
       alert('Please select a valid rating between 1 and 5.');
       return;
     }
@@ -75,7 +115,8 @@ export class ActivitiesComponent implements OnInit {
     const feedbackRequest = {
       userId: this.currentUserId,
       activityId: this.feedbackData.activityId,
-      targetUserId: this.feedbackType === 'user' ? this.feedbackData.targetUserId : null,
+      targetUserId:
+        this.feedbackType === 'user' ? this.feedbackData.targetUserId : null,
       rating: this.feedbackData.rating,
     };
 
@@ -126,9 +167,25 @@ export class ActivitiesComponent implements OnInit {
   }
 
   canRemoveParticipant(activity: any): boolean {
-    // Add logic to check if the current user can remove participants (e.g., is the creator of the activity)
-    const currentUserId = this.currentUserId; // Fetch user ID from token or service
-    return activity.createdById == currentUserId; // Replace `creatorId` with the actual field name
+    // Ensure activity and participants exist
+    if (
+      !activity ||
+      !activity.participants ||
+      activity.participants.length === 0
+    ) {
+      return false; // No participants, no one to remove
+    }
+
+    // Check if the current user is the creator of the activity
+    const currentUserId = this.currentUserId;
+
+    // If the current user is the creator AND there are other participants, return true
+    const isCreator = +activity.createdById === +currentUserId;
+    const otherParticipantsExist = activity.participants.some(
+      (participant: any) => +participant.userId !== +currentUserId
+    );
+
+    return isCreator && otherParticipantsExist; // Only allow removal if there are other participants
   }
 
   addParticipant(activityId: number): void {
@@ -176,5 +233,4 @@ export class ActivitiesComponent implements OnInit {
       });
     }
   }
-  
 }

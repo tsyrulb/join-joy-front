@@ -31,7 +31,7 @@ export const routes: Routes = [
   {
     path: 'activities',
     loadComponent: () =>
-      import('./activities/activities.component').then((m) => m.ActivitiesComponent),
+      import('./combined-page-component/combined-page-component.component').then((m) => m.CombinedPageComponentComponent),
   },
   {
     path: 'create-activity',
