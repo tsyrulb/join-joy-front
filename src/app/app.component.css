@@ -1,57 +1,122 @@
+:host, body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: block;
+  flex-direction: column; /* Align items vertically */
+  background: #fff;
+}
+
 /* Header styling */
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
   padding: 0 16px;
-  background-color: #f5f5f5;
-  height: 60px; /* Adjust this to your desired header height */
+  height: 60px;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 999;
+
+  /* Pastel gradient background for header */
+  background: linear-gradient(135deg, #A1C8F7, #6D9BF5);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Brand Logo */
+.brand-logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
 
+/* Tabs Container */
 .tab-container {
-  flex: 1; /* Make the tab group take up all available space */
-}
-/* Make the body content below the header scrollable */
-.page-content {
-  margin-top: 60px; /* Adjust this to match the header's height */
-  overflow-y: auto;
-  height: calc(100vh - 60px); /* Take the full screen height minus the header */
-  padding: 16px;
+  flex: 1;
+  margin: 0 20px;
 }
 
-mat-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+/* Mat Tab Group Customization */
+.nav-tab-group .mat-tab-header {
+  background: transparent;
+  box-shadow: none;
 }
 
+.nav-tab-group .mat-tab-labels {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-tab-group .mat-tab-label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.nav-tab-group .mat-tab-label:hover {
+  opacity: 1;
+}
+
+.nav-tab-group .mat-ink-bar {
+  background: #fff;
+}
+
+/* Selected Tab Styling */
+.nav-tab-group .mat-tab-label-active {
+  color: #fff;
+  font-weight: bolder;
+}
+
+/* Logout Container */
 .logout-container {
   display: flex;
   align-items: center;
 }
 
+/* Logout Button */
 .logout-button {
   border: none;
   background: none;
   cursor: pointer;
   display: flex;
   align-items: center;
+  color: #fff;
+  transition: transform 0.2s ease;
 }
 
-.logout-icon {
-  width: 24px; /* Adjust size as needed */
-  height: 24px;
+.logout-button:hover {
+  transform: scale(1.1);
 }
-.material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
+
+/* Material Icon Adjustments */
+.material-icons {
+  font-size: 24px;
+}
+
+/* Page Content */
+.page-content {
+  margin-top: 60px;
+  height: calc(100vh - 60px); /* Adjust height to fill remaining space */
+  overflow-y: auto;
+  flex: 1; /* Allow page-content to grow and fill available space */
+  background: #fff; /* Neutral background for routed components */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .tab-container {
+    margin: 0 10px;
+  }
+
+  .brand-logo {
+    font-size: 16px;
+  }
+
+  .nav-tab-group .mat-tab-label {
+    font-size: 13px;
+  }
 }

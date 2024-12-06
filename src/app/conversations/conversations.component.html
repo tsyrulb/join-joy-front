@@ -1,3 +1,4 @@
+<!-- conversations.component.html -->
 <div class="conversations-container">
   <!-- Conversations List -->
   <div class="conversation-list">
@@ -9,14 +10,19 @@
         placeholder="Search conversations..."
         [(ngModel)]="searchQuery"
         (input)="filterConversations()"
+        aria-label="Search conversations"
       />
     </div>
 
-    <ul>
+    <ul role="list">
       <li
         *ngFor="let conversation of filteredConversations"
         (click)="loadMessagesForConversation(conversation.id)"
         [class.selected]="conversation.id === selectedConversationId"
+        [attr.aria-label]="'Conversation with ' + getConversationParticipants(conversation)"
+        tabindex="0"
+        (keydown.enter)="loadMessagesForConversation(conversation.id)"
+        role="listitem"
       >
         <div class="conversation-participants">
           <p>
@@ -49,13 +55,20 @@
             </span>
           </p>
         </div>
+        <span class="unread-count" *ngIf="conversation.unreadCount > 0">
+          {{ conversation.unreadCount }}
+        </span>
       </li>
     </ul>
   </div>
 
   <!-- Messages Window -->
   <div class="messages-window" *ngIf="selectedConversationId">
+    <div *ngIf="isLoadingMessages" class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
     <app-messages
+      *ngIf="!isLoadingMessages"
       [conversationId]="selectedConversationId"
       [participants]="participants"
       [messages]="filteredMessages"

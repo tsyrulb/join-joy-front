@@ -1,19 +1,23 @@
+/* Global Settings */
+body, .activities-container, .activity-card, .participant-item, .card-footer .btn {
+  font-family: 'Poppins', sans-serif; /* Consistent, modern font throughout */
+}
+
 /* Activities Page Container */
 .activities-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  padding-top: 20px;
+  max-width: auto;
   background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc);
   animation: gradientAnimation 10s ease infinite;
 }
 
 /* Page Title */
 .page-title {
-  font-family: 'Poppins', sans-serif;
   font-size: 24px;
   font-weight: bold;
   color: #333;
   margin-bottom: 20px;
+  padding-left: 30px;
 }
 
 /* Activities Feed */
@@ -21,6 +25,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+  padding-top: 3%;
+  padding-bottom: 10%;
+  padding-left: 30%;
+  padding-right: 30%;
 }
 
 /* Activity Card */
@@ -39,7 +47,7 @@
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Background Image Section with Overlay */
+/* Background Image with Overlay */
 .activity-background {
   height: 200px;
   background-size: cover;
@@ -54,7 +62,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
 }
 
 .activity-title {
@@ -103,118 +111,118 @@
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #444;
 }
 
 /* Participants List */
 .participants-list {
   display: flex;
-  flex-wrap: wrap; /* Allow participants to wrap if they don't fit */
-  gap: 15px; /* Space between participant items */
-  list-style: none; /* Remove default bullet points */
+  flex-wrap: wrap;
+  gap: 15px;
+  list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .participant-item {
   display: flex;
-  flex-direction: column; /* Stack avatar and name vertically */
-  align-items: center; /* Center-align items */
-  text-align: center; /* Center-align text */
-  width: 100px; /* Fixed width to avoid inconsistent layouts */
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .participant-item:hover {
-  transform: scale(1.05); /* Slightly enlarge on hover */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Add shadow for hover effect */
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* Avatar Styles */
 .participant-image {
-  width: 60px; /* Circular avatar size */
+  width: 60px;
   height: 60px;
-  border-radius: 50%; /* Make it circular */
-  border: 2px solid #75006c; /* Add a border for better visibility */
-  object-fit: cover; /* Ensure the image fits nicely */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  transition: transform 0.3s ease; /* Add hover animation */
+  border-radius: 50%;
+  border: 2px solid #9b8fc2; /* Softer pastel purple border */
+  object-fit: cover;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
+
 .participant-image:hover {
   transform: scale(1.1);
 }
+
 /* Name Styles */
 .participant-name {
-  margin-top: 10px; /* Space between avatar and name */
+  margin-top: 10px;
   font-size: 14px;
   font-weight: bold;
-  color: #333; /* Neutral text color */
-  text-align: center; /* Center the name */
-  overflow: hidden; /* Prevent text overflow */
-  text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-  white-space: nowrap; /* Prevent text wrapping */
-  width: 100%; /* Ensure consistent width with the container */
-}
-.participant-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  margin-left: auto; /* Push actions to the right */
-  animation: fadeIn 0.3s ease;
+  color: #333;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }
 
-/* General Button Styles */
+/* Participant Actions */
+.participant-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.participant-item:hover .participant-actions {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Participant Action Buttons */
 .participant-actions .btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 50%; /* Circular button */
+  border-radius: 50%;
   font-size: 18px;
   color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for modern look */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, transform 0.2s ease;
-  border: none; /* Remove default border */
+  border: none;
   cursor: pointer;
 }
 
-/* "Rate User" Button (Favorite Icon) */
+/* Rate User Button */
 .participant-actions .btn.btn-primary {
-  background: linear-gradient(135deg, #f48fb1, #ec407a); /* Pink gradient */
+  background: linear-gradient(135deg, #FBC1D8, #F59AAD); /* Soft pastel pink gradient */
 }
 
 .participant-actions .btn.btn-primary:hover {
-  background: linear-gradient(135deg, #ec407a, #d81b60); /* Darker on hover */
-  transform: scale(1.1); /* Slightly enlarge */
+  background: linear-gradient(135deg, #F59AAD, #EC7B8E);
+  transform: scale(1.1);
 }
 
-/* "Remove Participant" Button (Person Remove Icon) */
+/* Remove Participant Button */
 .participant-actions .btn.btn-danger {
-  background: linear-gradient(135deg, #ff8a65, #d84315); /* Orange gradient */
+  background: linear-gradient(135deg, #FFD4B5, #FFA780); /* Soft pastel orange gradient */
 }
 
 .participant-actions .btn.btn-danger:hover {
-  background: linear-gradient(135deg, #d84315, #bf360c); /* Darker on hover */
-  transform: scale(1.1); /* Slightly enlarge */
+  background: linear-gradient(135deg, #FFA780, #FF8961);
+  transform: scale(1.1);
 }
 
-/* Icon Styling */
+/* Action Button Icons */
 .participant-actions .btn mat-icon {
-  font-size: 20px; /* Adjust icon size */
-  pointer-events: none; /* Ensure the icon doesn’t interfere with button click */
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  font-size: 20px;
+  pointer-events: none;
 }
 
 /* Footer Section */
@@ -226,47 +234,47 @@
   border-top: 1px solid #eee;
 }
 
-/* General Button Styles */
+/* Footer Buttons */
 .card-footer .btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 15px; /* Space around the text and icon */
-  border-radius: 8px; /* Rounded corners */
-  font-size: 16px; /* Text and icon size */
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: bold;
   color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for modern look */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, transform 0.2s ease;
-  border: none; /* Remove default border */
+  border: none;
   cursor: pointer;
-  gap: 8px; /* Space between icon and text */
+  gap: 8px;
 }
 
 /* Add Participant Button */
 .card-footer .btn.btn-primary {
-  background: linear-gradient(135deg, #64b5f6, #1e88e5); /* Blue gradient */
+  background: linear-gradient(135deg, #A1C8F7, #6D9BF5); /* Soft pastel blue gradient */
 }
 
 .card-footer .btn.btn-primary:hover {
-  background: linear-gradient(135deg, #1e88e5, #1565c0); /* Darker on hover */
-  transform: scale(1.05); /* Slightly enlarge on hover */
+  background: linear-gradient(135deg, #6D9BF5, #4E80E2);
+  transform: scale(1.05);
 }
 
 /* Delete Activity Button */
 .card-footer .btn.btn-danger {
-  background: linear-gradient(135deg, #ef5350, #e53935); /* Red gradient */
+  background: linear-gradient(135deg, #F5B3AD, #F57E7A); /* Soft pastel red gradient */
 }
 
 .card-footer .btn.btn-danger:hover {
-  background: linear-gradient(135deg, #e53935, #b71c1c); /* Darker on hover */
-  transform: scale(1.05); /* Slightly enlarge on hover */
+  background: linear-gradient(135deg, #F57E7A, #F2605D);
+  transform: scale(1.05);
 }
 
-/* Icon Styling */
+/* Footer Button Icons */
 .card-footer .btn mat-icon {
-  font-size: 20px; /* Adjust icon size */
-  pointer-events: none; /* Prevent mouse interaction with the icon */
+  font-size: 20px;
+  pointer-events: none;
 }
 
 /* Responsive Design */
@@ -296,57 +304,4 @@
   100% {
     background-position: 0% 50%;
   }
-}
-/* Participant Actions */
-.participant-actions {
-  margin-top: 10px; /* Space above the buttons */
-  display: flex;
-  gap: 8px; /* Space between buttons */
-  justify-content: center; /* Center align the buttons */
-  visibility: hidden; /* Initially hidden */
-  opacity: 0; /* Make them invisible */
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
-}
-
-/* Show Buttons on Hover */
-.participant-item:hover .participant-actions {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Button Styles */
-.participant-actions button {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.participant-actions button:hover {
-  transform: scale(1.1); /* Slight enlargement on hover */
-}
-
-/* Primary Button */
-.participant-actions .btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.participant-actions .btn-primary:hover {
-  background-color: #0056b3;
-}
-
-/* Danger Button */
-.participant-actions .btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.participant-actions .btn-danger:hover {
-  background-color: #a71d2a;
 }

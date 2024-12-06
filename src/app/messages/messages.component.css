@@ -2,11 +2,10 @@
 .messages-container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Full viewport height */
+  height: 90vh; /* Full viewport height */
   background: linear-gradient(135deg, #d8eafd, #f8d8e4, #ffe5cc); /* Pastel gradient */
   background-size: 400% 400%;
   animation: gradientAnimation 10s ease infinite;
-  padding: 10px;
   box-sizing: border-box;
 }
 

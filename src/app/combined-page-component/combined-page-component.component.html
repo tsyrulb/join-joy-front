@@ -1,19 +1,22 @@
 <div class="activities-with-sidenav">
-    <!-- Activities Section -->
-    <div class="activities-main">
-      <app-user-activities></app-user-activities>
-    </div>
-  
-    <!-- Sidebar Toggle Button (Outside Sidebar) -->
-    <div class="toggle-button" (click)="toggleSidebar()">
-      <mat-icon>{{ isSidebarOpen ? 'close' : 'arrow_forward' }}</mat-icon>
-    </div>
-  
-    <!-- User Matches Sidebar -->
-    <div class="user-matches-sidebar" [class.open]="isSidebarOpen">
-      <div class="user-matches-content">
-        <app-user-matches></app-user-matches>
-      </div>
+  <!-- Activities Section -->
+  <div class="activities-main faint-pattern">
+    <app-user-activities></app-user-activities>
+    <!-- Floating Action Button for adding new activities -->
+    <button class="fab-button" matTooltip="Add New Activity" (click)="addNewActivity()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <!-- Sidebar Toggle Button with tooltip -->
+  <div class="toggle-button" matTooltip="{{ isSidebarOpen ? 'Hide Matches' : 'Show Matches' }}" (click)="toggleSidebar()">
+    <mat-icon>{{ isSidebarOpen ? 'close' : 'arrow_forward' }}</mat-icon>
+  </div>
+
+  <!-- User Matches Sidebar -->
+  <div class="user-matches-sidebar" [class.open]="isSidebarOpen">
+    <div class="user-matches-content">
+      <app-user-matches></app-user-matches>
     </div>
   </div>
-  
+</div>

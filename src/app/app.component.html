@@ -1,11 +1,14 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
 <div class="header">
+  <div class="brand-logo">JoinJoy</div>
+
   <!-- Tab Group -->
   <div class="tab-container">
     <mat-tab-group
       [(selectedIndex)]="selectedIndex"
       (selectedIndexChange)="onTabChange($event)"
+      class="nav-tab-group"
     >
       <ng-container *ngIf="isAuthenticated(); else guestTabs">
         <mat-tab label="Profile"></mat-tab>
@@ -23,11 +26,13 @@
 
   <!-- Logout Button -->
   <div *ngIf="isAuthenticated()" class="logout-container">
-    <button mat-icon-button (click)="logout()" class="logout-button">
-      <span class="material-symbols-outlined"> logout </span>
+    <button mat-icon-button (click)="logout()" class="logout-button" matTooltip="Logout">
+      <span class="material-icons">logout</span>
     </button>
   </div>
 </div>
 
 <!-- Routed Components -->
-<router-outlet></router-outlet>
+<div class="page-content">
+  <router-outlet></router-outlet>
+</div>

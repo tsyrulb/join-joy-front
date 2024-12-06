@@ -1,4 +1,3 @@
-
 <div class="profile-container mat-app-background">
   <mat-sidenav-container class="sidenav-container">
     <!-- Sidenav Section -->
@@ -9,6 +8,7 @@
           (click)="selectSection('address')"
           [class.active]="selectedSection === 'address'"
         >
+        <mat-icon>home</mat-icon>
           Address
         </a>
         <a
@@ -16,6 +16,7 @@
           (click)="selectSection('photo')"
           [class.active]="selectedSection === 'photo'"
         >
+        <mat-icon>photo_camera</mat-icon>
           Profile Photo
         </a>
         <a
@@ -23,6 +24,7 @@
           (click)="selectSection('password')"
           [class.active]="selectedSection === 'password'"
         >
+        <mat-icon>lock</mat-icon>
           Password
         </a>
         <a
@@ -30,6 +32,7 @@
           (click)="selectSection('availability')"
           [class.active]="selectedSection === 'availability'"
         >
+        <mat-icon>event_busy</mat-icon>
           Availability
         </a>
         <a
@@ -37,11 +40,11 @@
           (click)="selectSection('details')"
           [class.active]="selectedSection === 'details'"
         >
+        <mat-icon>person</mat-icon>
           Personal Details
         </a>
       </mat-nav-list>
     </mat-sidenav>
-
     <!-- Main Content -->
     <mat-sidenav-content>
       <div class="content">

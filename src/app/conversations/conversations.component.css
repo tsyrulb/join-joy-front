@@ -1,20 +1,26 @@
+/* conversations.component.css */
+
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden; /* Prevent main page scrolling */
+  font-family: 'Poppins', sans-serif;
 }
+
 * {
   box-sizing: border-box;
 }
+
 .conversations-container {
   display: flex;
-  height: 100vh; /* Full viewport height */
+  height: 93vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
   background: linear-gradient(135deg, #d8eafd, #f8d8e4, #ffe5cc); /* Pastel gradient */
   background-size: 400% 400%;
   animation: gradientAnimation 10s ease infinite;
   overflow: hidden; /* Prevent unwanted scrollbars */
-  padding-top: 50px;
 }
 
 /* Optional animation for a dynamic gradient effect */
@@ -32,30 +38,41 @@ body {
 
 /* Conversation List */
 .conversation-list {
-  width: 30%;
-  overflow-y: auto; /* Add scrolling if content exceeds height */
-  background: rgba(255, 255, 255, 0.8); /* Slight white overlay for readability */
+  width: 30%; /* Adjust width as needed */
+  min-width: 250px; /* Prevent too narrow on small screens */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable internal scrolling */
+  background: rgba(255, 255, 255, 0.9); /* Slight white overlay for readability */
   border-right: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px 0 0 8px; /* Rounded corners on the left side */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05); /* Subtle shadow on the right side */
+  padding: 10px;
 }
 
-/* Search bar within the conversation list */
+/* Customize scrollbar for conversation-list */
+.conversation-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.conversation-list::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+/* Search Bar within the Conversation List */
 .search-bar {
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.8); /* Slight white overlay */
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
 }
 
 .search-bar input {
   width: 100%;
-  padding: 8px;
+  padding: 8px 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 20px; /* Rounded input for a modern look */
   font-size: 14px;
 }
 
-/* Conversations list items */
+/* Conversations List Items */
 .conversation-list ul {
   list-style: none;
   padding: 0;
@@ -63,19 +80,20 @@ body {
 }
 
 .conversation-list li {
+  position: relative;
   padding: 10px;
   cursor: pointer;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s ease, transform 0.2s ease;
   border-radius: 8px;
-  margin: 5px;
-  white-space: nowrap; /* Prevent wrapping */
+  margin: 5px 0;
+  white-space: nowrap; /* Prevent text wrapping */
   overflow: hidden;
   text-overflow: ellipsis; /* Add ellipsis for long text */
 }
 
 .conversation-list li:hover {
-  background: rgba(249, 216, 253, 0.6); /* Light pastel blue on hover */
+  background: rgba(249, 216, 253, 0.6); /* Light pastel purple on hover */
   transform: scale(1.02); /* Slightly enlarge the item */
 }
 
@@ -86,17 +104,45 @@ body {
   border: none; /* Remove border for selected item */
 }
 
+/* Unread Count Badge */
+.unread-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff8bf5; /* Pastel purple badge */
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 20px; /* Rounded badge */
+}
+
 /* Messages Window */
 .messages-window {
-  display:block;
-  height: 100vh;
-  width: 70%;
-  overflow-y: auto; /* Allow scrolling */
-  background: rgba(255, 255, 255, 0.8); /* Slight white overlay */
-  border-radius: 0 8px 8px 0; /* Rounded corners on the right side */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  padding-left: 10px;
-  padding-right: 10px;
+  flex: 1; /* Take remaining horizontal space */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable internal scrolling */
+  background: rgba(255, 255, 255, 0.95); /* Slight white overlay */
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05); /* Subtle shadow on the left side */
+  padding: 10px;
+}
+
+/* Customize scrollbar for messages-window */
+.messages-window::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-window::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 /* Add padding to the participants list */
@@ -106,18 +152,10 @@ body {
 }
 
 .conversation-participants span {
-  color: #000000; /* Purple for participant names */
+  color: #000000; /* Black for participant names */
 }
 
-.unread-count {
-  background-color: #ff8bf5; /* Purple badge for unread count */
-  color: white;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 20px; /* Rounded badge */
-  float: right;
-}
-/* Date separator styling */
+/* Date Separator Styling */
 .date-separator {
   text-align: center;
   margin: 10px 0;
@@ -126,7 +164,7 @@ body {
   font-weight: bold;
 }
 
-/* Message footer */
+/* Message Footer */
 .message-footer {
   margin-top: 5px;
   font-size: 12px;
@@ -142,7 +180,8 @@ body {
 .message-footer .message-sender {
   font-weight: bold;
 }
-/* Participant names styling */
+
+/* Participant Names Styling */
 .participant-names {
   display: inline-block;
   max-width: 100%;
@@ -150,4 +189,39 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: bottom;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .conversations-container {
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .conversation-list {
+    width: 100%;
+    min-width: 100%;
+    height: 40vh; /* Adjust based on preference */
+    border-radius: 0 0 0 0; /* Remove rounded corners */
+    border-right: none;
+    box-shadow: none;
+  }
+
+  .messages-window {
+    width: 100%;
+    height: 60vh; /* Adjust based on preference */
+    box-shadow: none;
+  }
+
+  .conversation-list li {
+    margin: 5px 0;
+  }
+
+  .unread-count {
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    padding: 3px 6px;
+  }
 }
