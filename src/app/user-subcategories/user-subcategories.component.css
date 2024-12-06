@@ -1,73 +1,84 @@
-:host, body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #fefefe;
+:root {
+  /* Make sure these match your global theme variables or adjust accordingly */
+  --background-color: #000;
+  --card-color: #16181C;
+  --sidebar-color: #16181C;
+  --text-color: #E1E1E1;
+  --accent-color: #1D9BF0;
+  --muted-text: #A8A8A8;
+  --danger-color: #F4212E;
+  --border-radius: 8px;
+  --transition-speed: 0.3s;
+  --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .combined-page-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 0 20px;
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--background-color);
+  overflow-y: auto; /* In case content overflows, scrollbar styling applies */
+  height: calc(100vh - 64px); /* Adjust if needed based on header height */
+}
+
+/* Subtle scrollbar styling */
+.combined-page-container {
+  scrollbar-width: thin;
+  scrollbar-color: #2F3336 #000;
+}
+.combined-page-container::-webkit-scrollbar {
+  width: 6px;
+}
+.combined-page-container::-webkit-scrollbar-track {
+  background: #000;
+}
+.combined-page-container::-webkit-scrollbar-thumb {
+  background: #2F3336;
+  border-radius: 3px;
+}
+.combined-page-container::-webkit-scrollbar-thumb:hover {
+  background: #4f5559;
 }
 
 .card-section {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  padding: 20px;
+  background-color: var(--card-color);
+  color: var(--text-color);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 .card-section h3 {
   margin-top: 0;
   margin-bottom: 16px;
   font-size: 20px;
-  color: #444;
-  position: relative;
-  padding-bottom: 8px;
+  font-weight: 600;
 }
 
-.card-section h3::after {
-  content: "";
-  display: block;
-  width: 40px;
-  height: 3px;
-  background: #A1C8F7;
-  border-radius: 2px;
-  margin-top: 4px;
-}
-
-/* Categories Grid */
 .categories-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
 }
 
 .category-card {
   position: relative;
-  width: 180px;
-  height: 100px;
-  border-radius: 10px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--transition-speed) ease;
 }
-
 .category-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transform: scale(1.03);
 }
 
 .category-background {
   width: 100%;
-  height: 100%;
+  height: 100px;
   background-size: cover;
   background-position: center;
+  filter: brightness(0.7);
 }
 
 .category-overlay {
@@ -75,161 +86,62 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-  display: flex;
-  align-items: flex-end;
-  padding: 10px;
+  padding: 8px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.7));
 }
 
 .category-name {
-  color: #fff;
-  font-size: 16px;
   margin: 0;
-  font-weight: bold;
-}
-
-/* Subcategory Chips */
-.subcategory-chip-list {
-  margin-top: 16px;
-}
-
-.clickable-chip.mat-chip {
-  background: linear-gradient(135deg, #A1C8F7, #6D9BF5);
+  font-size: 14px;
+  font-weight: 500;
   color: #fff;
-  font-weight: bold;
-  text-transform: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.subcategory-chip-list, .user-subcat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.custom-pastel-chip {
+  background: #2F3336;
+  color: var(--text-color);
+  border-radius: var(--border-radius);
+  padding: 4px 8px;
+  font-size: 14px;
+  transition: background var(--transition-speed) ease;
+}
+.custom-pastel-chip:hover {
+  background: #3C4043;
+}
+
+.clickable-chip {
   cursor: pointer;
-  transition: transform 0.2s ease;
-  margin-right: 8px;
-  margin-bottom: 8px;
 }
 
-.clickable-chip.mat-chip:hover {
-  transform: scale(1.05);
+.user-subcategories-section {
+  background: var(--card-color);
 }
 
-/* User Subcategories (Chips) */
-.user-subcat-chips {
-  margin-top: 16px;
+.user-subcat-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.user-subcat-chip.mat-chip {
-  background: linear-gradient(135deg, #FBC1D8, #F59AAD);
-  color: #fff;
-  font-weight: bold;
-  text-transform: none;
-  margin-right: 8px;
-  margin-bottom: 8px;
-  transition: transform 0.2s ease;
-}
-
-.user-subcat-chip.mat-chip:hover {
-  transform: scale(1.05);
-}
-
-/* mat-icon for chip remove */
 .user-subcat-chip mat-icon {
-  font-size: 18px;
-  margin-left: 8px;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .combined-page-container {
-    margin: 10px;
-    padding: 0 10px;
-  }
-
-  .card-section {
-    padding: 15px;
-  }
-
-  .card-section h3 {
-    font-size: 18px;
-  }
-
-  .category-card {
-    width: 45%;
-    height: 90px;
-  }
-
-  .clickable-chip.mat-chip,
-  .user-subcat-chip.mat-chip {
-    font-size: 14px;
-  }
-}
-/* user-categories.component.css */
-
-/* Ensure the styles target the mat-chip directly within your component */
-.combined-page-container .card-section .clickable-chip.mat-chip {
-  background: linear-gradient(135deg, #A1C8F7, #6D9BF5);
-  color: #fff;
-  font-weight: bold;
-  text-transform: none;
+  font-size: 16px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-  margin-right: 8px;
-  margin-bottom: 8px;
+  transition: color var(--transition-speed) ease;
 }
 
-.combined-page-container .card-section .clickable-chip.mat-chip:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #6D9BF5, #4E80E2);
+.user-subcat-chip mat-icon:hover {
+  color: var(--danger-color);
 }
 
-.combined-page-container .card-section .user-subcat-chip.mat-chip {
-  background: linear-gradient(135deg, #FBC1D8, #F59AAD);
-  color: #fff;
-  font-weight: bold;
-  text-transform: none;
-  margin-right: 8px;
-  margin-bottom: 8px;
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-.combined-page-container .card-section .user-subcat-chip.mat-chip:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #F59AAD, #D95699);
-}
-
-/* Remove default background color */
-.combined-page-container .card-section .mat-chip {
-  background-color: transparent;
-}
-/* user-categories.component.css */
-
-::ng-deep .clickable-chip.mat-chip.custom-pastel-chip {
-  background: linear-gradient(135deg, #A1C8F7, #6D9BF5);
-  color: #fff;
-  font-weight: bold;
-  text-transform: none;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-
-::ng-deep .clickable-chip.mat-chip.custom-pastel-chip:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #6D9BF5, #4E80E2);
-}
-
-::ng-deep .user-subcat-chip.mat-chip.custom-pastel-chip {
-  background: linear-gradient(135deg, #FBC1D8, #F59AAD);
-  color: #fff;
-  font-weight: bold;
-  text-transform: none;
-  margin-right: 8px;
-  margin-bottom: 8px;
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-::ng-deep .user-subcat-chip.mat-chip.custom-pastel-chip:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #F59AAD, #D95699);
-}
-
-/* Remove default background color */
-::ng-deep .mat-chip.custom-pastel-chip {
-  background-color: transparent;
+p {
+  margin: 0;
+  color: var(--muted-text);
+  font-size: 14px;
 }

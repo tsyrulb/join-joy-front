@@ -1,307 +1,166 @@
-/* Global Settings */
-body, .activities-container, .activity-card, .participant-item, .card-footer .btn {
-  font-family: 'Poppins', sans-serif; /* Consistent, modern font throughout */
-}
-
-/* Activities Page Container */
 .activities-container {
-  padding-top: 20px;
-  max-width: auto;
-  background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc);
-  animation: gradientAnimation 10s ease infinite;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 80px; /* Space for FAB */
 }
 
-/* Page Title */
 .page-title {
   font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
-  padding-left: 30px;
+  margin-bottom: 16px;
+  color: var(--text-color);
 }
 
-/* Activities Feed */
 .activities-feed {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  padding-top: 3%;
-  padding-bottom: 10%;
-  padding-left: 30%;
-  padding-right: 30%;
-}
-
-/* Activity Card */
-.activity-card {
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  gap: 16px;
+}
+
+.activity-card {
+  background-color: var(--card-color);
+  border-radius: var(--border-radius);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
 }
 
-.activity-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Background Image with Overlay */
+/* Activity background image section */
 .activity-background {
-  height: 200px;
+  position: relative;
+  width: 100%;
+  height: 200px; 
   background-size: cover;
   background-position: center;
-  position: relative;
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
 
+/* If the fetched image is large, we ensure it fits nicely */
 .activity-background::after {
-  content: '';
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
 }
 
 .activity-title {
   position: absolute;
-  bottom: 15px;
-  left: 20px;
+  bottom: 8px;
+  left: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
   color: #fff;
-  font-size: 22px;
-  font-weight: bold;
-  z-index: 2;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
 }
 
-/* Content Section */
 .activity-content {
-  padding: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
+.activity-details {
+  font-size: 14px;
 }
 
 .activity-date {
   font-size: 14px;
-  color: #999;
+  color: var(--muted-text);
+  margin-bottom: 8px;
 }
-
 .activity-description {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 15px;
-  line-height: 1.5;
+  margin: 8px 0;
+  color: var(--text-color);
+  line-height: 1.4;
 }
 
-/* Participants Section */
 .card-participants {
-  border-top: 1px solid #eee;
-  padding-top: 15px;
-  margin-top: 15px;
+  background-color: #101114;
+  padding: 16px;
+  border-radius: var(--border-radius);
 }
 
-.card-participants h4 {
+.participants-heading {
   font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #444;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
-/* Participants List */
 .participants-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 .participant-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  width: 100px;
+  gap: 8px;
+  padding: 8px 0;
+  position: relative;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.participant-item:not(:last-child) {
+  border-bottom: 1px solid #2F3336;
 }
 
-.participant-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+.participant-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Avatar Styles */
 .participant-image {
-  width: 60px;
-  height: 60px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid #9b8fc2; /* Softer pastel purple border */
   object-fit: cover;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
 }
 
-.participant-image:hover {
-  transform: scale(1.1);
-}
-
-/* Name Styles */
 .participant-name {
-  margin-top: 10px;
   font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
+  color: var(--text-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
+  max-width: 120px;
 }
 
-/* Participant Actions */
 .participant-actions {
-  margin-top: 10px;
+  position: absolute;
+  right: 0;
   display: flex;
   gap: 8px;
-  justify-content: center;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
-.participant-item:hover .participant-actions {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Participant Action Buttons */
-.participant-actions .btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 18px;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
+.icon-btn {
+  background: none;
   border: none;
+  color: var(--accent-color);
   cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background var(--transition-speed) ease;
+}
+.icon-btn:hover {
+  background: #2F3336;
+}
+.icon-btn.danger {
+  color: var(--danger-color);
 }
 
-/* Rate User Button */
-.participant-actions .btn.btn-primary {
-  background: linear-gradient(135deg, #FBC1D8, #F59AAD); /* Soft pastel pink gradient */
-}
-
-.participant-actions .btn.btn-primary:hover {
-  background: linear-gradient(135deg, #F59AAD, #EC7B8E);
-  transform: scale(1.1);
-}
-
-/* Remove Participant Button */
-.participant-actions .btn.btn-danger {
-  background: linear-gradient(135deg, #FFD4B5, #FFA780); /* Soft pastel orange gradient */
-}
-
-.participant-actions .btn.btn-danger:hover {
-  background: linear-gradient(135deg, #FFA780, #FF8961);
-  transform: scale(1.1);
-}
-
-/* Action Button Icons */
-.participant-actions .btn mat-icon {
-  font-size: 20px;
-  pointer-events: none;
-}
-
-/* Footer Section */
 .card-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  border-top: 1px solid #eee;
-}
-
-/* Footer Buttons */
-.card-footer .btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  border: none;
-  cursor: pointer;
   gap: 8px;
-}
-
-/* Add Participant Button */
-.card-footer .btn.btn-primary {
-  background: linear-gradient(135deg, #A1C8F7, #6D9BF5); /* Soft pastel blue gradient */
-}
-
-.card-footer .btn.btn-primary:hover {
-  background: linear-gradient(135deg, #6D9BF5, #4E80E2);
-  transform: scale(1.05);
-}
-
-/* Delete Activity Button */
-.card-footer .btn.btn-danger {
-  background: linear-gradient(135deg, #F5B3AD, #F57E7A); /* Soft pastel red gradient */
-}
-
-.card-footer .btn.btn-danger:hover {
-  background: linear-gradient(135deg, #F57E7A, #F2605D);
-  transform: scale(1.05);
-}
-
-/* Footer Button Icons */
-.card-footer .btn mat-icon {
-  font-size: 20px;
-  pointer-events: none;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .activity-background {
-    height: 150px;
-  }
-
-  .activity-title {
-    font-size: 18px;
-  }
-
-  .card-footer {
-    flex-direction: column;
-    gap: 10px;
-  }
-}
-
-/* Gradient Animation */
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  padding: 16px;
+  border-top: 1px solid #2F3336;
 }

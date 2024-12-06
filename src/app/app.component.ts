@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +19,15 @@ export class AppComponent {
   selectedIndex = 0;
 
   constructor(private router: Router) {
-    this.syncTabWithRoute();
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.syncTabWithRoute();
+      });
   }
 
-  // Sync selectedIndex with the current route
   private syncTabWithRoute(): void {
-    const routeMap = {
+    const routeMap: { [key: string]: number } = {
       '/profile': 0,
       '/user-subcategories': 1,
       '/conversations': 2,
@@ -37,7 +41,6 @@ export class AppComponent {
     this.selectedIndex = routeMap[currentRoute] ?? 0;
   }
 
-  // Navigate on tab change
   onTabChange(index: number): void {
     const authenticatedRoutes = [
       '/profile',
@@ -48,7 +51,6 @@ export class AppComponent {
       '/user-matches',
     ];
     const guestRoutes = ['/login', '/register'];
-
     const routes = this.isAuthenticated() ? authenticatedRoutes : guestRoutes;
     if (index >= 0 && index < routes.length) {
       this.router.navigate([routes[index]]);

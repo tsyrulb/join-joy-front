@@ -47,7 +47,7 @@
           *ngFor="let userSubcategory of userSubcategories"
           [removable]="true"
           (removed)="removeUserSubcategory(userSubcategory.subcategoryId)"
-          class="user-subcat-chip custom-pastel-chip" 
+          class="user-subcat-chip custom-pastel-chip"
         >
           {{ userSubcategory.subcategory?.name }}
           <mat-icon matChipRemove>cancel</mat-icon>

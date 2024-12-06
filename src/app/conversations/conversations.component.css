@@ -1,227 +1,140 @@
-/* conversations.component.css */
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Prevent main page scrolling */
-  font-family: 'Poppins', sans-serif;
-}
-
-* {
-  box-sizing: border-box;
+:root {
+  --background-color: #000;
+  --card-color: #16181C;
+  --sidebar-color: #16181C;
+  --text-color: #E1E1E1;
+  --accent-color: #1D9BF0;
+  --muted-text: #A8A8A8;
+  --danger-color: #F4212E;
+  --border-radius: 8px;
+  --transition-speed: 0.3s;
+  --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .conversations-container {
   display: flex;
-  height: 93vh; /* Full viewport height */
-  width: 100vw; /* Full viewport width */
-  background: linear-gradient(135deg, #d8eafd, #f8d8e4, #ffe5cc); /* Pastel gradient */
-  background-size: 400% 400%;
-  animation: gradientAnimation 10s ease infinite;
-  overflow: hidden; /* Prevent unwanted scrollbars */
+  height: calc(100vh - 64px); /* Adjust if header height differs */
+  background-color: var(--background-color);
+  overflow: hidden;
+  min-height: 0; /* Allows children to shrink properly */
+
 }
 
-/* Optional animation for a dynamic gradient effect */
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Conversation List */
+/* Left Conversation List Panel */
 .conversation-list {
-  width: 30%; /* Adjust width as needed */
-  min-width: 250px; /* Prevent too narrow on small screens */
+  width: 300px;
+  background-color: var(--sidebar-color);
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Enable internal scrolling */
-  background: rgba(255, 255, 255, 0.9); /* Slight white overlay for readability */
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05); /* Subtle shadow on the right side */
-  padding: 10px;
+  border-right: 1px solid #2F3336;
+  padding: 8px;
+  overflow-y: auto;
 }
 
-/* Customize scrollbar for conversation-list */
+/* Subtle scrollbar */
+.conversation-list {
+  scrollbar-width: thin;
+  scrollbar-color: #2F3336 #000;
+}
 .conversation-list::-webkit-scrollbar {
   width: 6px;
 }
-
+.conversation-list::-webkit-scrollbar-track {
+  background: #000;
+}
 .conversation-list::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+  background: #2F3336;
   border-radius: 3px;
 }
-
-/* Search Bar within the Conversation List */
-.search-bar {
-  margin-bottom: 10px;
+.conversation-list::-webkit-scrollbar-thumb:hover {
+  background: #4f5559;
 }
 
-.search-bar input {
+/* Search bar in conversation list */
+.search-bar {
+  margin-bottom: 8px;
+}
+.search-bar input.form-control {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 20px; /* Rounded input for a modern look */
+  background: #101114;
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  padding: 8px;
+  color: var(--text-color);
   font-size: 14px;
 }
+.search-bar input::placeholder {
+  color: var(--muted-text);
+}
 
-/* Conversations List Items */
+/* Conversations list items */
 .conversation-list ul {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
-
 .conversation-list li {
-  position: relative;
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  border-radius: 8px;
-  margin: 5px 0;
-  white-space: nowrap; /* Prevent text wrapping */
-  overflow: hidden;
-  text-overflow: ellipsis; /* Add ellipsis for long text */
-}
-
-.conversation-list li:hover {
-  background: rgba(249, 216, 253, 0.6); /* Light pastel purple on hover */
-  transform: scale(1.02); /* Slightly enlarge the item */
-}
-
-.conversation-list li.selected {
-  background: rgba(255, 206, 231, 0.9); /* Highlighted purple for selected */
-  color: white;
-  font-weight: bold;
-  border: none; /* Remove border for selected item */
-}
-
-/* Unread Count Badge */
-.unread-count {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #ff8bf5; /* Pastel purple badge */
-  color: white;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 20px; /* Rounded badge */
-}
-
-/* Messages Window */
-.messages-window {
-  flex: 1; /* Take remaining horizontal space */
   display: flex;
-  flex-direction: column;
-  overflow-y: auto; /* Enable internal scrolling */
-  background: rgba(255, 255, 255, 0.95); /* Slight white overlay */
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05); /* Subtle shadow on the left side */
-  padding: 10px;
-}
-
-/* Customize scrollbar for messages-window */
-.messages-window::-webkit-scrollbar {
-  width: 6px;
-}
-
-.messages-window::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-}
-
-/* Loading Spinner */
-.loading-spinner {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100%;
+  padding: 12px;
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background var(--transition-speed) ease;
+  position: relative;
+  outline: none;
+}
+.conversation-list li:hover {
+  background-color: #2F3336;
+}
+.conversation-list li.selected {
+  background-color: #2F3336;
+  border: 1px solid var(--accent-color);
 }
 
-/* Add padding to the participants list */
-.conversation-participants {
+/* Participant names in a conversation list item */
+.conversation-participants p {
+  margin: 0;
   font-size: 14px;
-  color: #555; /* Neutral text color */
+  color: var(--text-color);
 }
-
-.conversation-participants span {
-  color: #000000; /* Black for participant names */
-}
-
-/* Date Separator Styling */
-.date-separator {
-  text-align: center;
-  margin: 10px 0;
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.6);
-  font-weight: bold;
-}
-
-/* Message Footer */
-.message-footer {
-  margin-top: 5px;
-  font-size: 12px;
-  display: flex;
-  justify-content: space-between;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.message-footer .message-time {
-  margin-right: 5px;
-}
-
-.message-footer .message-sender {
-  font-weight: bold;
-}
-
-/* Participant Names Styling */
 .participant-names {
-  display: inline-block;
-  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: bottom;
+  display: inline-block;
+  max-width: 200px;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .conversations-container {
-    flex-direction: column;
-    width: 100%;
-    height: 100vh;
-  }
+/* Unread count badge */
+.unread-count {
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 2px 6px;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
-  .conversation-list {
-    width: 100%;
-    min-width: 100%;
-    height: 40vh; /* Adjust based on preference */
-    border-radius: 0 0 0 0; /* Remove rounded corners */
-    border-right: none;
-    box-shadow: none;
-  }
+/* Messages Window (Right Panel) */
+.messages-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  overflow: hidden;
+  position: relative;
+  min-height: 0; /* Ensures messages-list can shrink */
 
-  .messages-window {
-    width: 100%;
-    height: 60vh; /* Adjust based on preference */
-    box-shadow: none;
-  }
+}
 
-  .conversation-list li {
-    margin: 5px 0;
-  }
-
-  .unread-count {
-    top: 8px;
-    right: 8px;
-    font-size: 10px;
-    padding: 3px 6px;
-  }
+/* Loading spinner in messages window */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }

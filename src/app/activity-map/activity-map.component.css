@@ -1,557 +1,437 @@
-/* Full-page Map Layout */
 .map-page {
   position: relative;
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
-  background-color: #f8f9fa;
-  padding-top: 50px;
-
+  height: 100%;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
-/* Search Bar at Bottom */
+
 .search-container {
-  position: fixed; /* Stick it to the bottom */
-  bottom: 20px; /* Adjust distance from the bottom edge */
-  left: 50%;
-  transform: translateX(-50%);
+  position: absolute;
+  top: 3%;
+  left: 15%;
   z-index: 1000;
-  width: 90%;
-  max-width: 600px;
-  background: rgba(255, 255, 255, 0.9); /* Light overlay for visibility */
-  border-radius: 20px; /* Rounded corners for a modern look */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  padding: 10px; /* Padding for inner spacing */
-}
-
-.search-bar {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  gap: 8px;
+  transform: translate(-50%, -50%);
 }
 
-.search-bar input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
+.search-bar .form-control {
+  background: #101114;
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  font-size: 16px; /* bigger font */
+  padding: 12px; /* more padding */
+  width: 300px;  /* wider input */
+}
+.search-bar .form-control::placeholder {
+  color: var(--muted-text);
+}
+
+.search-bar .btn.btn-primary.rounded-btn {
+  background: var(--accent-color);
+  border: none;
+  border-radius: var(--border-radius);
+  color: #fff;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background var(--transition-speed) ease;
+}
+.search-bar .btn.btn-primary.rounded-btn:hover {
+  background: #1583d7;
+}
+
+/* Filter Toggle and Recommend Buttons */
+.filter-toggle-btn, .recommend-activities-btn {
+  position: absolute;
+  background: var(--card-color);
+  color: var(--text-color);
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
   font-size: 14px;
-}
-
-.search-bar button {
-  background-color: #ffaaaa;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease;
-}
-
-.search-bar button:hover {
-  background-color: #ff5e00;
-  cursor: pointer;
-}
-
-
-/* Filter Toggle Button */
-.filter-toggle-btn {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
+  gap: 4px;
+  transition: background var(--transition-speed) ease;
   z-index: 1000;
-  background-color: #ffaaaa;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 50px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.filter-toggle-btn:hover, .recommend-activities-btn:hover {
+  background: #2F3336;
+}
+.filter-toggle-btn {
+  top: 1%;
+  right: 5%;
 }
 
-.filter-toggle-btn mat-icon {
-  font-size: 20px;
+.recommend-activities-btn {
+  top: 1%;
+  right: 12%;
 }
-
-.filter-toggle-btn:hover {
-  background-color: #ff5e00;
-}
-
 /* Filter Menu */
 .filter-menu {
-  position: fixed;
-  bottom: 80px;
-  left: 20px;
-  z-index: 1001;
-  width: 300px;
-  max-height: 50vh;
-  overflow-y: auto;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transform: scaleY(0); /* Initial state: collapsed */
-  transform-origin: bottom;
-  transition: transform 0.3s ease-in-out;
-  scroll-behavior: smooth; /* Smooth scrolling */
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  background: var(--card-color);
+  color: var(--text-color);
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  width: 200px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  max-height: 300px;
 }
-.filter-menu::-webkit-scrollbar {
-  width: 6px;
+/* Common overlay styling: ensure they appear on top of map tiles */
+.filter-menu, .recommended-activities, .recommended-users {
+  position: absolute;
+  z-index: 2000; /* Higher than map tiles and markers (usually under 1000) */
+  background: var(--card-color);
+  color: var(--text-color);
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-.filter-menu::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 5px;
-}
-
-.filter-menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 164, 111, 0.8);
-  border-radius: 5px;
-}
 .filter-menu.show {
-  transform: scaleY(1); /* Expanded state */
+  display: flex;
 }
 
 .filter-menu-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px;
-  background-color: #ff5e00;
-  color: white;
-  font-weight: bold;
+  padding: 8px;
+  border-bottom: 1px solid #2F3336;
+}
+.filter-menu-header h5 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.filter-menu-header .btn-close {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
 }
 
 .filter-menu-body {
-  padding: 15px;
-}
-
-.filter-menu ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.filter-menu .list-group-item {
-  cursor: pointer;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  text-align: center;
-  background-color: white;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.filter-menu .list-group-item.active {
-  background-color: #ffaaaa;
-  color: white;
-}
-
-.filter-menu .list-group-item:hover {
-  background-color: #f1f1f1;
-}
-
-
-/* Fullscreen Map */
-.full-page-map {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-/* Recommended Users List */
-.recommended-users {
-  position: fixed;
-  top: 10%;
-  right: 20px;
-  width: 300px;
-  max-height: 80vh;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 8px;
   overflow-y: auto;
-  z-index: 1001;
-}
-.recommended-users .btn-success {
-  background: #ff5e00; /* Primary button color */
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.recommended-header {
-  background-color: #ffaaaa;
-  color: #fff;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-/* Find Activities Button */
-.recommend-activities-btn {
-  position: fixed;
-  bottom: 80px;
-  left: 20px;
-  z-index: 1000;
-  background-color: #ffaaaa;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 50px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.recommend-activities-btn:hover {
-  background-color: #ff5e00;
-}
-
-/* Recommended Activities Section */
-.recommended-activities {
-  position: fixed;
-  top: 20%;
-  right: 20px;
-  width: 280px; /* Adjusted width for compact layout */
-  max-height: 50vh;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow-y: auto; /* Allows smooth scrolling for overflowing content */
-  z-index: 1001;
-  font-family: Arial, sans-serif;
-  scrollbar-width: thin; /* Make the scrollbar thinner for modern browsers */
-  scrollbar-color: #ffaaaa #f1f1f1; /* Custom scrollbar colors */
-}
-/* Recommended Activities Custom Scrollbar for Webkit Browsers */
-.recommended-activities::-webkit-scrollbar {
-  width: 8px; /* Narrow scrollbar width */
-}
-
-.recommended-activities::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Light background for the scrollbar track */
-  border-radius: 10px;
-}
-
-.recommended-activities::-webkit-scrollbar-thumb {
-  background-color: #ffaaaa; /* Blue scrollbar thumb for alignment with the theme */
-  border-radius: 10px;
-  border: 2px solid #f1f1f1; /* Adds a gap between thumb and track for a sleek look */
-}
-
-
-.recommended-body {
-  padding: 10px;
-}
-
-.recommended-activities .list-group-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  transition: background-color 0.3s ease;
-}
-
-.recommended-body .list-group-item:hover {
-  background-color: #f1f1f1;
-}
-
-.recommended-body .list-group-item.selected {
-  background-color: #ffaaaa;
-  color: #fff;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ffaaaa;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.recommended-footer {
-  padding: 10px;
-  display: flex;
-  justify-content: flex-end;
-  background-color: #f8f9fa;
-  border-top: 1px solid #ddd;
-}
-
-.recommended-footer .btn {
-  width: 100%;
-}
-.recommended-header {
-  background-color: #ffaaaa;
-  color: #fff;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.recommended-body {
-  padding: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #2F3336 #000;
 }
 
 .list-group-item {
-  cursor: pointer;
-}
-
-.list-group-item:hover {
-  background-color: #f8f9fa;
-}
-/* Activity Details */
-.activity-details {
-  display: flex;
-  flex-direction: column;
-  gap: 5px; /* Space between name and date */
-  flex: 1; /* Ensure it takes available space */
-}
-
-.activity-name {
+  background: none;
+  color: var(--text-color);
+  border: none;
+  padding: 8px 0;
   font-size: 14px;
-  font-weight: bold;
-}
-
-.activity-date {
-  font-size: 12px;
-  color: #666;
-}
-
-/* Button */
-.activity-button {
-  margin-left: 15px; /* Space between date and button */
-}
-.rounded-btn {
-  background-color: #ffaaaa; /* Apply the desired color */
-  border-radius: 50%; /* Makes the button circular */
-  width: 40px; /* Adjust size as needed */
-  height: 40px; /* Adjust size as needed */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  font-size: 16px; /* Icon size */
-  color: white; /* White text/icon for better contrast */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow for modern design */
-  border: none; /* Removes any border */
-}
-
-.rounded-btn:hover {
-  background-color: #ff5e00; /* Darker shade for hover effect */
-  cursor: pointer; /* Pointer cursor on hover */
-}
-.modern-marker {
-  width: 40px;
-  height: 40px;
-  background-color: #ffaaaa;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.modern-marker:hover {
-  background-color: #ff5e00; /* Slightly darker on hover */
-}
-.custom-marker {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: #ffaaaa;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-.custom-marker:hover {
-  background-color: #ff5e00; /* Darker shade on hover */
   cursor: pointer;
+  transition: color var(--transition-speed) ease;
 }
-/* Modal Overlay */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
+.list-group-item:hover {
+  color: var(--accent-color);
+}
+.list-group-item.active {
+  color: var(--accent-color);
 }
 
-/* Modal Dialog */
-.modal-dialog {
-  background: #fff; /* White modal background */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-  overflow: hidden; /* Prevent content overflow */
-  width: 90%;
-  max-width: 500px; /* Maximum modal width */
+/* Recommended Activities Panel */
+.recommended-activities {
+  position: absolute;
+  top: 56px;
+  left: 16px;
+  background: var(--card-color);
+  color: var(--text-color);
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-/* Modal Header */
-.modal-header {
-  background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc); /* Pastel gradient header */
-  color: #333; /* Neutral text color */
-  padding: 15px;
-  font-size: 18px;
-  font-weight: bold;
+.recommended-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #2F3336;
+}
+.recommended-header h5 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.recommended-header .btn-close {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
 }
 
+.recommended-body {
+  padding: 8px;
+}
+.recommended-body .list-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  color: var(--text-color);
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.recommended-body .list-group-item:hover .activity-name {
+  color: var(--accent-color);
+}
+
+.activity-details {
+  display: flex;
+  flex-direction: column;
+}
+.activity-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+.activity-date {
+  font-size: 12px;
+  color: var(--muted-text);
+}
+
+/* Buttons inside recommended-activities */
+.recommended-body .btn.btn-primary.rounded-btn {
+  background: var(--accent-color);
+  border: none;
+  border-radius: var(--border-radius);
+  color: #fff;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.recommended-body .btn.btn-primary.rounded-btn:hover {
+  background: #1583d7;
+}
+
+/* Map itself */
+.full-page-map {
+  flex: 1;
+  margin-top: 56px; /* Space for top bars */
+  width: 100%;
+  height: 100%;
+  position: relative; 
+  z-index: 1;
+}
+/* Modal styling for create activity (if still used) */
+.modal.fade.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-dialog {
+  background: var(--card-color);
+  border-radius: var(--border-radius);
+  width: 400px;
+  max-width: 90%;
+  border: 1px solid #2F3336;
+}
+
+.modal-header.bg-primary.text-white {
+  background: var(--accent-color);
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+.modal-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
 .modal-header .btn-close {
   background: none;
   border: none;
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
+  color: #fff;
   cursor: pointer;
-  transition: color 0.3s ease;
 }
 
-.modal-header .btn-close:hover {
-  color: #e679de; /* Hover color for close button */
-}
-
-/* Modal Body */
 .modal-body {
-  padding: 20px;
+  padding: 16px;
 }
-
-.modal-body .form-group {
-  margin-bottom: 15px;
-}
-
-.modal-body .form-group label {
+.modal-body .form-label {
+  color: var(--text-color);
   font-size: 14px;
-  color: #555;
-  margin-bottom: 5px;
-  display: block;
+  margin-bottom: 4px;
 }
-
-.modal-body .form-group input,
-.modal-body .form-group textarea {
+.modal-body .form-control {
+  background: #101114;
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  padding: 8px;
+  font-size: 14px;
   width: 100%;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f9f9f9; /* Light background for inputs */
-  transition: border-color 0.3s ease;
+  margin-bottom: 12px;
+}
+.modal-body .form-control::placeholder {
+  color: var(--muted-text);
 }
 
-.modal-body .form-group input:focus,
-.modal-body .form-group textarea:focus {
-  border-color: #ff5e00; /* Highlight border on focus */
-  outline: none;
-}
-
-/* Modal Footer */
 .modal-footer {
-  padding: 15px;
+  padding: 8px 16px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  border-top: 1px solid #2F3336;
+}
+.modal-footer .btn-success {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.modal-footer .btn-success:hover {
+  background: #1583d7;
+}
+.modal-footer .btn-secondary {
+  background: #2F3336;
+  color: var(--text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.modal-footer .btn-secondary:hover {
+  background: #3C4043;
+}
+
+/* Recommended Users Section */
+.recommended-users {
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  background: var(--card-color);
+  color: var(--text-color);
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+}
+.recommended-users .list-group-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+  border-bottom: 1px solid #2F3336;
+  background: none;
+  color: var(--text-color);
+}
+
+/* When a user is selected, change background and text color for clear feedback */
+.recommended-users .list-group-item.selected {
+  background: linear-gradient(135deg, #a2d2ff, #bde0fe, #caffbf); 
+  color: #000; /* Dark text for contrast against the pastel background */
+}
+
+/* Optional: Adjust the avatar and name appearance on hover or selected state */
+.recommended-users .list-group-item:hover:not(.selected) {
+  background: #2F3336;
+}
+
+.recommended-footer {
+  padding: 8px;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  background: #f8f9fa; /* Light background for footer */
-  border-top: 1px solid #ddd;
 }
-
-.modal-footer .btn {
-  padding: 8px 16px;
+.recommended-footer .btn.btn-success {
+  background: var(--accent-color);
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-size: 14px;
   cursor: pointer;
-  font-size: 14px;
+}
+.recommended-footer .btn.btn-success:disabled {
+  background: #555;
+  cursor: not-allowed;
 }
 
-.modal-footer .btn-success {
-  background: #ff5e00; /* Primary button color */
-  color: white;
-  transition: background-color 0.3s ease;
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.list-group-item.selected {
+  background: #2F3336;
 }
 
-.modal-footer .btn-success:hover {
-  background: #590053; /* Darker shade on hover */
+/* Minimal scrollbar for recommended users and activities */
+.recommended-body, .filter-menu-body {
+  scrollbar-width: thin;
+  scrollbar-color: #2F3336 #000;
 }
-
-.modal-footer .btn-secondary {
-  background: #ddd; /* Secondary button color */
-  color: #333;
-  transition: background-color 0.3s ease;
+.recommended-body::-webkit-scrollbar, .filter-menu-body::-webkit-scrollbar {
+  width: 6px;
 }
-
-.modal-footer .btn-secondary:hover {
-  background: #bbb; /* Darker shade on hover */
+.recommended-body::-webkit-scrollbar-track, .filter-menu-body::-webkit-scrollbar-track {
+  background: #000;
 }
-/* Outer Popup Styling */
-.custom-popup-outer {
-  background: rgba(255, 255, 255, 0.95); /* Semi-transparent white for the outer popup */
-  border-radius: 12px; /* Rounded corners */
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-  border: none; /* Remove any default border */
-  padding: 0; /* Reset padding for full control */
+.recommended-body::-webkit-scrollbar-thumb, .filter-menu-body::-webkit-scrollbar-thumb {
+  background: #2F3336;
+  border-radius: 3px;
 }
-
-/* Popup Tip Styling */
-.custom-popup-outer .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.95); /* Match the outer popup background */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+.recommended-body::-webkit-scrollbar-thumb:hover, .filter-menu-body::-webkit-scrollbar-thumb:hover {
+  background: #4f5559;
 }
-
-/* Inner Content Styling */
-.custom-popup {
-  padding: 10px;
-  max-width: 250px;
-  font-family: Arial, sans-serif;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
-  background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc); /* Gradient background */
-  color: #333; /* Neutral text color */
-  text-align: left;
-}
-
-/* Title Styling */
-.custom-popup h4 {
-  margin: 0;
+.custom-marker-icon {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #a2d2ff, #bde0fe, #caffbf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
-  color: #333; /* Ensure contrast */
+  box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+  border: 2px solid #fff;
 }
 
-/* Paragraph Styling */
-.custom-popup p {
-  margin: 8px 0;
-  font-size: 14px;
+/* If you want to display a custom icon inside, you could do something like: */
+.custom-marker-icon::after {
+  content: '📍'; /* or another icon, or an <svg> (via HTML) */
+  font-size: 20px;
+}
+
+/* Popup styling (if needed) */
+.custom-popup-outer .custom-popup {
+  background: linear-gradient(135deg, #d8eafd, #f8d9e3, #ffe5cc);
+  color: #000;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  max-width: 250px;
 }

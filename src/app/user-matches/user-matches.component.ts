@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-user-matches',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatExpansionModule, MatTabsModule],
+  imports: [FormsModule, CommonModule, MatExpansionModule, MatTabsModule, MatIconModule],
   templateUrl: './user-matches.component.html',
   styleUrls: ['./user-matches.component.css'],
 })
@@ -22,6 +23,9 @@ export class UserMatchesComponent implements OnInit {
   createdSearch: string = '';
   receivedSearch: string = '';
 
+  // Add this line to define selectedTab
+  selectedTab: string = 'created';  // default tab can be 'created' or 'received'
+
   constructor(private matchingService: MatchingService) {}
 
   ngOnInit(): void {
@@ -32,7 +36,7 @@ export class UserMatchesComponent implements OnInit {
         return;
       }
       this.fetchUserMatches();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Initialization failed:', error.message);
       alert('User is not authenticated. Please log in again.');
     }

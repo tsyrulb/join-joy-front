@@ -1,9 +1,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-<div class="header">
-  <div class="brand-logo">JoinJoy</div>
+<div class="app-header">
+  <div class="brand-container">
+    <div class="brand-logo">JoinJoy</div>
+  </div>
 
-  <!-- Tab Group -->
   <div class="tab-container">
     <mat-tab-group
       [(selectedIndex)]="selectedIndex"
@@ -24,7 +25,6 @@
     </mat-tab-group>
   </div>
 
-  <!-- Logout Button -->
   <div *ngIf="isAuthenticated()" class="logout-container">
     <button mat-icon-button (click)="logout()" class="logout-button" matTooltip="Logout">
       <span class="material-icons">logout</span>
@@ -32,7 +32,6 @@
   </div>
 </div>
 
-<!-- Routed Components -->
 <div class="page-content">
   <router-outlet></router-outlet>
 </div>

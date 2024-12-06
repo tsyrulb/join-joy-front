@@ -1,114 +1,77 @@
-<!-- user-matches.component.html -->
+<div class="matches-container">
+  <mat-tab-group class="custom-tab-group">
+    <mat-tab label="Created Invitations">
+      <div class="matches-section">
+        <h5>Created Invitations</h5>
+        <input type="text"
+               class="search-input"
+               placeholder="Search created invitations..."
+               [(ngModel)]="createdSearch"
+               (input)="filterCreatedMatches()" />
+        <mat-accordion class="matches-accordion">
+          <mat-expansion-panel *ngFor="let match of filteredCreatedMatches" class="match-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Activity: {{ match.activity?.name || 'Unknown Activity' }}
+              </mat-panel-title>
+              <mat-panel-description>
+                Sent To: {{ match.user2?.name || 'Unknown User' }}
+                <span class="status-badge" [class.accepted]="match.isAccepted" [class.pending]="!match.isAccepted">
+                  {{ match.isAccepted ? 'Accepted' : 'Pending' }}
+                </span>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="match-details">
+              <p><strong>Description:</strong> {{ match.activity?.description }}</p>
+              <p><strong>Location:</strong> {{ match.activity?.location?.address }}</p>
+              <p><strong>Date:</strong> {{ match.activity?.date | date: 'short' }}</p>
+            </div>
+            <div class="button-group">
+              <button *ngIf="!match.isAccepted" class="text-btn danger" (click)="cancelInvitation(match.id)">
+                <mat-icon>cancel</mat-icon>
+                Cancel Invitation
+              </button>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </mat-tab>
 
-<div class="overlay">
-  <div class="container">
-    <!-- Material Tabs -->
-    <mat-tab-group>
-      <!-- Created Invitations Tab -->
-      <mat-tab label="Created Invitations">
-        <div class="card">
-          <div class="card-header">
-            <h5>Created Invitations</h5>
-          </div>
-          <div class="card-body">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search created invitations..."
-              [(ngModel)]="createdSearch"
-              (input)="filterCreatedMatches()"
-            />
-            <mat-accordion>
-              <mat-expansion-panel *ngFor="let match of filteredCreatedMatches">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    Activity: {{ match.activity?.name || 'Unknown Activity' }}
-                  </mat-panel-title>
-                  <mat-panel-description>
-                    Sent To: {{ match.user2?.name || 'Unknown User' }}
-                    <span
-                      class="badge"
-                      [ngClass]="{
-                        'bg-success': match.isAccepted,
-                        'bg-warning': !match.isAccepted
-                      }"
-                    >
-                      {{ match.isAccepted ? 'Accepted' : 'Pending' }}
-                    </span>
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                <div class="match-details">
-                  <p><strong>Description:</strong> {{ match.activity?.description }}</p>
-                  <p><strong>Location:</strong> {{ match.activity?.location?.address }}</p>
-                  <p><strong>Date:</strong> {{ match.activity?.date | date: 'short' }}</p>
-                </div>
-                <div class="button-group">
-                  <button
-                    *ngIf="!match.isAccepted"
-                    class="btn btn-danger"
-                    (click)="cancelInvitation(match.id)"
-                  >
-                    Cancel Invitation
-                  </button>
-                </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </div>
-        </div>
-      </mat-tab>
-
-      <!-- Received Invitations Tab -->
-      <mat-tab label="Received Invitations">
-        <div class="card">
-          <div class="card-header">
-            <h5>Received Invitations</h5>
-          </div>
-          <div class="card-body">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search received invitations..."
-              [(ngModel)]="receivedSearch"
-              (input)="filterReceivedMatches()"
-            />
-            <mat-accordion>
-              <mat-expansion-panel *ngFor="let match of filteredReceivedMatches">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    Activity: {{ match.activity?.name || 'Unknown Activity' }}
-                  </mat-panel-title>
-                  <mat-panel-description>
-                    From: {{ match.user1?.name || 'Unknown User' }}
-                    <span
-                      class="badge"
-                      [ngClass]="{
-                        'bg-success': match.isAccepted,
-                        'bg-warning': !match.isAccepted
-                      }"
-                    >
-                      {{ match.isAccepted ? 'Accepted' : 'Pending' }}
-                    </span>
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                <div class="match-details">
-                  <p><strong>Description:</strong> {{ match.activity?.description }}</p>
-                  <p><strong>Location:</strong> {{ match.activity?.location?.address }}</p>
-                  <p><strong>Date:</strong> {{ match.activity?.date | date: 'short' }}</p>
-                </div>
-                <div class="button-group">
-                  <button
-                    *ngIf="!match.isAccepted"
-                    class="btn btn-primary"
-                    (click)="acceptInvitation(match.id)"
-                  >
-                    Accept Invitation
-                  </button>
-                </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </div>
-        </div>
-      </mat-tab>
-    </mat-tab-group>
-  </div>
+    <mat-tab label="Received Invitations">
+      <div class="matches-section">
+        <h5>Received Invitations</h5>
+        <input type="text"
+               class="search-input"
+               placeholder="Search received invitations..."
+               [(ngModel)]="receivedSearch"
+               (input)="filterReceivedMatches()" />
+        <mat-accordion class="matches-accordion">
+          <mat-expansion-panel *ngFor="let match of filteredReceivedMatches" class="match-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Activity: {{ match.activity?.name || 'Unknown Activity' }}
+              </mat-panel-title>
+              <mat-panel-description>
+                From: {{ match.user1?.name || 'Unknown User' }}
+                <span class="status-badge" [class.accepted]="match.isAccepted" [class.pending]="!match.isAccepted">
+                  {{ match.isAccepted ? 'Accepted' : 'Pending' }}
+                </span>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="match-details">
+              <p><strong>Description:</strong> {{ match.activity?.description }}</p>
+              <p><strong>Location:</strong> {{ match.activity?.location?.address }}</p>
+              <p><strong>Date:</strong> {{ match.activity?.date | date: 'short' }}</p>
+            </div>
+            <div class="button-group">
+              <button *ngIf="!match.isAccepted" class="text-btn" (click)="acceptInvitation(match.id)">
+                <mat-icon>check_circle</mat-icon>
+                Accept Invitation
+              </button>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

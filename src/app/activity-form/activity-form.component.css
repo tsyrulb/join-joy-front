@@ -1,10 +1,55 @@
+:root {
+  --background-color: #000;
+  --card-color: #16181C;
+  --sidebar-color: #16181C;
+  --text-color: #E1E1E1;
+  --accent-color: #1D9BF0;
+  --muted-text: #A8A8A8;
+  --danger-color: #F4212E;
+  --border-radius: 8px;
+  --transition-speed: 0.3s;
+  --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 .form-container {
-    max-width: 800px; /* Limit the width of the form */
-    margin: 0 auto; /* Center the form */
-    padding: 20px; /* Add some padding */
-  }
-  
-  .map-section {
-    margin-top: 20px; /* Add space above the map section */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: var(--background-color);
+  padding: 16px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.map-section {
+  background-color: var(--card-color);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.submit-button {
+  align-self: flex-end;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 12px 24px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background var(--transition-speed) ease;
+}
+.submit-button:hover {
+  background-color: #1583d7;
+}

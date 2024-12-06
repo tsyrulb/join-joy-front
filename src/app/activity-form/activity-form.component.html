@@ -1,9 +1,10 @@
 <div class="form-container">
   <!-- Map Section -->
   <div class="map-section">
-    <h4>Select Location on the Map:</h4>
+    <h4 class="section-title">Select Location on the Map</h4>
     <app-activity-map (locationSelected)="onLocationSelected($event)"></app-activity-map>
   </div>
+
   <!-- Submit Button -->
-  <button (click)="createActivity()">Create Activity</button>
+  <button class="submit-button" (click)="createActivity()">Create Activity</button>
 </div>
