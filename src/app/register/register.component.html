@@ -1,16 +1,44 @@
-<form (ngSubmit)="onSubmit()">
-  <h3>Register</h3>
+<div class="register-container">
+  <!-- SVG Background -->
+  <div class="background-svg">
+    <svg width="100%" height="100%" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background: black -->
+      <rect width="1920" height="1080" fill="#000"/>
+    
+      <!-- "Join" text -->
+      <text x="45%" y="50%" 
+            text-anchor="end" 
+            dominant-baseline="middle"
+            fill="rgba(255,255,255,0.05)" 
+            font-size="400" 
+            font-family="Segoe UI, Roboto, Arial, sans-serif" 
+            font-weight="600"
+            letter-spacing="4">
+        Join
+      </text>
+    
+      <!-- "Joy" text -->
+      <text x="55%" y="50%" 
+            text-anchor="start" 
+            dominant-baseline="middle"
+            fill="rgba(255,255,255,0.05)" 
+            font-size="400" 
+            font-family="Segoe UI, Roboto, Arial, sans-serif" 
+            font-weight="600"
+            letter-spacing="4">
+        Joy
+      </text>
+    </svg>
+  </div>
 
-  <label for="username">Username</label>
-  <input type="text" id="username" [(ngModel)]="username" name="username" required />
-
-  <label for="email">Email</label>
-  <input type="email" id="email" [(ngModel)]="email" name="email" required />
-
-  <label for="password">Password</label>
-  <input type="password" id="password" [(ngModel)]="password" name="password" required />
-
-  <button type="submit" [disabled]="!username || !email || !password">Register</button>
-
-  <p *ngIf="registrationFailed" class="error-message">{{ errorMessage }}</p>
-</form>
+  <div class="register-form">
+    <h2>Sign Up</h2>
+    <input type="text" placeholder="Username" [(ngModel)]="username">
+    <input type="email" placeholder="Email" [(ngModel)]="email">
+    <input type="password" placeholder="Password" [(ngModel)]="password">
+    <input type="text" placeholder="City" [(ngModel)]="city"> <!-- Just a city string -->
+    
+    <button (click)="onSubmit()">Sign Up</button>
+    <p *ngIf="errorMessage">{{ errorMessage }}</p>
+  </div>  
+</div>

@@ -18,7 +18,7 @@
   <button class="filter-toggle-btn" (click)="toggleFilterMenu()">
     <mat-icon>filter_list</mat-icon> Filters
   </button>
-  
+
   <!-- Fetch Recommended Activities Button -->
   <button class="recommend-activities-btn" (click)="getRecommendedActivities()">
     <mat-icon>search</mat-icon> Find Activities
@@ -44,8 +44,10 @@
     </div>
   </div>
 
-  <!-- Fullscreen Map -->
-  <div id="map" class="full-page-map"></div>
+  <!-- Map Container (Position it and size it as desired) -->
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
 
   <!-- Recommended Activities Section -->
   <div class="recommended-activities" *ngIf="isRecommendedActivitiesVisible">
@@ -180,5 +182,12 @@
         Send Invitations
       </button>
     </div>
+  </div>
+</div>
+<!-- Success Animation Overlay -->
+<div class="invitation-success-overlay" *ngIf="showInvitationSuccess">
+  <div class="invitation-success-content">
+    <mat-icon class="success-icon">check_circle</mat-icon>
+    <p>Invitations Sent Successfully!</p>
   </div>
 </div>

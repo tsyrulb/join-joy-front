@@ -1,85 +1,51 @@
-<div class="background">
-  <div class="shape"></div>
-  <div class="shape"></div>
-</div>
-
-<form (ngSubmit)="onLogin()" #loginForm="ngForm">
-  <h3>Login Here</h3>
-
-  <!-- Username field -->
-  <label for="username">Username</label>
-  <input
-    type="text"
-    placeholder="Email or Phone"
-    id="username"
-    [(ngModel)]="username"
-    name="username"
-    required
-    #usernameInput="ngModel"
-  />
-  <div *ngIf="usernameInput.invalid && usernameInput.touched" class="alert alert-danger">
-    Username is required
-  </div>
-
-  <!-- Password field -->
-  <label for="password">Password</label>
-  <input
-    type="password"
-    placeholder="Password"
-    id="password"
-    [(ngModel)]="password"
-    name="password"
-    required
-    #passwordInput="ngModel"
-  />
-  <div *ngIf="passwordInput.invalid && passwordInput.touched" class="alert alert-danger">
-    Password is required
-  </div>
-
-  <!-- Submit Button -->
-  <button type="submit" [disabled]="!loginForm.form.valid">Log In</button>
-
-  <p>
-    Don't have an account? <a [routerLink]="['/register']">Register here</a>
-  </p>
-
-  <!-- Social Login Buttons -->
-  <div class="social">
-    <div class="go"><i class="fab fa-google"></i> Google</div>
-    <div class="fb"><i class="fab fa-facebook"></i> Facebook</div>
-  </div>
-</form>
-
-
-
-<!--
 <div class="login-container">
-  <h2>Login</h2>
-  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-    <label for="username">Username:</label>
-    <input
-      type="text"
-      id="username"
-      [(ngModel)]="username"
-      name="username"
-      required
-    />
+  <!-- SVG Background -->
+  <div class="background-svg">
+    <svg width="100%" height="100%" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background: black -->
+      <rect width="1920" height="1080" fill="#000"/>
+    
+      <!-- "Join" text -->
+      <text x="45%" y="50%" 
+            text-anchor="end" 
+            dominant-baseline="middle"
+            fill="rgba(255,255,255,0.05)" 
+            font-size="400" 
+            font-family="Segoe UI, Roboto, Arial, sans-serif" 
+            font-weight="600"
+            letter-spacing="4">
+        Join
+      </text>
+    
 
-    <label for="password">Password:</label>
-    <input
-      type="password"
-      id="password"
-      [(ngModel)]="password"
-      name="password"
-      required
-    />
+      <!-- "Joy" text -->
+      <text x="55%" y="50%" 
+            text-anchor="start" 
+            dominant-baseline="middle"
+            fill="rgba(255,255,255,0.05)" 
+            font-size="400" 
+            font-family="Segoe UI, Roboto, Arial, sans-serif" 
+            font-weight="600"
+            letter-spacing="4">
+        Joy
+      </text>
+    </svg>
+    
+    
+    
+    
+    
+  </div>
 
-    <button type="submit" [disabled]="!loginForm.form.valid">Login</button>
-  </form>
-
-
-  <p>
-    Don't have an account? <a [routerLink]="['/register']">Register here</a>
-  </p>
+  <div class="login-form">
+    <h2>Login</h2>
+    <input type="text" placeholder="Username" [(ngModel)]="username" />
+    <input type="password" placeholder="Password" [(ngModel)]="password" />
+    <button (click)="onLogin()">Login</button>
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <p class="switch-auth">
+      Don't have an account?
+      <a routerLink="/register">Register here</a>
+    </p>
+  </div>
 </div>
--->

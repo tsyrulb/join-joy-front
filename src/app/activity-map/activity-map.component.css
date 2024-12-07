@@ -1,12 +1,14 @@
 :root {
-  --background-color: #1c1f22;       /* Slightly lighter dark bg */
-  --card-color: #24272b;             /* Card/overlay background */
-  --text-color: #e1e1e1;
-  --accent-color: #1d9bf0;
-  --muted-text: #a8a8a8;
-  --border-radius: 8px;
+  --background-color: #1c1f22;
+  --card-color: #24272b;
+  --overlay-bg: rgba(36, 39, 43, 0.85);
+  --text-color: #ddd;
+  --accent-color: #7b1fa2;    /* Purple accent */
+  --muted-text: #9a9a9a;
+  --border-radius: 12px;
   --transition-speed: 0.3s;
   --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 html, body {
@@ -89,19 +91,20 @@ html, body {
   background: #3a3d40;
 }
 
-/* Filter Menu: a neat dropdown */
 .filter-menu {
   position: absolute;
   top: 60px;
   right: 16px;
-  background: var(--card-color);
+  backdrop-filter: blur(6px);
+  background: linear-gradient(135deg, #2c2f33 0%, #232629 100%);
   border: 1px solid #2f3336;
   border-radius: var(--border-radius);
-  width: 180px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  width: 200px;
   display: none;
   flex-direction: column;
   z-index: 2000;
+  box-shadow: var(--box-shadow);
+  animation: fadeIn var(--transition-speed) ease;
 }
 
 .filter-menu.show {
@@ -112,42 +115,52 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px;
+  padding: 8px 12px;
   border-bottom: 1px solid #2f3336;
 }
 .filter-menu-header h5 {
   font-size: 14px;
   margin: 0;
+  font-weight: 500;
+  color: var(--text-color);
 }
 .filter-menu-header .btn-close {
   background: none;
   border: none;
   color: var(--text-color);
   cursor: pointer;
+  font-size: 16px;
+  transition: color var(--transition-speed) ease;
+}
+.filter-menu-header .btn-close:hover {
+  color: var(--accent-color);
 }
 
 .filter-menu-body {
-  padding: 8px;
+  padding: 8px 12px;
   max-height: 200px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #2f3336 #232629;
 }
-
-/* List items inside filter menu */
 .filter-menu-body .list-group-item {
   padding: 6px 0;
   cursor: pointer;
-  font-size: 12px;
-  color: var(--text-color);
+  font-size: 13px;
   border: none;
   transition: color var(--transition-speed);
+}
+.list-group-item {
+  color:none;
+  background-color: none;
 }
 .filter-menu-body .list-group-item:hover {
   color: var(--accent-color);
 }
 .filter-menu-body .list-group-item.active {
   color: var(--accent-color);
+  background-color: #408af73b;
 }
-
 /* The Map Area */
 .full-page-map {
   flex: 1;
@@ -229,130 +242,180 @@ html, body {
 }
 
 /* Modal Styles */
+/* Create Activity Modal */
 .modal.fade.show {
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
 }
 .modal-dialog {
-  background: var(--card-color);
+  background: linear-gradient(135deg, #2c2f33, #232629);
   border-radius: var(--border-radius);
   border: 1px solid #2f3336;
-  width: 350px;
+  width: 380px;
   max-width: 90%;
+  box-shadow: var(--box-shadow);
+  animation: fadeIn var(--transition-speed) ease;
 }
+
 .modal-header.bg-primary.text-white {
   background: var(--accent-color);
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
-  padding: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+
+.bg-primary {
+  background-color: var(--accent-color) !important; /* Your chosen color and opacity */
+}
+
 .modal-header h5 {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
+  color: #eee;
 }
 .modal-header .btn-close {
   background: none;
   border: none;
-  color: #fff;
+  color: #eee;
   cursor: pointer;
+  font-size: 18px;
+  transition: color var(--transition-speed) ease;
 }
+.modal-header .btn-close:hover {
+  color: #ccc;
+}
+
 .modal-body {
-  padding: 12px;
+  padding: 16px;
 }
 .modal-body .form-control {
   background: #2e3033;
   border: none;
   border-radius: var(--border-radius);
   color: var(--text-color);
-  font-size: 12px;
-  padding: 8px;
-  margin-bottom: 8px;
+  font-size: 13px;
+  padding: 10px;
+  margin-bottom: 12px;
 }
 .modal-body .form-control::placeholder {
   color: var(--muted-text);
 }
+.modal-body label {
+  font-size: 13px;
+  color: var(--muted-text);
+  margin-bottom: 4px;
+  display: block;
+}
+
 .modal-footer {
-  padding: 8px;
+  padding: 12px 16px;
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 10px;
   border-top: 1px solid #2f3336;
 }
 .modal-footer .btn-success {
   background: var(--accent-color);
-  color: #fff;
+  color: #eee;
   border-radius: var(--border-radius);
   border: none;
-  font-size: 12px;
-  padding: 6px 12px;
+  font-size: 13px;
+  padding: 8px 16px;
+  transition: background var(--transition-speed) ease;
+}
+.modal-footer .btn-success:hover {
+  background: #6f1790;
 }
 .modal-footer .btn-secondary {
   background: #3a3d40;
-  color: var(--text-color);
+  color: #ddd;
   border: none;
   border-radius: var(--border-radius);
-  font-size: 12px;
-  padding: 6px 12px;
-}
-.modal-footer .btn-success:hover {
-  background: #1583d7;
+  font-size: 13px;
+  padding: 8px 16px;
+  transition: background var(--transition-speed) ease;
 }
 .modal-footer .btn-secondary:hover {
-  background: #4b4e51;
+  background: #474a4e;
 }
 
-/* Recommended Users Section */
+/* Simple fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.modal-content {
+  background-color: #00000024;
+}
+/* Recommended Users Window */
 .recommended-users {
   position: absolute;
   top: 60px;
   right: 16px;
-  background: var(--card-color);
+  backdrop-filter: blur(6px);
+  background: linear-gradient(135deg, #2c2f33 0%, #232629 100%);
   border: 1px solid #2f3336;
   border-radius: var(--border-radius);
-  width: 280px;
-  max-height: 300px;
+  width: 300px;
+  max-height: 350px;
   overflow-y: auto;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  box-shadow: var(--box-shadow);
   display: flex;
   flex-direction: column;
   z-index: 2000;
 }
+
 .recommended-users .recommended-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
+  padding: 8px 12px;
   border-bottom: 1px solid #2f3336;
 }
 .recommended-users .recommended-header h5 {
   margin: 0;
   font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
 }
 .recommended-users .recommended-header .btn-close {
   background: none;
   border: none;
   color: var(--text-color);
   cursor: pointer;
+  font-size: 16px;
+  transition: color var(--transition-speed) ease;
 }
+.recommended-users .recommended-header .btn-close:hover {
+  color: var(--accent-color);
+}
+
 .recommended-users .recommended-body {
-  padding: 8px;
+  padding: 8px 12px;
 }
 .recommended-users .recommended-body .list-group-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 0;
-  font-size: 12px;
+  padding: 8px;
+  font-size: 13px;
   border-bottom: 1px solid #2f3336;
-}
-.recommended-users .recommended-body .list-group-item.selected {
-  background: #2f3336;
+  border-radius: 6px;
+  transition: background var(--transition-speed), color var(--transition-speed);
+  color: var(--text-color);
 }
 .recommended-users .recommended-body .list-group-item:hover:not(.selected) {
-  background: #3a3d40;
+  background: #303336;
+}
+.recommended-users .recommended-body .list-group-item.selected {
+  background: var(--accent-color);
+  color: #eee;
 }
 .recommended-users .user-avatar {
   width: 24px;
@@ -361,17 +424,21 @@ html, body {
   object-fit: cover;
 }
 .recommended-users .recommended-footer {
-  padding: 8px;
+  padding: 8px 12px;
   display: flex;
   justify-content: flex-end;
 }
 .recommended-users .recommended-footer .btn.btn-success {
   background: var(--accent-color);
-  color: #fff;
+  color: #eee;
   border-radius: var(--border-radius);
   border: none;
-  font-size: 12px;
+  font-size: 13px;
   padding: 6px 12px;
+  transition: background var(--transition-speed) ease;
+}
+.recommended-users .recommended-footer .btn.btn-success:hover {
+  background: #6f1790; /* Slightly darker purple */
 }
 .recommended-users .recommended-footer .btn.btn-success:disabled {
   background: #555;
@@ -409,4 +476,80 @@ html, body {
   font-size: 16px;
   box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
   border: 2px solid #fff;
+}
+.map-container {
+  /* Position and size the map container as you like */
+  position: absolute; /* or relative if you prefer */
+  top: 50px;
+  bottom: 20px; /* adjust to desired location */
+  right: 0%; /* adjust to desired location */
+  width: 100%; /* your chosen width */
+  height: 800px; /* your chosen height */
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  overflow: hidden; /* ensure the map doesn't overflow */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.full-page-map {
+  /* Remove or modify these styles if they cause issues */
+  position: static; 
+  width: 100%;
+  height: 100%;
+}
+
+/* #map needs a defined size */
+#map {
+  width: 100%;
+  height: 100%;
+}
+.invitation-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 50, 0.5); /* deep blue and semi-transparent */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000; /* Above everything else */
+  animation: fadeInOut 3s forwards; /* 3s total: fade in, stay, fade out */
+}
+
+.invitation-success-content {
+  background: #1d9bf0; /* accent-color or a variant */
+  border-radius: 20px;
+  padding: 20px 40px;
+  text-align: center;
+  color: #fff;
+  font-family: var(--font-family);
+  box-shadow: 0 0 20px rgba(29, 155, 240, 0.5);
+  animation: popIn 0.5s ease forwards;
+}
+
+.invitation-success-content .success-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.invitation-success-content p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Keyframes for overlay fade */
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Keyframe for scaling the popup content */
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }

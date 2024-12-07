@@ -79,8 +79,8 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/Users/profile`, { headers });
   }
 
-  registerUser(name: string, email: string, password: string): Observable<any> {
-    const body = { name, email, password };
+  registerUser(name: string, email: string, password: string, city: string): Observable<any> {
+    const body = { name, email, password, city };
     return this.http.post(`${this.apiUrl}/Users/register`, body, {
       responseType: 'text',
     });

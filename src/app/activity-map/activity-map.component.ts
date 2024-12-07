@@ -32,7 +32,7 @@ export class ActivityMapComponent implements OnDestroy {
   isModalVisible = false;
   loggedInUserId: number | null = null; // User ID for fetching recommendations
   isRecommendedActivitiesVisible = false;
-
+  showInvitationSuccess = false;
   activityFormData = {
     name: '',
     description: '',
@@ -59,23 +59,23 @@ export class ActivityMapComponent implements OnDestroy {
       this.map.remove();
     }
     this.setLoggedInUserId();
-  
+
     this.map = L.map('map').setView([40.7128, -74.006], 13); // Default to New York City
-  
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
     }).addTo(this.map);
-  
+
     this.markers.addTo(this.map);
-  
+
     this.map.on('click', (event: L.LeafletMouseEvent) => {
       const { lat, lng } = event.latlng;
-  
+
       // Remove the previous marker if it exists
       if (this.selectedMarker) {
         this.map.removeLayer(this.selectedMarker);
       }
-  
+
       // Pastel gradient for the selected location marker
       const selectedIcon = L.divIcon({
         className: 'modern-marker',
@@ -98,30 +98,31 @@ export class ActivityMapComponent implements OnDestroy {
         iconSize: [40, 40],
         iconAnchor: [20, 40],
       });
-  
-      this.selectedMarker = L.marker([lat, lng], { icon: selectedIcon }).addTo(this.map);
+
+      this.selectedMarker = L.marker([lat, lng], { icon: selectedIcon }).addTo(
+        this.map
+      );
       this.locationSelected.emit({ latitude: lat, longitude: lng });
     });
-  
+
     // Assign the component instance to a global variable
     window.angularComponent = this;
   }
-  
 
   toggleUserSelection(index: number): void {
     this.visibleUsers[index].selected = !this.visibleUsers[index].selected;
   }
   addActivityMarkers(activities: any[]): void {
     this.markers.clearLayers(); // Clear existing markers
-  
+
     activities.forEach((activity) => {
       const { latitude, longitude, address } = activity.location;
       const { name, description, date } = activity;
-  
+
       if (latitude && longitude) {
         // Pastel gradient icon for activities
         const activityIcon = L.divIcon({
-          className: 'custom-marker', 
+          className: 'custom-marker',
           html: `
             <div style="
               border-radius: 50%;
@@ -141,7 +142,7 @@ export class ActivityMapComponent implements OnDestroy {
           iconSize: [40, 40],
           iconAnchor: [20, 40],
         });
-  
+
         const marker = L.marker([latitude, longitude], {
           icon: activityIcon,
         }).addTo(this.markers).bindPopup(`
@@ -159,22 +160,23 @@ export class ActivityMapComponent implements OnDestroy {
               <h4 style="margin: 0; font-size: 18px;">${name}</h4>
               <p style="margin: 8px 0; font-size: 14px;">
                 ${description || 'No description available'}<br>
-                <strong>Date:</strong> ${new Date(date).toLocaleDateString()}<br>
+                <strong>Date:</strong> ${new Date(
+                  date
+                ).toLocaleDateString()}<br>
                 <strong>Address:</strong> ${address || 'No address provided'}
               </p>
             </div>
           </div>
         `);
-  
+
         marker.on('click', () => {
           console.log(`Clicked on activity: ${name}`);
         });
       }
     });
-  
+
     this.map?.addLayer(this.markers); // Add updated markers to the map
   }
-  
 
   setLoggedInUserId(): void {
     const token = localStorage.getItem('token');
@@ -213,17 +215,17 @@ export class ActivityMapComponent implements OnDestroy {
   }
   focusOnActivity(activity: any): void {
     const { name, description, date, location } = activity;
-  
+
     if (location && location.latitude && location.longitude) {
       const { latitude, longitude, address } = location;
-  
+
       // Format date and time
       const formattedDate = new Date(date).toLocaleDateString();
       const formattedTime = new Date(date).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
       });
-  
+
       // Find the existing marker
       const marker = this.markers.getLayers().find((layer: any) => {
         return (
@@ -232,11 +234,12 @@ export class ActivityMapComponent implements OnDestroy {
           layer.getLatLng().lng === longitude
         );
       });
-  
+
       if (marker) {
         // Update the popup content with consistent pastel style
         marker
-          .bindPopup(`
+          .bindPopup(
+            `
             <div style="
               padding: 10px; 
               max-width: 250px; 
@@ -253,9 +256,10 @@ export class ActivityMapComponent implements OnDestroy {
                 <strong>Address:</strong> ${address || 'No address provided'}
               </p>
             </div>
-          `)
+          `
+          )
           .openPopup();
-  
+
         // Focus on the marker
         this.map?.setView([latitude, longitude], 14);
       } else {
@@ -265,7 +269,6 @@ export class ActivityMapComponent implements OnDestroy {
       alert('Location data not available for this activity.');
     }
   }
-  
 
   closeRecommendedActivities(): void {
     this.isRecommendedActivitiesVisible = false;
@@ -353,6 +356,12 @@ export class ActivityMapComponent implements OnDestroy {
       .subscribe({
         next: () => {
           this.isRecommendedUsersModalVisible = false;
+          // Trigger the success animation
+          this.showInvitationSuccess = true;
+          // Hide it after 3 seconds
+          setTimeout(() => {
+            this.showInvitationSuccess = false;
+          }, 3000);
         },
         error: (error) => {
           console.error('Error sending invitations:', error);
@@ -526,24 +535,25 @@ export class ActivityMapComponent implements OnDestroy {
       console.error('Map is not initialized!');
       return;
     }
-  
+
     this.markers.clearLayers();
     this.typeFiltersMarker = {}; // Reset type filters
-  
+
     rawResponse.forEach((rawEntry) => {
       const lines = rawEntry.split('\n');
       const typeMatch = rawEntry.match(/Nearby places for (.*?) = (.*?):/);
-  
+
       const primaryType = typeMatch ? typeMatch[1].trim() : 'Unknown';
-      const subType = typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
-  
+      const subType =
+        typeMatch && typeMatch[2] ? typeMatch[2].trim() : 'General';
+
       const fullType = `${capitalize(primaryType)}, ${capitalize(subType)}`;
-  
+
       lines.forEach((line) => {
         const nameMatch = line.match(/Name: (.*?),/);
         const latitudeMatch = line.match(/Latitude: ([^,]*)/);
         const longitudeMatch = line.match(/Longitude: ([^,]*)/);
-  
+
         const name = nameMatch ? nameMatch[1].trim() : null;
         const lat =
           latitudeMatch && latitudeMatch[1]
@@ -553,11 +563,11 @@ export class ActivityMapComponent implements OnDestroy {
           longitudeMatch && longitudeMatch[1]
             ? parseFloat(longitudeMatch[1])
             : NaN;
-  
+
         if (!name || isNaN(lat) || isNaN(lon)) {
           return;
         }
-  
+
         // Unified pastel marker for nearby places
         const placeIcon = L.divIcon({
           className: 'modern-marker',
@@ -580,7 +590,7 @@ export class ActivityMapComponent implements OnDestroy {
           iconSize: [40, 40],
           iconAnchor: [20, 40],
         });
-  
+
         const marker = L.marker([lat, lon], {
           icon: placeIcon,
         }).bindPopup(`
@@ -619,9 +629,9 @@ export class ActivityMapComponent implements OnDestroy {
             </button>
           </div>
         `);
-  
+
         this.markers.addLayer(marker);
-  
+
         if (!this.typeFiltersMarker[fullType]) {
           this.typeFiltersMarker[fullType] = {
             visible: true,
@@ -632,10 +642,9 @@ export class ActivityMapComponent implements OnDestroy {
         this.typeFiltersMarker[fullType].markers.push(marker);
       });
     });
-  
+
     this.map.addLayer(this.markers);
   }
-  
 
   toggleMarkers(type: string): void {
     const filter = this.typeFiltersMarker[type];

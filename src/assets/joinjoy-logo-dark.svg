@@ -1,0 +1,26 @@
+<svg width="100%" height="100%" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+      <!-- Dark background gradient from a deep blue-black to a slightly lighter blue-black -->
+      <stop offset="0%" stop-color="#0B0F16"/>
+      <stop offset="100%" stop-color="#131821"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rect to fill background -->
+  <rect width="1920" height="1080" fill="url(#bgGradient)"/>
+
+  <!-- Semi-transparent "JoinJoy" text as watermark -->
+  <text x="50%" y="50%" 
+        text-anchor="middle" 
+        dominant-baseline="middle"
+        fill="rgba(255,255,255,0.05)" 
+        font-size="200" 
+        font-family="Segoe UI, Roboto, Arial, sans-serif" 
+        font-weight="600"
+        letter-spacing="2"
+        >
+    JoinJoy
+  </text>
+</svg>
