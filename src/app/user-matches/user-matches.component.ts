@@ -6,11 +6,13 @@ import { CommonModule } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { NotificationService } from '../notification.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user-matches',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatExpansionModule, MatTabsModule, MatIconModule],
+  imports: [FormsModule, CommonModule, MatExpansionModule, MatTabsModule, MatIconModule, MatSnackBarModule],
   templateUrl: './user-matches.component.html',
   styleUrls: ['./user-matches.component.css'],
 })
@@ -26,7 +28,7 @@ export class UserMatchesComponent implements OnInit {
   // Add this line to define selectedTab
   selectedTab: string = 'created';  // default tab can be 'created' or 'received'
 
-  constructor(private matchingService: MatchingService) {}
+  constructor(private matchingService: MatchingService, private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     try {
@@ -38,7 +40,7 @@ export class UserMatchesComponent implements OnInit {
       this.fetchUserMatches();
     } catch (error: any) {
       console.error('Initialization failed:', error.message);
-      alert('User is not authenticated. Please log in again.');
+      this.notificationService.showMessage('User is not authenticated. Please log in again.');
     }
   }
 
@@ -54,7 +56,6 @@ export class UserMatchesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching matches:', error);
-        alert('Failed to fetch matches. Please try again.');
       },
     });
   }
@@ -62,12 +63,12 @@ export class UserMatchesComponent implements OnInit {
   acceptInvitation(matchId: number): void {
     this.matchingService.acceptInvitation(matchId).subscribe({
       next: () => {
-        alert('Invitation accepted successfully.');
+        this.notificationService.showMessage('Invitation accepted successfully.');
         this.fetchUserMatches();
       },
       error: (error) => {
         console.error('Error accepting invitation:', error);
-        alert('Failed to accept invitation. Please try again.');
+        this.notificationService.showMessage('Failed to accept invitation. Please try again.');
       },
     });
   }
@@ -75,12 +76,12 @@ export class UserMatchesComponent implements OnInit {
   cancelInvitation(matchId: number): void {
     this.matchingService.cancelInvitation(matchId).subscribe({
       next: () => {
-        alert('Invitation canceled successfully.');
+        this.notificationService.showMessage('Invitation canceled successfully.');
         this.fetchUserMatches(); // Refresh the list after canceling
       },
       error: (error) => {
         console.error('Error canceling invitation:', error);
-        alert('Failed to cancel invitation. Please try again.');
+        this.notificationService.showMessage('Failed to cancel invitation. Please try again.');
       },
     });
   }

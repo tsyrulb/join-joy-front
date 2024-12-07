@@ -52,7 +52,8 @@ export class ProfileComponent implements OnInit {
     profilePhoto: '',
     gender: '',
     dateOfBirth: '',
-    location: { id: 0, latitude: 0, longitude: 0, address: '' },
+    location: { id: 0, latitude: 0, longitude: 0, address: ''},
+    distanceWillingToTravel: 0
   };
   selectedFile: File | null = null;
   selectedSection: string = 'details';
@@ -300,6 +301,7 @@ export class ProfileComponent implements OnInit {
           ? new Date(this.user.dateOfBirth)
           : null,
         address: this.user.location?.address || '',
+        distanceWillingToTravel: this.user.distanceWillingToTravel
       };
 
       this.apiService.updateUser(this.user.id, updatedUser).subscribe({

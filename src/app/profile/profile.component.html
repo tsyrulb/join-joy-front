@@ -175,6 +175,10 @@
                 <mat-option value="Other">Other</mat-option>
               </mat-select>
             </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Distance Willing to Travel (km)</mat-label>
+              <input matInput type="number" [(ngModel)]="user.distanceWillingToTravel" name="distanceWillingToTravel" />
+            </mat-form-field>
             <button mat-raised-button color="primary" type="submit">Save Details</button>
           </form>
         </div>

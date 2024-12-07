@@ -119,4 +119,5 @@ export interface UpdateUserRequest {
   dateOfBirth?: Date; // Ensure dateOfBirth is a string to match the API
   address?: string;
   gender?: string;
+  distanceWillingToTravel?: Number;
 }

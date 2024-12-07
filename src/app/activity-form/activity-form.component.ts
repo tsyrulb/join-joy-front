@@ -4,11 +4,16 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivityMapComponent } from '../activity-map/activity-map.component';
-
+import { NotificationService } from '../notification.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-activity-form',
   standalone: true,
-  imports: [FormsModule, CommonModule, ActivityMapComponent],
+  imports: [FormsModule, 
+    CommonModule, 
+    ActivityMapComponent,
+    MatSnackBarModule,
+  ],
   templateUrl: './activity-form.component.html',
   styleUrls: ['./activity-form.component.css'],
 })
@@ -22,7 +27,9 @@ export class ActivityFormComponent {
     createdById: null as number | null,
   };
 
-  constructor(private activityService: ActivityService, private router: Router) {
+  constructor(private activityService: ActivityService, 
+    private router: Router, 
+    private notificationService: NotificationService) {
     this.setCreatedById();
   }
 
@@ -54,13 +61,13 @@ export class ActivityFormComponent {
     const { name, date, latitude, longitude, createdById } = this.activityData;
 
     if (!name || !date || latitude === null || longitude === null || createdById === null) {
-      alert('Please fill in all the fields, select a location, and ensure you are logged in.');
+      this.notificationService.showMessage('Please fill in all the fields, select a location, and ensure you are logged in.');
       return;
     }
 
     this.activityService.createActivityWithCoordinates(this.activityData).subscribe({
       next: () => {
-        alert('Activity created successfully!');
+        this.notificationService.showMessage('Activity created successfully!');
         this.router.navigate(['/activities']);
       },
       error: (error) => console.error('Error creating activity:', error),

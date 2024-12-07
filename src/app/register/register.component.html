@@ -40,5 +40,10 @@
     
     <button (click)="onSubmit()">Sign Up</button>
     <p *ngIf="errorMessage">{{ errorMessage }}</p>
+    
+    <p class="login-redirect">
+      Already have an account? 
+      <a routerLink="/login" class="login-link">Login here</a>
+    </p>
   </div>  
 </div>

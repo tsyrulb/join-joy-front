@@ -63,3 +63,41 @@
     </div>
   </div>
 </div>
+<!-- Recommended Users Modal -->
+<div class="recommended-users" *ngIf="isRecommendedUsersModalVisible">
+  <div class="recommended-header">
+    <h5>Recommended Users</h5>
+    <button class="btn-close" (click)="closeRecommendedUsersModal()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="recommended-body">
+    <ul class="list-group">
+      <li
+        class="list-group-item d-flex align-items-center user-item"
+        *ngFor="let user of visibleUsers; let i = index"
+        (click)="toggleUserSelection(i)"
+        [class.selected]="user.selected"
+        (contextmenu)="excludeUser(i, $event)"
+      >
+        <img
+          [src]="user.profilePhoto || 'assets/profile.png'"
+          alt="{{ user.userName }}"
+          class="user-avatar"
+        />
+        <span class="user-name">{{ user.userName }}</span>
+      </li>
+    </ul>
+  </div>
+  <div class="recommended-footer">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="sendSelectedInvitations()"
+      [disabled]="!isAnyUserSelected()"
+    >
+      Send Invitations
+    </button>
+  </div>
+</div>
+
