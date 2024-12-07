@@ -13,6 +13,12 @@ import { User, UpdateUserRequest, Location } from '../user.model';
 import { MatTableModule } from '@angular/material/table'  
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog-component/confirm-dialog-component.component';
+
 
 @Component({
   selector: 'app-profile',
@@ -32,7 +38,9 @@ import {MatDividerModule} from '@angular/material/divider';
     MatTableModule,
     MatIconModule,
     MatDividerModule,
-  ],
+    MatSnackBarModule, 
+    MatDialogModule     
+    ],
 })
 export class ProfileComponent implements OnInit {
   nameid: number | null = null;
@@ -70,8 +78,11 @@ export class ProfileComponent implements OnInit {
   ];
   
 
-  constructor(private apiService: ApiService) {}
-
+  constructor(
+    private apiService: ApiService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {}
   ngOnInit(): void {
     this.setUserId();
     if (this.nameid) {
@@ -119,41 +130,65 @@ export class ProfileComponent implements OnInit {
       this.newUnavailability.endTime
     ) {
       const payload = {
-        dayOfWeek: Number(this.newUnavailability.dayOfWeek), // Ensure it's a number
+        dayOfWeek: Number(this.newUnavailability.dayOfWeek),
         startTime: this.newUnavailability.startTime,
         endTime: this.newUnavailability.endTime,
       };
-
+  
       this.apiService.addUnavailability(payload).subscribe({
         next: () => {
-          alert('Unavailability added successfully.');
-          this.loadUnavailabilities(); // Reload the list
-          this.newUnavailability = { dayOfWeek: 0, startTime: '', endTime: '' }; // Reset form
+          this.snackBar.open('Unavailability added successfully.', 'OK', {
+            duration: 3000,
+            verticalPosition: 'bottom',
+            horizontalPosition: 'center'
+          });
+          this.loadUnavailabilities();
+          this.newUnavailability = { dayOfWeek: 0, startTime: '', endTime: '' };
         },
         error: (error) => {
           console.error('Error adding unavailability:', error);
-          alert('Failed to add unavailability.');
+          this.snackBar.open('Failed to add unavailability.', 'OK', {
+            duration: 3000,
+            verticalPosition: 'bottom',
+            horizontalPosition: 'center'
+          });
         },
       });
     } else {
-      alert('Please fill out all fields.');
+      this.snackBar.open('Please fill out all fields.', 'OK', {
+        duration: 3000,
+        verticalPosition: 'bottom',
+        horizontalPosition: 'center'
+      });
     }
   }
   
+  
     // Remove an unavailability period
     removeUnavailability(id: number): void {
-      if (confirm('Are you sure you want to delete this unavailability?')) {
-        this.apiService.removeUnavailability(id).subscribe({
-          next: () => {
-            alert('Unavailability removed successfully.');
-            this.loadUnavailabilities(); // Reload the list
-          },
-          error: (error) => {
-            console.error('Error removing unavailability:', error);
-            alert('Failed to remove unavailability.');
-          },
-        });
-      }
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '300px',
+        data: {} // No extra data needed
+      });
+    
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === true) {
+          this.apiService.removeUnavailability(id).subscribe({
+            next: () => {
+              this.snackBar.open('Unavailability removed successfully.', 'OK', {
+                duration: 3000
+              });
+              this.loadUnavailabilities();
+            },
+            error: (error) => {
+              console.error('Error removing unavailability:', error);
+              this.snackBar.open('Failed to remove unavailability.', 'OK', {
+                duration: 3000
+              });
+            },
+          });
+        }
+      });
     }
 
   loadUserData(): void {

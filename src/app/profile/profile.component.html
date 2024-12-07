@@ -1,264 +1,183 @@
-<div class="profile-container mat-app-background">
-  <mat-sidenav-container class="sidenav-container">
+<div class="profile-wrapper">
+  <mat-sidenav-container class="main-container">
     <!-- Sidenav Section -->
-    <mat-sidenav mode="side" opened class="sidenav" disableClose>
+    <mat-sidenav mode="side" opened class="sidebar" disableClose>
+      <div class="sidebar-header">Settings</div>
       <mat-nav-list>
         <a
           mat-list-item
+          matTooltip="Address"
           (click)="selectSection('address')"
-          [class.active]="selectedSection === 'address'"
-        >
-        <mat-icon>home</mat-icon>
-          Address
+          [class.active]="selectedSection === 'address'">
+          <mat-icon>home</mat-icon>
         </a>
         <a
           mat-list-item
+          matTooltip="Profile Photo"
           (click)="selectSection('photo')"
-          [class.active]="selectedSection === 'photo'"
-        >
-        <mat-icon>photo_camera</mat-icon>
-          Profile Photo
+          [class.active]="selectedSection === 'photo'">
+          <mat-icon>photo_camera</mat-icon>
         </a>
         <a
           mat-list-item
+          matTooltip="Password"
           (click)="selectSection('password')"
-          [class.active]="selectedSection === 'password'"
-        >
-        <mat-icon>lock</mat-icon>
-          Password
+          [class.active]="selectedSection === 'password'">
+          <mat-icon>lock</mat-icon>
         </a>
         <a
           mat-list-item
+          matTooltip="Availability"
           (click)="selectSection('availability')"
-          [class.active]="selectedSection === 'availability'"
-        >
-        <mat-icon>event_busy</mat-icon>
-          Availability
+          [class.active]="selectedSection === 'availability'">
+          <mat-icon>event_busy</mat-icon>
         </a>
         <a
           mat-list-item
+          matTooltip="Personal Details"
           (click)="selectSection('details')"
-          [class.active]="selectedSection === 'details'"
-        >
-        <mat-icon>person</mat-icon>
-          Personal Details
+          [class.active]="selectedSection === 'details'">
+          <mat-icon>person</mat-icon>
         </a>
       </mat-nav-list>
     </mat-sidenav>
-    <!-- Main Content -->
+
     <mat-sidenav-content>
-      <div class="content">
-        <!-- Address Section -->
-        <form
-          *ngIf="selectedSection === 'address'"
-          (ngSubmit)="updateProfile()"
-        >
-          <h3>Update Address</h3>
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Address</mat-label>
-            <input
-              matInput
-              type="text"
-              [(ngModel)]="user.location.address"
-              name="address"
+      <div class="content-area">
+        <div class="profile-header">
+          <div class="profile-info">
+            <img
+              *ngIf="user.profilePhoto"
+              [src]="user.profilePhoto"
+              alt="{{ user.name }}"
+              class="profile-avatar"
             />
-          </mat-form-field>
-          <button mat-raised-button color="primary" type="submit">
-            Save Address
-          </button>
-        </form>
+            <div class="user-details">
+              <h2>{{ user.name || 'User Name' }}</h2>
+              <p>{{ user.email || 'User Email' }}</p>
+            </div>
+          </div>
+        </div>
 
-        <!-- Profile Photo Section -->
-        <form *ngIf="selectedSection === 'photo'" (ngSubmit)="uploadPhoto()">
-          <h3>Upload Profile Photo</h3>
-          <img
-            *ngIf="photoPreview"
-            [src]="photoPreview"
-            alt="Photo Preview"
-            class="photo-preview"
-          />
-          <img
-            *ngIf="user.profilePhoto && !photoPreview"
-            [src]="user.profilePhoto"
-            alt="Current Profile Photo"
-            class="photo-preview"
-          />
-          <input type="file" (change)="onFileSelected($event)" />
-          <button mat-raised-button color="primary" type="submit">
-            Save Photo
-          </button>
-          <button
-            mat-stroked-button
-            color="warn"
-            *ngIf="user.profilePhoto"
-            (click)="deleteProfilePhoto()"
-          >
-            Delete Photo
-          </button>
-        </form>
+        <div class="form-card">
+          <!-- Address Section -->
+          <form *ngIf="selectedSection === 'address'" (ngSubmit)="updateProfile()">
+            <h3>Update Address</h3>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Address</mat-label>
+              <input matInput type="text" [(ngModel)]="user.location.address" name="address" />
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="submit">Save Address</button>
+          </form>
 
-        <!-- Password Section -->
-        <form
-          *ngIf="selectedSection === 'password'"
-          (ngSubmit)="updateProfile()"
-        >
-          <h3>Change Password</h3>
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>New Password</mat-label>
-            <input
-              matInput
-              type="password"
-              [(ngModel)]="user.password"
-              name="password"
-            />
-          </mat-form-field>
-          <button mat-raised-button color="primary" type="submit">
-            Save Password
-          </button>
-        </form>
+          <!-- Profile Photo Section -->
+          <form *ngIf="selectedSection === 'photo'" (ngSubmit)="uploadPhoto()">
+            <h3>Upload Profile Photo</h3>
+            <div class="photo-container">
+              <img *ngIf="photoPreview" [src]="photoPreview" alt="Photo Preview" class="photo-preview" />
+              <img *ngIf="user.profilePhoto && !photoPreview" [src]="user.profilePhoto" alt="Current Profile Photo" class="photo-preview" />
+            </div>
+            <input type="file" (change)="onFileSelected($event)" />
+            <div class="button-group">
+              <button mat-raised-button color="primary" type="submit">Save Photo</button>
+              <button mat-stroked-button color="warn" *ngIf="user.profilePhoto" (click)="deleteProfilePhoto()">
+                Delete Photo
+              </button>
+            </div>
+          </form>
 
-        <form
-          *ngIf="selectedSection === 'availability'"
-          (ngSubmit)="addUnavailability()"
-        >
-          <h3>Set Unavailable Time</h3>
+          <!-- Password Section -->
+          <form *ngIf="selectedSection === 'password'" (ngSubmit)="updateProfile()">
+            <h3>Change Password</h3>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>New Password</mat-label>
+              <input matInput type="password" [(ngModel)]="user.password" name="password" />
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="submit">Save Password</button>
+          </form>
 
-          <!-- Unavailable Day -->
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Unavailable Day</mat-label>
-            <mat-select
-              [(ngModel)]="newUnavailability.dayOfWeek"
-              name="dayOfWeek"
-              required
-            >
-              <mat-option *ngFor="let day of daysOfWeek" [value]="day.value">{{
-                day.viewValue
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <!-- Availability Section -->
+          <form *ngIf="selectedSection === 'availability'" (ngSubmit)="addUnavailability()">
+            <h3>Set Unavailable Time</h3>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Unavailable Day</mat-label>
+              <mat-select [(ngModel)]="newUnavailability.dayOfWeek" name="dayOfWeek" required>
+                <mat-option *ngFor="let day of daysOfWeek" [value]="day.value">
+                  {{ day.viewValue }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
 
-          <!-- Unavailable Start Time -->
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Unavailable Start Time</mat-label>
-            <input
-              matInput
-              type="time"
-              [(ngModel)]="newUnavailability.startTime"
-              name="startTime"
-              required
-            />
-          </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Start Time</mat-label>
+              <input matInput type="time" [(ngModel)]="newUnavailability.startTime" name="startTime" required />
+            </mat-form-field>
 
-          <!-- Unavailable End Time -->
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Unavailable End Time</mat-label>
-            <input
-              matInput
-              type="time"
-              [(ngModel)]="newUnavailability.endTime"
-              name="endTime"
-              required
-            />
-          </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>End Time</mat-label>
+              <input matInput type="time" [(ngModel)]="newUnavailability.endTime" name="endTime" required />
+            </mat-form-field>
 
-          <button mat-raised-button color="primary" type="submit">
-            Save Availability
-          </button>
+            <button mat-raised-button color="primary" type="submit">Save Availability</button>
 
-          <!-- Unavailability List -->
-          <h3>Existing Unavailabilities</h3>
-          <table
-            mat-table
-            [dataSource]="unavailabilities"
-            class="mat-elevation-z8"
-          >
-            <ng-container matColumnDef="day">
-              <th mat-header-cell *matHeaderCellDef>Day</th>
-              <td mat-cell *matCellDef="let element">
-                {{ daysOfWeek[element.dayOfWeek]?.viewValue }}
-              </td>
-            </ng-container>
+            <h3>Existing Unavailabilities</h3>
+            <table mat-table [dataSource]="unavailabilities" class="mat-elevation-z8 availability-table">
+              <ng-container matColumnDef="day">
+                <th mat-header-cell *matHeaderCellDef>Day</th>
+                <td mat-cell *matCellDef="let element">{{ daysOfWeek[element.dayOfWeek]?.viewValue }}</td>
+              </ng-container>
 
-            <ng-container matColumnDef="startTime">
-              <th mat-header-cell *matHeaderCellDef>Start Time</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.startTime }}
-              </td>
-            </ng-container>
+              <ng-container matColumnDef="startTime">
+                <th mat-header-cell *matHeaderCellDef>Start Time</th>
+                <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
+              </ng-container>
 
-            <ng-container matColumnDef="endTime">
-              <th mat-header-cell *matHeaderCellDef>End Time</th>
-              <td mat-cell *matCellDef="let element">{{ element.endTime }}</td>
-            </ng-container>
+              <ng-container matColumnDef="endTime">
+                <th mat-header-cell *matHeaderCellDef>End Time</th>
+                <td mat-cell *matCellDef="let element">{{ element.endTime }}</td>
+              </ng-container>
 
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let element">
-                <button
-                  (click)="removeUnavailability(element.id) " class="icon-circle"
-                >
-                <mat-icon>remove</mat-icon>
-                </button>
-              </td>
-            </ng-container>
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let element">
+                  <button (click)="removeUnavailability(element.id)" class="icon-circle">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
 
-            <tr
-              mat-header-row
-              *matHeaderRowDef="['day', 'startTime', 'endTime', 'actions']"
-            ></tr>
-            <tr
-              mat-row
-              *matRowDef="
-                let row;
-                columns: ['day', 'startTime', 'endTime', 'actions']
-              "
-            ></tr>
-          </table>
-        </form>
+              <tr mat-header-row *matHeaderRowDef="['day', 'startTime', 'endTime', 'actions']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['day', 'startTime', 'endTime', 'actions']"></tr>
+            </table>
+          </form>
 
-        <!-- Personal Details Section -->
-        <form
-          *ngIf="selectedSection === 'details'"
-          (ngSubmit)="updateProfile()"
-        >
-          <h3>Update Personal Details</h3>
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Name</mat-label>
-            <input matInput type="text" [(ngModel)]="user.name" name="name" />
-          </mat-form-field>
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Email</mat-label>
-            <input
-              matInput
-              type="email"
-              [(ngModel)]="user.email"
-              name="email"
-            />
-          </mat-form-field>
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Date of Birth</mat-label>
-            <input
-              matInput
-              type="date"
-              [(ngModel)]="user.dateOfBirth"
-              name="dateOfBirth"
-            />
-          </mat-form-field>
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Gender</mat-label>
-            <mat-select [(ngModel)]="user.gender" name="gender">
-              <mat-option [value]="null" disabled
-                >Select your gender</mat-option
-              >
-              <mat-option value="Male">Male</mat-option>
-              <mat-option value="Female">Female</mat-option>
-              <mat-option value="Other">Other</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button mat-raised-button color="primary" type="submit">
-            Save Details
-          </button>
-        </form>
+          <!-- Personal Details Section -->
+          <form *ngIf="selectedSection === 'details'" (ngSubmit)="updateProfile()">
+            <h3>Update Personal Details</h3>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Name</mat-label>
+              <input matInput type="text" [(ngModel)]="user.name" name="name" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" [(ngModel)]="user.email" name="email" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Date of Birth</mat-label>
+              <input matInput type="date" [(ngModel)]="user.dateOfBirth" name="dateOfBirth" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Gender</mat-label>
+              <mat-select [(ngModel)]="user.gender" name="gender">
+                <mat-option [value]="null" disabled>Select your gender</mat-option>
+                <mat-option value="Male">Male</mat-option>
+                <mat-option value="Female">Female</mat-option>
+                <mat-option value="Other">Other</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="submit">Save Details</button>
+          </form>
+        </div>
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
