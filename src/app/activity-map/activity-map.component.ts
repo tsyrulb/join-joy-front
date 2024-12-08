@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivityService } from '../activity.service';
+import { ApiService } from '../api.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { NotificationService } from '../notification.service';
@@ -11,7 +12,13 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-activity-map',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatTableModule, MatIconModule, MatSnackBarModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    MatTableModule,
+    MatIconModule,
+    MatSnackBarModule,
+  ],
   templateUrl: './activity-map.component.html',
   styleUrls: ['./activity-map.component.css'],
 })
@@ -52,6 +59,7 @@ export class ActivityMapComponent implements OnDestroy {
 
   constructor(
     private activityService: ActivityService,
+    private apiService: ApiService,
     private http: HttpClient,
     private notificationService: NotificationService
   ) {}
@@ -114,10 +122,11 @@ export class ActivityMapComponent implements OnDestroy {
   toggleUserSelection(index: number): void {
     this.visibleUsers[index].selected = !this.visibleUsers[index].selected;
   }
-  addActivityMarkers(activities: any[]): void {
+  addActivityMarkers(items: any[]): void {
     this.markers.clearLayers(); // Clear existing markers
 
-    activities.forEach((activity) => {
+    items.forEach((item) => {
+      const activity = item.activity;
       const { latitude, longitude, address } = activity.location;
       const { name, description, date } = activity;
 
@@ -265,10 +274,14 @@ export class ActivityMapComponent implements OnDestroy {
         // Focus on the marker
         this.map?.setView([latitude, longitude], 14);
       } else {
-        this.notificationService.showMessage('Marker not found for the specified activity.');
+        this.notificationService.showMessage(
+          'Marker not found for the specified activity.'
+        );
       }
     } else {
-      this.notificationService.showMessage('Location data not available for this activity.');
+      this.notificationService.showMessage(
+        'Location data not available for this activity.'
+      );
     }
   }
 
@@ -289,7 +302,9 @@ export class ActivityMapComponent implements OnDestroy {
       },
       error: (error) => {
         console.error('Error sending request:', error);
-        this.notificationService.showMessage('Failed to send request. Please try again.');
+        this.notificationService.showMessage(
+          'Failed to send request. Please try again.'
+        );
       },
     });
   }
@@ -349,7 +364,9 @@ export class ActivityMapComponent implements OnDestroy {
     }
 
     if (this.createdActivityId === null) {
-      this.notificationService.showMessage('Activity ID is missing. Cannot send invitations.');
+      this.notificationService.showMessage(
+        'Activity ID is missing. Cannot send invitations.'
+      );
       return;
     }
 
@@ -367,7 +384,9 @@ export class ActivityMapComponent implements OnDestroy {
         },
         error: (error) => {
           console.error('Error sending invitations:', error);
-          this.notificationService.showMessage('Failed to send invitations. See console for details.');
+          this.notificationService.showMessage(
+            'Failed to send invitations. See console for details.'
+          );
         },
       });
   }
@@ -380,6 +399,7 @@ export class ActivityMapComponent implements OnDestroy {
       this.notificationService.showMessage('All fields are required!');
       return;
     }
+
     const combinedDateTime = new Date(`${date}T${time}`);
 
     const activityData = {
@@ -400,22 +420,22 @@ export class ActivityMapComponent implements OnDestroy {
 
         console.log('Created activity:', createdActivity);
 
-        this.activityService
-          .fetchRecommendedUsers(createdActivity.id)
-          .subscribe({
-            next: (recommendedUsers) =>
-              this.showRecommendedUsers(recommendedUsers),
-            error: (error) => {
-              console.error('Error fetching recommended users:', error);
-              this.notificationService.showMessage(
-                'Failed to fetch recommended users. See console for details.'
-              );
-            },
-          });
+        // Now inform Flask service about the new activity
+        this.apiService.addNewActivityInFlask(createdActivity.id).subscribe({
+          next: () => {
+            this.fetchRecommendedUsers(createdActivity.id);
+          },
+          error: (error) => {
+            console.error('Error updating activity in Flask:', error);
+            this.fetchRecommendedUsers(createdActivity.id);
+          },
+        });
       },
       error: (error) => {
         console.error('Error creating activity:', error);
-        this.notificationService.showMessage('Failed to create activity. See console for details.');
+        this.notificationService.showMessage(
+          'Failed to create activity. See console for details.'
+        );
       },
     });
   }
@@ -428,7 +448,9 @@ export class ActivityMapComponent implements OnDestroy {
       },
       error: (error) => {
         console.error('Error fetching recommended users:', error);
-        this.notificationService.showMessage('Failed to fetch recommended users.');
+        this.notificationService.showMessage(
+          'Failed to fetch recommended users.'
+        );
       },
     });
   }
@@ -470,7 +492,9 @@ export class ActivityMapComponent implements OnDestroy {
       return;
     }
     if (this.createdActivityId === null) {
-      this.notificationService.showMessage('Activity ID is missing. Cannot send invitations.');
+      this.notificationService.showMessage(
+        'Activity ID is missing. Cannot send invitations.'
+      );
       return;
     }
     this.activityService.sendInvitations(activityId, receiverIds).subscribe({
@@ -479,7 +503,9 @@ export class ActivityMapComponent implements OnDestroy {
       },
       error: (error) => {
         console.error('Error sending invitations:', error);
-        this.notificationService.showMessage('Failed to send invitations. Check console for details.');
+        this.notificationService.showMessage(
+          'Failed to send invitations. Check console for details.'
+        );
       },
     });
   }

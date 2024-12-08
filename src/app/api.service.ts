@@ -18,6 +18,7 @@ import { Message, Conversation } from './message.model'; // Ensure this model ex
 })
 export class ApiService {
   private apiUrl = 'https://localhost:7276/api'; // Base API URL
+  private flaskApiUrl = 'http://localhost:5000'; //  Flask base URL
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +28,17 @@ export class ApiService {
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
+  }
+  updateUserSubcategoriesInFlask(userId: number): Observable<any> {
+    return this.http.post(`${this.flaskApiUrl}/update_user_subcategories/${userId}`, {});
+  }
+
+  updateUserUnavailabilityInFlask(userId: number): Observable<any> {
+    return this.http.post(`${this.flaskApiUrl}/update_user_unavailability/${userId}`, {});
+  }
+
+  addNewActivityInFlask(activityId: number): Observable<any> {
+    return this.http.post(`${this.flaskApiUrl}/add_new_activity/${activityId}`, {});
   }
 
   getCategories(): Observable<Category[]> {

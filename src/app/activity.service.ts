@@ -48,6 +48,9 @@ export class ActivityService {
   requestApproval(request: { ActivityId: number }): Observable<any> {
     return this.http.post(`${this.apiUrl}/Matching/request-approval`, request, { headers: this.getAuthHeaders() });
   }
+  refreshData(): Observable<any> {
+    return this.http.post('http://localhost:5000/refresh_data', {}); 
+  }
   
   createActivityWithCoordinates(request: ActivityRequestWithCoordinates): Observable<any> {
     return this.http.post(`${this.apiActivityUrl}/create-with-coordinates`, request, { headers: this.getAuthHeaders() });

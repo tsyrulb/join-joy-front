@@ -1,4 +1,4 @@
-import { Component, OnInit, Input  } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Subcategory, UserSubcategory, Category } from '../user.model';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './subcategories.component.html',
   styleUrls: ['./subcategories.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule],
 })
 export class SubcategoriesComponent implements OnInit {
   categories: Category[] = [];
@@ -39,15 +39,20 @@ export class SubcategoriesComponent implements OnInit {
 
         // Fetch full Subcategory details for each UserSubcategory
         this.userSubcategories.forEach((userSubcategory, index) => {
-          this.apiService.getSubcategoryById(userSubcategory.subcategoryId).subscribe({
-            next: (subcategory) => {
-              // Attach the full subcategory object to the userSubcategory
-              this.userSubcategories[index].subcategory = subcategory;
-            },
-            error: (error) => {
-              console.error(`Error fetching subcategory ${userSubcategory.subcategoryId}:`, error);
-            },
-          });
+          this.apiService
+            .getSubcategoryById(userSubcategory.subcategoryId)
+            .subscribe({
+              next: (subcategory) => {
+                // Attach the full subcategory object to the userSubcategory
+                this.userSubcategories[index].subcategory = subcategory;
+              },
+              error: (error) => {
+                console.error(
+                  `Error fetching subcategory ${userSubcategory.subcategoryId}:`,
+                  error
+                );
+              },
+            });
         });
       },
       error: (error) => {
@@ -58,15 +63,23 @@ export class SubcategoriesComponent implements OnInit {
 
   onCategorySelect(categoryId: number): void {
     this.selectedCategoryId = categoryId;
-    this.apiService.getSubcategoriesByCategoryId(categoryId).subscribe((subcategories) => {
-      this.subcategories = subcategories;
-    });
+    this.apiService
+      .getSubcategoriesByCategoryId(categoryId)
+      .subscribe((subcategories) => {
+        this.subcategories = subcategories;
+      });
   }
 
   addUserSubcategory(subcategoryId: number): void {
     this.apiService.addUserSubcategory(this.userId, subcategoryId).subscribe({
       next: () => {
-        this.loadUserSubcategories(); // Refresh user subcategories
+        this.loadUserSubcategories();
+        this.apiService.updateUserSubcategoriesInFlask(this.userId).subscribe({
+          next: () => {},
+          error: (error) => {
+            console.error('Error updating subcategories in Flask:', error);
+          },
+        });
       },
       error: (error) => {
         console.error('Error adding user subcategory:', error);

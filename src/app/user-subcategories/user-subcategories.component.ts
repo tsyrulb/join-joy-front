@@ -36,20 +36,20 @@ export class UserSubcategoriesComponent implements OnInit {
 
   // Map categories names to their image paths
   private categoryImages: { [key: string]: string } = {
-    'Music': 'assets/categories/music.png',
-    'Sports': 'assets/categories/sports.png',
-    'Art': 'assets/categories/art.png',
-    'Literature': 'assets/categories/literature.png',
-    'Technology': 'assets/categories/technology.png',
+    Music: 'assets/categories/music.png',
+    Sports: 'assets/categories/sports.png',
+    Art: 'assets/categories/art.png',
+    Literature: 'assets/categories/literature.png',
+    Technology: 'assets/categories/technology.png',
     'Outdoor Activities': 'assets/categories/outdoor.png',
     'Food & Drink': 'assets/categories/food_drink.png',
-    'Travel': 'assets/categories/travel.png',
-    'Games': 'assets/categories/games.png',
+    Travel: 'assets/categories/travel.png',
+    Games: 'assets/categories/games.png',
     'Movies & TV Shows': 'assets/categories/movies_tv.png',
     'Performing Arts': 'assets/categories/performing_arts.png',
-    'Science': 'assets/categories/science.png',
+    Science: 'assets/categories/science.png',
     'Social Activities': 'assets/categories/social.png',
-    'MBTI': 'assets/categories/mbti.png'
+    MBTI: 'assets/categories/mbti.png',
   };
 
   constructor(private apiService: ApiService) {}
@@ -90,16 +90,18 @@ export class UserSubcategoriesComponent implements OnInit {
 
         // Fetch full Subcategory details for each UserSubcategory
         this.userSubcategories.forEach((userSubcategory, index) => {
-          this.apiService.getSubcategoryById(userSubcategory.subcategoryId).subscribe({
-            next: (subcategory) => {
-              this.userSubcategories[index].subcategory = subcategory;
-            },
-            error: (error) =>
-              console.error(
-                `Error fetching subcategory ${userSubcategory.subcategoryId}:`,
-                error
-              ),
-          });
+          this.apiService
+            .getSubcategoryById(userSubcategory.subcategoryId)
+            .subscribe({
+              next: (subcategory) => {
+                this.userSubcategories[index].subcategory = subcategory;
+              },
+              error: (error) =>
+                console.error(
+                  `Error fetching subcategory ${userSubcategory.subcategoryId}:`,
+                  error
+                ),
+            });
         });
       },
       error: (error) => {
@@ -117,13 +119,14 @@ export class UserSubcategoriesComponent implements OnInit {
           // Filter out any subcategories the user already has
           this.subcategories = subcategories.filter(
             (s) =>
-              !this.userSubcategories.some(
-                (us) => us.subcategoryId === s.id
-              )
+              !this.userSubcategories.some((us) => us.subcategoryId === s.id)
           );
         },
         error: (error) =>
-          console.error(`Error fetching subcategories for category ${category.id}:`, error),
+          console.error(
+            `Error fetching subcategories for category ${category.id}:`,
+            error
+          ),
       });
     }
   }
@@ -133,7 +136,16 @@ export class UserSubcategoriesComponent implements OnInit {
     this.apiService.addUserSubcategory(this.userId, subcategoryId).subscribe({
       next: () => {
         this.loadUserSubcategories(); // Refresh user subcategories
-        this.subcategories = this.subcategories.filter((s) => s.id !== subcategoryId);
+        this.subcategories = this.subcategories.filter(
+          (s) => s.id !== subcategoryId
+        );
+        // Now call the Flask endpoint to update embeddings
+        this.apiService.updateUserSubcategoriesInFlask(this.userId).subscribe({
+          next: () => {},
+          error: (error) => {
+            console.error('Error updating subcategories in Flask:', error);
+          },
+        });
       },
       error: (error) => {
         console.error('Error adding user subcategory:', error);
@@ -143,33 +155,42 @@ export class UserSubcategoriesComponent implements OnInit {
 
   removeUserSubcategory(subcategoryId: number): void {
     if (!this.userId) return;
-    this.apiService.removeUserSubcategory(this.userId, subcategoryId).subscribe({
-      next: () => {
-        const removedUserSubcategory = this.userSubcategories.find(
-          (us) => us.subcategoryId === subcategoryId
-        );
-
-        if (removedUserSubcategory) {
-          const subcategoryToRestore = removedUserSubcategory.subcategory;
-
-          // Remove from userSubcategories
-          this.userSubcategories = this.userSubcategories.filter(
-            (us) => us.subcategoryId !== subcategoryId
+    this.apiService
+      .removeUserSubcategory(this.userId, subcategoryId)
+      .subscribe({
+        next: () => {
+          const removedUserSubcategory = this.userSubcategories.find(
+            (us) => us.subcategoryId === subcategoryId
           );
 
-          // If this subcategory belongs to the currently selected category, restore it
-          if (
-            subcategoryToRestore &&
-            subcategoryToRestore.categoryId === this.selectedCategoryId
-          ) {
-            this.subcategories.push(subcategoryToRestore);
+          if (removedUserSubcategory) {
+            const subcategoryToRestore = removedUserSubcategory.subcategory;
+
+            // Remove from userSubcategories
+            this.userSubcategories = this.userSubcategories.filter(
+              (us) => us.subcategoryId !== subcategoryId
+            );
+
+            // If this subcategory belongs to the currently selected category, restore it
+            if (
+              subcategoryToRestore &&
+              subcategoryToRestore.categoryId === this.selectedCategoryId
+            ) {
+              this.subcategories.push(subcategoryToRestore);
+            }
           }
-        }
-      },
-      error: (error) => {
-        console.error('Error removing user subcategory:', error);
-      },
-    });
+          this.apiService.updateUserSubcategoriesInFlask(this.userId).subscribe({
+            next: () => {
+            },
+            error: (error) => {
+              console.error('Error updating subcategories in Flask:', error);
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Error removing user subcategory:', error);
+        },
+      });
   }
 
   // Helper method to get category image

@@ -10,15 +10,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../api.service';
 import { User, UpdateUserRequest, Location } from '../user.model';
-import { MatTableModule } from '@angular/material/table'  
-import {MatIconModule} from '@angular/material/icon';
-import {MatDividerModule} from '@angular/material/divider';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog-component/confirm-dialog-component.component';
-
 
 @Component({
   selector: 'app-profile',
@@ -38,9 +37,9 @@ import { ConfirmDialogComponent } from '../confirm-dialog-component/confirm-dial
     MatTableModule,
     MatIconModule,
     MatDividerModule,
-    MatSnackBarModule, 
-    MatDialogModule     
-    ],
+    MatSnackBarModule,
+    MatDialogModule,
+  ],
 })
 export class ProfileComponent implements OnInit {
   nameid: number | null = null;
@@ -52,8 +51,8 @@ export class ProfileComponent implements OnInit {
     profilePhoto: '',
     gender: '',
     dateOfBirth: '',
-    location: { id: 0, latitude: 0, longitude: 0, address: ''},
-    distanceWillingToTravel: 0
+    location: { id: 0, latitude: 0, longitude: 0, address: '' },
+    distanceWillingToTravel: 0,
   };
   selectedFile: File | null = null;
   selectedSection: string = 'details';
@@ -77,7 +76,6 @@ export class ProfileComponent implements OnInit {
     { value: 5, viewValue: 'Friday' },
     { value: 6, viewValue: 'Saturday' },
   ];
-  
 
   constructor(
     private apiService: ApiService,
@@ -111,18 +109,18 @@ export class ProfileComponent implements OnInit {
       console.error('Token not found');
     }
   }
-    // Fetch all unavailabilities
-    loadUnavailabilities(): void {
-      this.apiService.getUnavailabilities().subscribe({
-        next: (data) => {
-          this.unavailabilities = data;
-        },
-        error: (error) => {
-          console.error('Error fetching unavailabilities:', error);
-        },
-      });
-    }
-  
+  // Fetch all unavailabilities
+  loadUnavailabilities(): void {
+    this.apiService.getUnavailabilities().subscribe({
+      next: (data) => {
+        this.unavailabilities = data;
+      },
+      error: (error) => {
+        console.error('Error fetching unavailabilities:', error);
+      },
+    });
+  }
+
   // Add a new unavailability period
   addUnavailability(): void {
     if (
@@ -135,23 +133,32 @@ export class ProfileComponent implements OnInit {
         startTime: this.newUnavailability.startTime,
         endTime: this.newUnavailability.endTime,
       };
-  
+
       this.apiService.addUnavailability(payload).subscribe({
         next: () => {
           this.snackBar.open('Unavailability added successfully.', 'OK', {
             duration: 3000,
             verticalPosition: 'bottom',
-            horizontalPosition: 'center'
+            horizontalPosition: 'center',
           });
           this.loadUnavailabilities();
           this.newUnavailability = { dayOfWeek: 0, startTime: '', endTime: '' };
+          // Update Flask as well
+          this.apiService
+            .updateUserUnavailabilityInFlask(this.nameid)
+            .subscribe({
+              next: () => {},
+              error: (error) => {
+                console.error('Error updating unavailability in Flask:', error);
+              },
+            });
         },
         error: (error) => {
           console.error('Error adding unavailability:', error);
           this.snackBar.open('Failed to add unavailability.', 'OK', {
             duration: 3000,
             verticalPosition: 'bottom',
-            horizontalPosition: 'center'
+            horizontalPosition: 'center',
           });
         },
       });
@@ -159,38 +166,37 @@ export class ProfileComponent implements OnInit {
       this.snackBar.open('Please fill out all fields.', 'OK', {
         duration: 3000,
         verticalPosition: 'bottom',
-        horizontalPosition: 'center'
+        horizontalPosition: 'center',
       });
     }
   }
-  
-  
-    // Remove an unavailability period
-    removeUnavailability(id: number): void {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '300px',
-        data: {} // No extra data needed
-      });
-    
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === true) {
-          this.apiService.removeUnavailability(id).subscribe({
-            next: () => {
-              this.snackBar.open('Unavailability removed successfully.', 'OK', {
-                duration: 3000
-              });
-              this.loadUnavailabilities();
-            },
-            error: (error) => {
-              console.error('Error removing unavailability:', error);
-              this.snackBar.open('Failed to remove unavailability.', 'OK', {
-                duration: 3000
-              });
-            },
-          });
-        }
-      });
-    }
+
+  // Remove an unavailability period
+  removeUnavailability(id: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {}, // No extra data needed
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.apiService.removeUnavailability(id).subscribe({
+          next: () => {
+            this.snackBar.open('Unavailability removed successfully.', 'OK', {
+              duration: 3000,
+            });
+            this.loadUnavailabilities();
+          },
+          error: (error) => {
+            console.error('Error removing unavailability:', error);
+            this.snackBar.open('Failed to remove unavailability.', 'OK', {
+              duration: 3000,
+            });
+          },
+        });
+      }
+    });
+  }
 
   loadUserData(): void {
     const token = localStorage.getItem('token');
@@ -301,7 +307,7 @@ export class ProfileComponent implements OnInit {
           ? new Date(this.user.dateOfBirth)
           : null,
         address: this.user.location?.address || '',
-        distanceWillingToTravel: this.user.distanceWillingToTravel
+        distanceWillingToTravel: this.user.distanceWillingToTravel,
       };
 
       this.apiService.updateUser(this.user.id, updatedUser).subscribe({
