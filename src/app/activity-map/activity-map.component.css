@@ -3,8 +3,9 @@
   --card-color: #24272b;
   --overlay-bg: rgba(36, 39, 43, 0.85);
   --text-color: #ddd;
-  --accent-color: #7b1fa2;    /* Purple accent */
-  --muted-text: #9a9a9a;
+  --accent-color: #7b1fa2;
+  --muted-text: #a8a8a8;
+  --danger-color: #F4212E;
   --border-radius: 12px;
   --transition-speed: 0.3s;
   --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -15,9 +16,9 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: var(--font-family);
   background: var(--background-color);
   color: var(--text-color);
+  font-family: var(--font-family);
 }
 
 .map-page {
@@ -27,7 +28,7 @@ html, body {
   height: 100%;
 }
 
-/* Search Container: Minimal, sleek floating box */
+/* Search Container */
 .search-container {
   position: absolute;
   top: 5%;
@@ -59,10 +60,10 @@ html, body {
   transition: background var(--transition-speed) ease;
 }
 .search-bar .btn.btn-primary.rounded-btn:hover {
-  background: #1583d7;
+  background: #6f1790;
 }
 
-/* Filter and Recommend Buttons: small, floating action buttons */
+/* Floating action buttons (Filter & Recommend) */
 .filter-toggle-btn, .recommend-activities-btn {
   position: absolute;
   top: 5%;
@@ -91,11 +92,11 @@ html, body {
   background: #3a3d40;
 }
 
+/* Filter Menu */
 .filter-menu {
   position: absolute;
   top: 60px;
   right: 16px;
-  backdrop-filter: blur(6px);
   background: linear-gradient(135deg, #2c2f33 0%, #232629 100%);
   border: 1px solid #2f3336;
   border-radius: var(--border-radius);
@@ -149,25 +150,33 @@ html, body {
   font-size: 13px;
   border: none;
   transition: color var(--transition-speed);
-}
-.list-group-item {
-  color:none;
-  background-color: none;
+  color: var(--text-color);
 }
 .filter-menu-body .list-group-item:hover {
   color: var(--accent-color);
 }
 .filter-menu-body .list-group-item.active {
   color: var(--accent-color);
-  background-color: #408af73b;
+  background-color: #00000000;
 }
-/* The Map Area */
-.full-page-map {
-  flex: 1;
+
+/* Map Container */
+.map-container {
+  position: absolute;
+  top: 50px;
+  bottom: 20px;
+  right: 0%;
+  width: 100%;
+  height: 800px;
+  border: 1px solid #2F3336;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+#map {
   width: 100%;
   height: 100%;
-  position: relative;
-  z-index: 1;
 }
 
 /* Recommended Activities Panel */
@@ -178,12 +187,13 @@ html, body {
   background: var(--card-color);
   border: 1px solid #2f3336;
   border-radius: var(--border-radius);
-  width: 280px;
-  max-height: 300px;
+  width: 320px;
+  max-height: 350px;
   overflow-y: auto;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  box-shadow: var(--box-shadow);
   z-index: 2000;
 }
+
 .recommended-header {
   display: flex;
   justify-content: space-between;
@@ -193,56 +203,73 @@ html, body {
 }
 .recommended-header h5 {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color);
 }
 .recommended-header .btn-close {
   background: none;
   border: none;
   color: var(--text-color);
   cursor: pointer;
+  font-size: 16px;
+  transition: color var(--transition-speed) ease;
 }
+.recommended-header .btn-close:hover {
+  color: var(--accent-color);
+}
+
 .recommended-body {
   padding: 8px;
 }
-.recommended-body .list-group-item {
+.recommended-body .activity-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  cursor: pointer;
-  font-size: 12px;
-  border: none;
+  align-items: flex-start;
+  padding: 8px;
+  font-size: 13px;
+  border-bottom: 1px solid #2f3336;
+  transition: background var(--transition-speed) ease;
+  color: var(--text-color);
 }
-.recommended-body .list-group-item:hover .activity-name {
+.recommended-body .activity-item:hover .activity-name {
   color: var(--accent-color);
 }
 
 .activity-details {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 .activity-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 .activity-date {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted-text);
 }
-.recommended-body .btn.btn-primary.rounded-btn {
+.activity-explanation {
+  font-size: 12px;
+  color: var(--muted-text);
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+.send-invite-btn {
   background: var(--accent-color);
-  border-radius: var(--border-radius);
   border: none;
   color: #fff;
-  padding: 4px 8px;
+  border-radius: var(--border-radius);
+  padding: 6px 10px;
   font-size: 12px;
+  transition: background var(--transition-speed) ease;
 }
-.recommended-body .btn.btn-primary.rounded-btn:hover {
-  background: #1583d7;
+.send-invite-btn:hover {
+  background: #6f1790;
 }
 
 /* Modal Styles */
-/* Create Activity Modal */
 .modal.fade.show {
   display: flex;
   align-items: center;
@@ -258,7 +285,9 @@ html, body {
   box-shadow: var(--box-shadow);
   animation: fadeIn var(--transition-speed) ease;
 }
-
+.modal-content {
+  background-color: #00000024;
+}
 .modal-header.bg-primary.text-white {
   background: var(--accent-color);
   border-top-left-radius: var(--border-radius);
@@ -267,10 +296,6 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.bg-primary {
-  background-color: var(--accent-color) !important; /* Your chosen color and opacity */
 }
 
 .modal-header h5 {
@@ -345,14 +370,6 @@ html, body {
   background: #474a4e;
 }
 
-/* Simple fade-in animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.modal-content {
-  background-color: #00000024;
-}
 /* Recommended Users Window */
 .recommended-users {
   position: absolute;
@@ -362,7 +379,7 @@ html, body {
   background: linear-gradient(135deg, #2c2f33 0%, #232629 100%);
   border: 1px solid #2f3336;
   border-radius: var(--border-radius);
-  width: 300px;
+  width: 320px;
   max-height: 350px;
   overflow-y: auto;
   box-shadow: var(--box-shadow);
@@ -399,9 +416,9 @@ html, body {
 .recommended-users .recommended-body {
   padding: 8px 12px;
 }
-.recommended-users .recommended-body .list-group-item {
+.recommended-users .recommended-body .user-item {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 8px;
   padding: 8px;
   font-size: 13px;
@@ -410,19 +427,35 @@ html, body {
   transition: background var(--transition-speed), color var(--transition-speed);
   color: var(--text-color);
 }
-.recommended-users .recommended-body .list-group-item:hover:not(.selected) {
+.recommended-users .recommended-body .user-item:hover:not(.selected) {
   background: #303336;
 }
-.recommended-users .recommended-body .list-group-item.selected {
+.recommended-users .recommended-body .user-item.selected {
   background: var(--accent-color);
   color: #eee;
 }
 .recommended-users .user-avatar {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
+  margin-top: 2px;
 }
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-explanation,
+.activity-explanation {
+  font-size: 12px;
+  color: var(--muted-text);
+  margin-top: 4px;
+  line-height: 1.3;
+  font-style: italic;
+}
+
 .recommended-users .recommended-footer {
   padding: 8px 12px;
   display: flex;
@@ -438,13 +471,72 @@ html, body {
   transition: background var(--transition-speed) ease;
 }
 .recommended-users .recommended-footer .btn.btn-success:hover {
-  background: #6f1790; /* Slightly darker purple */
+  background: #6f1790;
 }
 .recommended-users .recommended-footer .btn.btn-success:disabled {
   background: #555;
   cursor: not-allowed;
 }
 
+/* Success Animation Overlay */
+.invitation-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 50, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  animation: fadeInOut 3s forwards;
+}
+
+.invitation-success-content {
+  background: #1d9bf0;
+  border-radius: 20px;
+  padding: 40px 60px; /* Increased padding for more room */
+  text-align: center;
+  color: #fff;
+  font-family: var(--font-family);
+  box-shadow: 0 0 20px rgba(29, 155, 240, 0.5);
+  animation: popIn 0.5s ease forwards;
+  display: flex;           
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.invitation-success-content .success-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px; /* Slightly more spacing below the icon */
+}
+
+.invitation-success-content p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
 /* Scrollbar Styling */
 .recommended-body, .filter-menu-body {
   scrollbar-width: thin;
@@ -464,106 +556,6 @@ html, body {
   background: #4f5559;
 }
 
-/* Custom Marker Icon if needed */
-.custom-marker-icon {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  background: var(--accent-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
-  border: 2px solid #fff;
-}
-.map-container {
-  /* Position and size the map container as you like */
-  position: absolute; /* or relative if you prefer */
-  top: 50px;
-  bottom: 20px; /* adjust to desired location */
-  right: 0%; /* adjust to desired location */
-  width: 100%; /* your chosen width */
-  height: 800px; /* your chosen height */
-  border: 1px solid #2F3336;
-  border-radius: var(--border-radius);
-  overflow: hidden; /* ensure the map doesn't overflow */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-.full-page-map {
-  /* Remove or modify these styles if they cause issues */
-  position: static; 
-  width: 100%;
-  height: 100%;
-}
-
-/* #map needs a defined size */
-#map {
-  width: 100%;
-  height: 100%;
-}
-.invitation-success-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 50, 0.5); /* deep blue and semi-transparent */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3000; /* Above everything else */
-  animation: fadeInOut 3s forwards; /* 3s total: fade in, stay, fade out */
-}
-
-.invitation-success-content {
-  background: #1d9bf0; /* accent-color or a variant */
-  border-radius: 20px;
-  padding: 20px 40px;
-  text-align: center;
-  color: #fff;
-  font-family: var(--font-family);
-  box-shadow: 0 0 20px rgba(29, 155, 240, 0.5);
-  animation: popIn 0.5s ease forwards;
-}
-
-.invitation-success-content .success-icon {
-  font-size: 48px;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.invitation-success-content p {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-/* Keyframes for overlay fade */
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-/* Keyframe for scaling the popup content */
-@keyframes popIn {
-  0% { transform: scale(0.7); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-.user-explanation {
-  font-size: 12px;
-  color: var(--muted-text);
-  margin-top: 4px;
-}
-.activity-explanation {
-  font-size: 12px;
-  color: var(--muted-text);
-  margin-top: 4px;
+.list-group-item {
+  background-color: #000;
 }

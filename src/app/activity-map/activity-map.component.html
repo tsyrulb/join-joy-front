@@ -49,39 +49,39 @@
     <div id="map"></div>
   </div>
 
-<!-- Recommended Activities Section -->
-<div class="recommended-activities" *ngIf="isRecommendedActivitiesVisible">
-  <div class="recommended-header">
-    <h5>Recommended Activities</h5>
-    <button class="btn-close" (click)="closeRecommendedActivities()"></button>
-  </div>
-  <div class="recommended-body">
-    <ul class="list-group">
-      <!-- item contains both Activity and Explanation -->
-      <li
-        class="list-group-item"
-        *ngFor="let item of recommendedActivities"
-        (click)="focusOnActivity(item.activity)"
-      >
-        <div class="activity-details">
-          <div class="activity-name">{{ item.activity.name }}</div>
-          <div class="activity-date">{{ item.activity.date | date: 'shortDate' }}</div>
-          <!-- Display explanation if available -->
-          <div class="activity-explanation" *ngIf="item.explanation">
-            {{ item.explanation }}
-          </div>
-        </div>
-        <button
-          class="btn btn-primary rounded-btn"
-          (click)="sendRequest(item.activity.id)"
+  <!-- Recommended Activities Section -->
+  <div class="recommended-activities" *ngIf="isRecommendedActivitiesVisible">
+    <div class="recommended-header">
+      <h5>Recommended Activities</h5>
+      <button class="btn-close" (click)="closeRecommendedActivities()"></button>
+    </div>
+    <div class="recommended-body">
+      <ul class="list-group">
+        <li
+          class="list-group-item activity-item"
+          *ngFor="let item of recommendedActivities"
+          (click)="focusOnActivity(item.activity)"
         >
-          <mat-icon>send</mat-icon>
-        </button>
-      </li>
-    </ul>
+          <div class="activity-details">
+            <div class="activity-name">{{ item.activity.name }}</div>
+            <div class="activity-date">
+              {{ item.activity.date | date : "shortDate" }}
+            </div>
+            <!-- Display explanation if available -->
+            <div class="activity-explanation" *ngIf="item.explanation">
+              {{ item.explanation }}
+            </div>
+          </div>
+          <button
+            class="btn btn-primary rounded-btn send-invite-btn"
+            (click)="sendRequest(item.activity.id)"
+          >
+            <mat-icon>send</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
-</div>
-
   <!-- Modal for Activity Creation -->
   <div
     class="modal fade"
@@ -169,6 +169,7 @@
     </div>
   </div>
 
+  <!-- Recommended Users Window -->
   <div
     class="recommended-users"
     *ngIf="isRecommendedUsersModalVisible && recommendedUsers.length > 0"
@@ -180,7 +181,7 @@
     <div class="recommended-body">
       <ul class="list-group">
         <li
-          class="list-group-item d-flex align-items-start"
+          class="list-group-item user-item"
           *ngFor="let user of visibleUsers; let i = index"
           (click)="toggleUserSelection(i)"
           [class.selected]="user.selected"
@@ -215,7 +216,7 @@
 <!-- Success Animation Overlay -->
 <div class="invitation-success-overlay" *ngIf="showInvitationSuccess">
   <div class="invitation-success-content">
-    <mat-icon class="success-icon">check_circle</mat-icon>
+    <mat-icon class="success-icon">done</mat-icon>
     <p>Invitations Sent Successfully!</p>
   </div>
 </div>

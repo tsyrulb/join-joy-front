@@ -63,7 +63,10 @@ export class ActivitiesComponent implements OnInit {
   }
 
   // Toggle visibility for a specific activity and participant
-  toggleActionsVisibility(activityIndex: number, participantIndex: number): void {
+  toggleActionsVisibility(
+    activityIndex: number,
+    participantIndex: number
+  ): void {
     const activity = this.activities[activityIndex];
     if (activity) {
       activity.visibleActionsIndex =
@@ -90,7 +93,11 @@ export class ActivitiesComponent implements OnInit {
     });
   }
 
-  openFeedbackModal(activityId: number, targetUserId: number | null, type: 'user' | 'activity'): void {
+  openFeedbackModal(
+    activityId: number,
+    targetUserId: number | null,
+    type: 'user' | 'activity'
+  ): void {
     console.log('Opening feedback modal:', { activityId, targetUserId, type });
     this.isFeedbackModalVisible = true;
     this.feedbackType = type;
@@ -115,7 +122,9 @@ export class ActivitiesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error sending feedback:', error);
-        this.notificationService.showMessage('Failed to send feedback. Please try again.');
+        this.notificationService.showMessage(
+          'Failed to send feedback. Please try again.'
+        );
       },
     });
   }
@@ -126,21 +135,30 @@ export class ActivitiesComponent implements OnInit {
   }
 
   submitFeedback(): void {
-    if (!this.feedbackData.rating || this.feedbackData.rating < 1 || this.feedbackData.rating > 5) {
-      this.notificationService.showMessage('Please select a valid rating between 1 and 5.');
+    if (
+      !this.feedbackData.rating ||
+      this.feedbackData.rating < 1 ||
+      this.feedbackData.rating > 5
+    ) {
+      this.notificationService.showMessage(
+        'Please select a valid rating between 1 and 5.'
+      );
       return;
     }
 
     const feedbackRequest = {
       userId: this.currentUserId,
       activityId: this.feedbackData.activityId,
-      targetUserId: this.feedbackType === 'user' ? this.feedbackData.targetUserId : null,
+      targetUserId:
+        this.feedbackType === 'user' ? this.feedbackData.targetUserId : null,
       rating: this.feedbackData.rating,
     };
 
     this.feedbackService.submitFeedback(feedbackRequest).subscribe({
       next: () => {
-        this.notificationService.showMessage('Feedback submitted successfully.');
+        this.notificationService.showMessage(
+          'Feedback submitted successfully.'
+        );
         this.closeFeedbackModal();
       },
       error: (error) => {
@@ -170,13 +188,16 @@ export class ActivitiesComponent implements OnInit {
       this.activityService.removeUser(activityId, userId).subscribe({
         next: (response) => {
           console.log('Remove response:', response);
-          this.notificationService.showMessage(response.message || 'Participant removed successfully!');
+          this.notificationService.showMessage(
+            response.message || 'Participant removed successfully!'
+          );
           this.loadUserActivities(); // Refresh activities
         },
         error: (error) => {
           console.error('Error removing participant:', error);
           this.notificationService.showMessage(
-            error.error?.message || 'Failed to remove participant. Please try again.'
+            error.error?.message ||
+              'Failed to remove participant. Please try again.'
           );
         },
       });
@@ -185,7 +206,11 @@ export class ActivitiesComponent implements OnInit {
 
   canRemoveParticipant(activity: any): boolean {
     // Ensure activity and participants exist
-    if (!activity || !activity.participants || activity.participants.length === 0) {
+    if (
+      !activity ||
+      !activity.participants ||
+      activity.participants.length === 0
+    ) {
       return false; // No participants, no one to remove
     }
 
@@ -208,11 +233,14 @@ export class ActivitiesComponent implements OnInit {
     }
 
     // Fetch recommended users for the selected activity
-    this.activityService.fetchRecommendedUsers(activityId).subscribe({
-      next: (recommendedUsers) => this.showRecommendedUsers(recommendedUsers, activityId),
+    this.activityService.getRecommendedUsersForActivity(activityId, this.currentUserId).subscribe({
+      next: (recommendedUsers) =>
+        this.showRecommendedUsers(recommendedUsers, activityId),
       error: (error) => {
         console.error('Error fetching recommended users:', error);
-        this.notificationService.showMessage('Failed to fetch recommended users. See console for details.');
+        this.notificationService.showMessage(
+          'Failed to fetch recommended users. See console for details.'
+        );
       },
     });
   }
@@ -236,28 +264,36 @@ export class ActivitiesComponent implements OnInit {
     if (confirm('Are you sure you want to delete this activity?')) {
       this.activityService.deleteActivity(activityId).subscribe({
         next: () => {
-          this.notificationService.showMessage('Activity deleted successfully.');
+          this.notificationService.showMessage(
+            'Activity deleted successfully.'
+          );
           this.loadUserActivities(); // Refresh the activities list
         },
         error: (error) => {
           console.error('Error deleting activity:', error);
-          this.notificationService.showMessage('Failed to delete activity. Please try again.');
+          this.notificationService.showMessage(
+            'Failed to delete activity. Please try again.'
+          );
         },
       });
     }
   }
 
   fetchRecommendedUsers(activityId: number): void {
-    this.activityService.getRecommendedUsersForActivity(activityId).subscribe({
-      next: (users) => {
-        console.log('Recommended users:', users);
-        this.showRecommendedUsers(users, activityId);
-      },
-      error: (error) => {
-        console.error('Error fetching recommended users:', error);
-        this.notificationService.showMessage('Failed to fetch recommended users.');
-      },
-    });
+    this.activityService
+      .getRecommendedUsersForActivity(activityId, this.currentUserId)
+      .subscribe({
+        next: (users) => {
+          console.log('Recommended users:', users);
+          this.showRecommendedUsers(users, activityId);
+        },
+        error: (error) => {
+          console.error('Error fetching recommended users:', error);
+          this.notificationService.showMessage(
+            'Failed to fetch recommended users.'
+          );
+        },
+      });
   }
 
   showRecommendedUsers(users: any[], activityId: number): void {
@@ -302,24 +338,30 @@ export class ActivitiesComponent implements OnInit {
 
     // Instead of using this.createdActivityId, use the stored activity ID
     if (!this.currentActivityForInvitations) {
-      this.notificationService.showMessage('Activity ID is missing. Cannot send invitations.');
+      this.notificationService.showMessage(
+        'Activity ID is missing. Cannot send invitations.'
+      );
       return;
     }
 
-    this.activityService.sendInvitations(this.currentActivityForInvitations, receiverIds).subscribe({
-      next: () => {
-        this.isRecommendedUsersModalVisible = false;
-        // Trigger success animation
-        this.showInvitationSuccess = true;
-        setTimeout(() => {
-          this.showInvitationSuccess = false;
-        }, 3000);
-      },
-      error: (error) => {
-        console.error('Error sending invitations:', error);
-        this.notificationService.showMessage('Failed to send invitations. See console for details.');
-      },
-    });
+    this.activityService
+      .sendInvitations(this.currentActivityForInvitations, receiverIds)
+      .subscribe({
+        next: () => {
+          this.isRecommendedUsersModalVisible = false;
+          // Trigger success animation
+          this.showInvitationSuccess = true;
+          setTimeout(() => {
+            this.showInvitationSuccess = false;
+          }, 3000);
+        },
+        error: (error) => {
+          console.error('Error sending invitations:', error);
+          this.notificationService.showMessage(
+            'Failed to send invitations. See console for details.'
+          );
+        },
+      });
   }
 
   excludeUser(index: number, event: MouseEvent): void {

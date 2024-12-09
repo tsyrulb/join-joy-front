@@ -1,3 +1,26 @@
+:root {
+  --background-color: #1c1f22;
+  --card-color: #24272b;
+  --overlay-bg: rgba(36, 39, 43, 0.85);
+  --text-color: #ddd;
+  --accent-color: #7b1fa2;
+  --muted-text: #a8a8a8;
+  --danger-color: #F4212E;
+  --border-radius: 12px;
+  --transition-speed: 0.3s;
+  --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+}
+
 .activities-container {
   max-width: 800px;
   margin: 0 auto;
@@ -25,7 +48,7 @@
   flex-direction: column;
 }
 
-/* Activity background image section */
+/* Activity background section */
 .activity-background {
   position: relative;
   width: 100%;
@@ -35,8 +58,6 @@
   background-repeat: no-repeat;
   overflow: hidden;
 }
-
-/* If the fetched image is large, we ensure it fits nicely */
 .activity-background::after {
   content: "";
   display: block;
@@ -75,6 +96,7 @@
   color: var(--muted-text);
   margin-bottom: 8px;
 }
+
 .activity-description {
   margin: 8px 0;
   color: var(--text-color);
@@ -164,6 +186,8 @@
   padding: 16px;
   border-top: 1px solid #2F3336;
 }
+
+/* Recommended Users Modal */
 .recommended-users {
   position: fixed;
   top: 50%;
@@ -179,7 +203,7 @@
   border: 1px solid #2F3336;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   overflow: hidden;
-  z-index: 3000; /* Ensure it appears above other elements */
+  z-index: 3000;
   animation: fadeInScale 0.3s ease forwards;
 }
 
@@ -222,34 +246,65 @@
   padding: 8px 16px;
   overflow-y: auto;
 }
-
 .user-item {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 8px;
   padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #2f3336;
+  border-radius: 6px;
+  transition: background var(--transition-speed), color var(--transition-speed);
+  color: var(--text-color);
   cursor: pointer;
-  transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
-  border-bottom: 1px solid #2F3336;
 }
 .user-item:hover:not(.selected) {
   background: #2F3336;
 }
 .user-item.selected {
-  background: linear-gradient(135deg, #1D9BF0, #5f2eea);
-  color: #fff;
+  background: var(--accent-color);
+  color: #eee;
 }
 .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
+  margin-top: 2px;
 }
-.user-name {
-  flex: 1;
-  font-size: 14px;
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+.user-explanation {
+  font-size: 13px;
+  color: var(--muted-text);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.user-explanation p {
+  margin: 8px 0;
+  color: var(--text-color);
+}
+
+.user-explanation ul {
+  list-style-type: disc;
+  margin: 8px 0 8px 20px;
+  padding: 0;
+}
+
+.user-explanation li {
+  margin-bottom: 6px;
+  color: var(--text-color);
+}
+
+.user-explanation strong {
+  color: var(--accent-color);
   font-weight: 500;
 }
+
 
 .recommended-footer {
   padding: 8px 16px;
@@ -278,4 +333,7 @@
 }
 .recommended-body::-webkit-scrollbar-thumb:hover {
   background: #4f5559;
+}
+.list-group-item {
+  background-color: #000;
 }

@@ -64,7 +64,7 @@
   </div>
 </div>
 <!-- Recommended Users Modal -->
-<div class="recommended-users" *ngIf="isRecommendedUsersModalVisible">
+<div class="recommended-users" *ngIf="isRecommendedUsersModalVisible && recommendedUsers.length > 0">
   <div class="recommended-header">
     <h5>Recommended Users</h5>
     <button class="btn-close" (click)="closeRecommendedUsersModal()">
@@ -74,7 +74,7 @@
   <div class="recommended-body">
     <ul class="list-group">
       <li
-        class="list-group-item d-flex align-items-center user-item"
+        class="list-group-item d-flex align-items-start user-item"
         *ngFor="let user of visibleUsers; let i = index"
         (click)="toggleUserSelection(i)"
         [class.selected]="user.selected"
@@ -85,7 +85,13 @@
           alt="{{ user.userName }}"
           class="user-avatar"
         />
-        <span class="user-name">{{ user.userName }}</span>
+        <div class="user-details">
+          <span class="user-name">{{ user.userName }}</span>
+          <!-- Display the explanation text here -->
+          <div class="user-explanation" *ngIf="user.explanation">
+            {{ user.explanation }}
+          </div>
+        </div>
       </li>
     </ul>
   </div>
@@ -100,4 +106,5 @@
     </button>
   </div>
 </div>
+
 

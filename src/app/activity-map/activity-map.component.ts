@@ -419,17 +419,17 @@ export class ActivityMapComponent implements OnDestroy {
         this.createdActivityId = createdActivity.id;
 
         console.log('Created activity:', createdActivity);
-
         // Now inform Flask service about the new activity
         this.apiService.addNewActivityInFlask(createdActivity.id).subscribe({
           next: () => {
-            this.fetchRecommendedUsers(createdActivity.id);
           },
           error: (error) => {
             console.error('Error updating activity in Flask:', error);
-            this.fetchRecommendedUsers(createdActivity.id);
+            this.fetchRecommendedUsers(createdActivity.id, activityData.createdById);
           },
         });
+        this.fetchRecommendedUsers(createdActivity.id, activityData.createdById);
+
       },
       error: (error) => {
         console.error('Error creating activity:', error);
@@ -440,8 +440,8 @@ export class ActivityMapComponent implements OnDestroy {
     });
   }
 
-  fetchRecommendedUsers(activityId: number): void {
-    this.activityService.getRecommendedUsersForActivity(activityId).subscribe({
+  fetchRecommendedUsers(activityId: number, createdById: number): void {
+    this.activityService.getRecommendedUsersForActivity(activityId, createdById).subscribe({
       next: (users) => {
         console.log('Recommended users:', users);
         this.showRecommendedUsers(users);
