@@ -26,7 +26,7 @@ export const routes: Routes = [
   {
     path: 'conversations',
     loadComponent: () =>
-      import('./conversations/conversations.component').then((m) => m.ConversationsComponent),
+      import('./chat/chat.component').then((m) => m.ChatComponent),
   },
   {
     path: 'activities',

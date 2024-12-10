@@ -1,5 +1,4 @@
-// conversations.component.ts
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Message, Conversation } from '../message.model';
 import { User } from '../user.model';
@@ -11,6 +10,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SignalRNotificationService } from '../signalr-notification.service';
 
 @Component({
   selector: 'app-conversations',
@@ -23,31 +23,51 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatListModule,
     MatInputModule,
     MatCardModule,
-    MatProgressSpinnerModule, // Added for loading spinner
+    MatProgressSpinnerModule,
   ],
   templateUrl: './conversations.component.html',
-  styleUrls: ['./conversations.component.css'],
+  styleUrls: ['../chat-window.css'],
 })
 export class ConversationsComponent implements OnInit {
   conversations: Conversation[] = [];
-  selectedConversationId: number | null = null; // Track the currently selected conversation
-  loggedInUserId: number | null = null; // Store the logged-in user ID
-  participants: User[] = []; // Track participants of the selected conversation
-  filteredConversations: Conversation[] = []; // Filtered conversations for display
-  searchQuery: string = ''; // Search query for filtering conversations
+  selectedConversationId: number | null = null;
+  loggedInUserId: number | null = null;
+  participants: User[] = [];
+  filteredConversations: Conversation[] = [];
+  searchQuery: string = '';
   isLoadingMessages = false;
   filteredMessages: Message[] = [];
   conversationTitle: string = 'Conversation Title';
-  errorMessage: string = ''; // To display error messages
-   
-  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {}
-   
+  errorMessage: string = '';
+
+  constructor(
+    private apiService: ApiService,
+    private cdr: ChangeDetectorRef,
+    private signalRService: SignalRNotificationService
+  ) {}
+
   ngOnInit(): void {
     this.setLoggedInUserId();
     this.loadConversations();
+
+    // Subscribe to incoming messages from SignalR
+    this.signalRService.messageReceived$.subscribe((newMessage: Message) => {
+      // If the incoming message belongs to the currently selected conversation, append it
+      if (this.selectedConversationId && newMessage.conversationId === this.selectedConversationId) {
+        this.filteredMessages = [...this.filteredMessages, newMessage];
+        // Trigger change detection to update the view
+        this.cdr.detectChanges();
+      }
+    });
+
+    // Start the SignalR connection after login
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.signalRService.startConnection(token)
+        .catch(err => console.error('Error starting SignalR connection:', err));
+    }
   }
-   
-  // Retrieve the logged-in user ID from the token
+
   private setLoggedInUserId(): void {
     const token = localStorage.getItem('token');
     if (token) {
@@ -63,19 +83,17 @@ export class ConversationsComponent implements OnInit {
       this.errorMessage = 'User is not authenticated.';
     }
   }
-   
-  // Load conversations for the logged-in user
+
   loadConversations(): void {
     if (!this.loggedInUserId) {
       console.error('User ID is not set.');
       return;
     }
-   
-    // Updated method call without parameters
+
     this.apiService.getConversationsForUser().subscribe({
       next: (conversations) => {
         this.conversations = conversations;
-        this.filteredConversations = [...this.conversations]; // Initialize filtered list
+        this.filteredConversations = [...this.conversations];
       },
       error: (error) => {
         console.error('Error loading conversations:', error);
@@ -83,8 +101,7 @@ export class ConversationsComponent implements OnInit {
       },
     });
   }
-   
-  // Filter conversations based on the search query
+
   filterConversations(): void {
     const query = this.searchQuery.toLowerCase();
     this.filteredConversations = this.conversations.filter((conversation) =>
@@ -93,32 +110,31 @@ export class ConversationsComponent implements OnInit {
       )
     );
   }
-   
-  // Get concatenated participant names for display
+
   getConversationParticipants(conversation: Conversation): string {
     return conversation.participants
       .map((participant) => participant.user.name)
       .join(', ');
   }
-   
-  // Determine the maximum number of visible participants before truncating
+
   getMaxVisibleParticipants(): number {
-    return 3; // Adjust based on design preference
+    return 3;
   }
-   
-  // Load messages for a selected conversation
+
   loadMessagesForConversation(conversationId: number): void {
     if (this.selectedConversationId === conversationId) {
-      // If the same conversation is clicked again, do nothing or toggle selection
       return;
     }
-   
+
     this.isLoadingMessages = true;
     this.selectedConversationId = conversationId;
-    this.filteredMessages = []; // Clear previous messages
+    this.filteredMessages = [];
     this.conversationTitle = '';
-   
-    // Fetch messages for the selected conversation
+
+    // Join the conversation group using SignalR so that we receive real-time updates
+    this.signalRService.joinConversationGroup(conversationId)
+      .catch(err => console.error('Error joining conversation group:', err));
+
     this.apiService.getMessagesForConversation(conversationId).subscribe({
       next: (messages) => {
         this.filteredMessages = messages.filter(
@@ -132,12 +148,11 @@ export class ConversationsComponent implements OnInit {
         this.isLoadingMessages = false;
       },
     });
-   
-    // Set conversation title and participants
+
     const selectedConversation = this.conversations.find(
       (conversation) => conversation.id === conversationId
     );
-   
+
     if (selectedConversation) {
       this.conversationTitle = selectedConversation.title || 'Untitled Conversation';
       this.participants = selectedConversation.participants.map(

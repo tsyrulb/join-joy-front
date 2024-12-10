@@ -5,23 +5,26 @@ import {
   ViewChild,
   ElementRef,
   AfterViewChecked,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
-import { MessageService } from '../message.service';
-import { Message } from '../message.model';
-import { ApiService } from '../api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { User } from '../user.model';
 import { MatIconModule } from '@angular/material/icon';
+
+import { ApiService } from '../api.service';
+import { NotificationService } from '../notification.service';
+import { Message } from '../message.model';
+import { User } from '../user.model';
 
 @Component({
   selector: 'app-messages',
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './messages.component.html',
-  styleUrls: ['./messages.component.css'],
+  styleUrls: ['../chat-window.css'],
 })
-export class MessagesComponent implements OnInit, AfterViewChecked {
+export class MessagesComponent implements OnInit, AfterViewChecked, OnChanges {
   @Input() conversationId!: number;
   @Input() messages: Message[] = [];
   @Input() participants: User[] = [];
@@ -34,17 +37,32 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   filteredMessages: Message[] = [];
   isSearchVisible = false;
   isParticipantsVisible = false;
-  
-  constructor(private apiService: ApiService) {}
+
+  constructor(
+    private apiService: ApiService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.setLoggedInUserId();
     this.filteredMessages = [...this.messages];
-    this.loadMessages(); // Load messages on component initialization
+    this.loadMessages();
+  }
+  
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['messages'] && !changes['messages'].firstChange) {
+      const prev = changes['messages'].previousValue as Message[];
+      const curr = changes['messages'].currentValue as Message[];
+  
+      // Check if a new message was added at the end
+      if (curr.length > prev.length && curr[curr.length - 1].senderId) {
+        this.scrollToBottom();
+      }
+    }
   }
 
   ngAfterViewChecked(): void {
-    this.scrollToBottom();
+
   }
 
   private setLoggedInUserId(): void {
@@ -55,6 +73,9 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
         this.loggedInUserId = Number(tokenPayload.nameid);
       } catch (error) {
         console.error('Error parsing token:', error);
+        this.notificationService.showMessage(
+          'Error decoding user ID from token.'
+        );
       }
     }
   }
@@ -62,55 +83,41 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   filterMessages(): void {
     const query = this.messageSearchQuery.trim().toLowerCase();
     this.filteredMessages = this.messages.filter((message) =>
-      message.content.toLowerCase().includes(query)
+      message.content?.toLowerCase().includes(query)
     );
   }
-  
+
   getUserProfilePicture(userId: number): string {
-    const user = this.participants.find(
-      (participant) => participant.id === userId
-    );
+    const user = this.participants.find((p) => p.id === userId);
     return user && user.profilePhoto ? user.profilePhoto : 'assets/profile.png';
   }
 
   isNewDay(index: number): boolean {
     if (index === 0) return true;
-  
     const currentMessage = this.messages[index];
     const previousMessage = this.messages[index - 1];
 
-    if (!currentMessage?.timestamp) {
-      console.log(currentMessage, '1', index, this.filteredMessages);
-      return false; // Prevent errors if timestamp is missing
+    if (!currentMessage?.timestamp || !previousMessage?.timestamp) {
+      return false;
     }
-    if (!previousMessage?.timestamp) {
-      console.log(previousMessage, '2');
-      return false; // Prevent errors if timestamp is missing
-    }
-    const currentMessageDate = new Date(currentMessage.timestamp).toDateString();
-    const previousMessageDate = new Date(previousMessage.timestamp).toDateString();
-  
-    return currentMessageDate !== previousMessageDate;
+
+    const currentDate = new Date(currentMessage.timestamp).toDateString();
+    const previousDate = new Date(previousMessage.timestamp).toDateString();
+
+    return currentDate !== previousDate;
   }
-  
 
   getValidDate(date: string | undefined): Date | null {
     if (!date) return null;
     const parsedDate = new Date(date);
-    if (isNaN(parsedDate.getTime())) {
-      console.warn('Invalid date found:', date);
-      return null;
-    }
-    return parsedDate;
+    return isNaN(parsedDate.getTime()) ? null : parsedDate;
   }
-
 
   getMessageDate(timestamp: string | undefined): string {
     if (!timestamp) return 'Unknown Date';
     const validDate = this.getValidDate(timestamp);
     return validDate ? validDate.toDateString() : 'Unknown Date';
   }
-  
 
   getMessageTime(date: string | undefined): string {
     const validDate = this.getValidDate(date);
@@ -121,37 +128,39 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
 
   toggleSearch(): void {
     this.isSearchVisible = !this.isSearchVisible;
-    this.isParticipantsVisible = false; // Hide participants if visible
+    this.isParticipantsVisible = false;
+    if (!this.isSearchVisible) {
+      this.messageSearchQuery = '';
+      this.filteredMessages = [...this.messages];
+    }
   }
 
   isDuplicateMessage(index: number): boolean {
-    if (index === 0) return false; // Always show the first message
-    const currentMessage = this.messages[index];
-    const previousMessage = this.messages[index - 1];
-
+    if (index === 0) return false;
+    const current = this.messages[index];
+    const prev = this.messages[index - 1];
     return (
-      currentMessage.content === previousMessage.content &&
-      currentMessage.senderId === previousMessage.senderId
+      current.content === prev.content && current.senderId === prev.senderId
     );
   }
 
   sendMessage(): void {
     if (!this.newMessageContent.trim() || !this.loggedInUserId) {
-      console.error('Message content or user ID missing.');
+      this.notificationService.showMessage(
+        'Message content or user ID missing.'
+      );
       return;
     }
 
-    // Explicitly convert to numbers for comparison
     const receiverIds = this.participants
-      .filter((participant) => {
-        const isReceiver =
-          Number(participant.id) !== Number(this.loggedInUserId);
-        return isReceiver;
-      })
-      .map((participant) => Number(participant.id));
+      .filter((p) => Number(p.id) !== Number(this.loggedInUserId))
+      .map((p) => Number(p.id));
 
     if (receiverIds.length === 0) {
       console.error('No valid recipients for this message.');
+      this.notificationService.showMessage(
+        'No recipients found for this message.'
+      );
       return;
     }
 
@@ -167,7 +176,10 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
         this.newMessageContent = '';
         this.loadMessages(); // Reload messages after sending
       },
-      error: (error) => console.error('Error sending message:', error),
+      error: (error) => {
+        console.error('Error sending message:', error);
+        this.notificationService.showMessage('Failed to send message.');
+      },
     });
   }
 
@@ -185,16 +197,24 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
 
   toggleParticipants(): void {
     this.isParticipantsVisible = !this.isParticipantsVisible;
-    this.isSearchVisible = false; // Hide search if visible
+    this.isSearchVisible = false;
   }
 
   private loadMessages(): void {
+    if (!this.conversationId) {
+      console.warn('No conversationId provided to load messages.');
+      return;
+    }
+
     this.apiService.getMessagesForConversation(this.conversationId).subscribe({
       next: (messages) => {
         this.messages = messages;
-        this.filteredMessages = [...this.messages]; // Initialize filtered list
+        this.filteredMessages = [...this.messages];
       },
-      error: (error) => console.error('Error loading messages:', error),
+      error: (error) => {
+        console.error('Error loading messages:', error);
+        this.notificationService.showMessage('Failed to load messages.');
+      },
     });
   }
 }

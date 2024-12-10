@@ -1,0 +1,130 @@
+<div class="chat-container">
+    <!-- Left Sidebar: Conversations List -->
+    <div class="sidebar">
+      <div class="search-bar">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search conversations..."
+          [(ngModel)]="searchQuery"
+          (input)="filterConversations()"
+          aria-label="Search conversations"
+        />
+      </div>
+  
+      <ul class="conversations-list" role="list">
+        <li
+          *ngFor="let conversation of filteredConversations"
+          (click)="loadMessagesForConversation(conversation.id)"
+          [class.selected]="conversation.id === selectedConversationId"
+          [attr.aria-label]="'Conversation with ' + getConversationParticipants(conversation)"
+          tabindex="0"
+          (keydown.enter)="loadMessagesForConversation(conversation.id)"
+          role="listitem"
+        >
+          <div class="participants-info">
+            <span class="participant-names">
+              <ng-container *ngFor="let participant of conversation.participants.slice(0, getMaxVisibleParticipants()); let isLast = last">
+                {{ participant.user.name }}<span *ngIf="!isLast && participant !== conversation.participants[getMaxVisibleParticipants()-1]">, </span>
+              </ng-container>
+              <span *ngIf="conversation.participants.length > getMaxVisibleParticipants()">...</span>
+            </span>
+          </div>
+          <span class="unread-count" *ngIf="conversation.unreadCount > 0">
+            {{ conversation.unreadCount }}
+          </span>
+        </li>
+      </ul>
+    </div>
+  
+    <!-- Main Content: Chat Window -->
+    <div class="chat-window">
+      <div *ngIf="selectedConversationId; else noConversationSelected" class="chat-content">
+        <!-- Loading Overlay -->
+        <div *ngIf="isLoadingMessages" class="loading-overlay">
+          <mat-spinner></mat-spinner>
+        </div>
+  
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="header-left">
+            <button mat-icon-button (click)="toggleSearch()" class="icon-btn">
+              <mat-icon>search</mat-icon>
+            </button>
+            <h4 class="conversation-title">{{ conversationTitle }}</h4>
+            <button mat-icon-button (click)="toggleParticipants()" class="icon-btn">
+              <mat-icon>contacts</mat-icon>
+            </button>
+          </div>
+  
+          <!-- Search Bar -->
+          <div class="panel-content" *ngIf="isSearchVisible">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search messages..."
+              [(ngModel)]="messageSearchQuery"
+              (input)="filterMessages()"
+            />
+          </div>
+  
+          <!-- Participants List -->
+          <div class="panel-content participants-panel" *ngIf="isParticipantsVisible">
+            <h4>Participants</h4>
+            <ul>
+              <li *ngFor="let participant of participants">
+                <img
+                  [src]="participant.profilePhoto || 'assets/profile.png'"
+                  alt="{{ participant.name }}"
+                  class="participant-avatar"
+                />
+                <span>{{ participant.name }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+  
+        <!-- Messages List -->
+        <div #messagesContainer class="messages-list">
+          <ng-container *ngFor="let message of (messageSearchQuery ? filteredMessages : filteredMessages); let i = index">
+            <div *ngIf="isNewDay(i)" class="date-separator">
+              {{ getMessageDate(message.timestamp) }}
+            </div>
+            <div class="message" [class.sent]="message.senderId == loggedInUserId">
+              <img
+                [src]="getUserProfilePicture(message.senderId)"
+                class="message-avatar"
+                alt="User avatar"
+              />
+              <div class="message-content">
+                <div class="message-text">{{ message.content }}</div>
+                <div class="message-footer">
+                  <span class="message-time">{{ getMessageTime(message.timestamp) }}</span>
+                  <span class="message-sender">{{ getUserNameById(message.senderId) }}</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+  
+        <!-- Message Input (Always visible if conversation selected) -->
+        <div class="send-message">
+          <input [(ngModel)]="newMessageContent" placeholder="Type a message..." />
+          <button mat-icon-button (click)="sendMessage()" aria-label="Send message" class="icon-btn">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      </div>
+  
+      <ng-template #noConversationSelected>
+        <div class="no-conversation-selected">
+          <p>Select a conversation to start chatting</p>
+        </div>
+      </ng-template>
+  
+      <div class="no-conversations" *ngIf="conversations.length === 0 && !isLoadingMessages">
+        <p>No conversations found.</p>
+      </div>
+    </div>
+  </div>
+  
