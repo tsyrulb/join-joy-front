@@ -4,10 +4,7 @@
     <div *ngFor="let activity of activities; let activityIndex = index" class="activity-card">
       <div
         class="activity-background"
-        [ngStyle]="{
-          'background-image':
-            'url(' + (activityImages[activity.name] || defaultImageUrl) + ')'
-        }"
+        [ngStyle]="{ 'background-image': 'url(' + defaultImageUrl + ')' }"
       >
         <h3 class="activity-title">{{ activity.name }}</h3>
       </div>
@@ -106,5 +103,3 @@
     </button>
   </div>
 </div>
-
-

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivityService } from '../activity.service';
 import { CommonModule } from '@angular/common';
-import { GoogleSearchService } from '../google-search.service';
 import { FeedbackService } from '../feedback.service';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +18,6 @@ export class ActivitiesComponent implements OnInit {
   activities: any[] = [];
   currentUserId: number = 0;
   defaultImageUrl = './assets/images/image.png';
-  activityImages: { [key: string]: string } = {};
   visibleActionsIndex: number | null = null; // Index of the participant whose actions are visible
 
   // Recommended Users Modal State
@@ -52,7 +50,6 @@ export class ActivitiesComponent implements OnInit {
 
   constructor(
     private activityService: ActivityService,
-    private googleSearchService: GoogleSearchService,
     private feedbackService: FeedbackService,
     private notificationService: NotificationService
   ) {}
@@ -62,7 +59,6 @@ export class ActivitiesComponent implements OnInit {
     this.loadUserActivities();
   }
 
-  // Toggle visibility for a specific activity and participant
   toggleActionsVisibility(
     activityIndex: number,
     participantIndex: number
@@ -81,11 +77,9 @@ export class ActivitiesComponent implements OnInit {
       next: (data) => {
         this.activities = data.map((activity) => ({
           ...activity,
-          visibleActionsIndex: null, // Initialize a visibility index for each activity
+          visibleActionsIndex: null,
         }));
-        this.activities.forEach((activity) =>
-          this.fetchActivityImage(activity.name)
-        );
+        // No fetchActivityImage call needed, we always use defaultImageUrl now
       },
       error: (error) => {
         console.error('Error fetching user activities:', error);
@@ -168,21 +162,6 @@ export class ActivitiesComponent implements OnInit {
     });
   }
 
-  fetchActivityImage(activityName: string): void {
-    this.googleSearchService.searchImages(activityName).subscribe({
-      next: (response) => {
-        if (response.items && response.items.length > 0) {
-          this.activityImages[activityName] = response.items[0].link;
-        } else {
-          console.warn(`No images found for activity: ${activityName}`);
-        }
-      },
-      error: (error) => {
-        console.error(`Error fetching image for ${activityName}:`, error);
-      },
-    });
-  }
-
   removeParticipant(activityId: number, userId: number): void {
     if (confirm('Are you sure you want to remove this participant?')) {
       this.activityService.removeUser(activityId, userId).subscribe({
@@ -205,25 +184,17 @@ export class ActivitiesComponent implements OnInit {
   }
 
   canRemoveParticipant(activity: any): boolean {
-    // Ensure activity and participants exist
-    if (
-      !activity ||
-      !activity.participants ||
-      activity.participants.length === 0
-    ) {
-      return false; // No participants, no one to remove
+    if (!activity || !activity.participants || activity.participants.length === 0) {
+      return false;
     }
 
-    // Check if the current user is the creator of the activity
     const currentUserId = this.currentUserId;
-
-    // If the current user is the creator AND there are other participants, return true
     const isCreator = +activity.createdById === +currentUserId;
     const otherParticipantsExist = activity.participants.some(
       (participant: any) => +participant.userId !== +currentUserId
     );
 
-    return isCreator && otherParticipantsExist; // Only allow removal if there are other participants
+    return isCreator && otherParticipantsExist;
   }
 
   addParticipant(activityId: number): void {
@@ -232,7 +203,6 @@ export class ActivitiesComponent implements OnInit {
       return;
     }
 
-    // Fetch recommended users for the selected activity
     this.activityService.getRecommendedUsersForActivity(activityId, this.currentUserId).subscribe({
       next: (recommendedUsers) =>
         this.showRecommendedUsers(recommendedUsers, activityId),
@@ -264,9 +234,7 @@ export class ActivitiesComponent implements OnInit {
     if (confirm('Are you sure you want to delete this activity?')) {
       this.activityService.deleteActivity(activityId).subscribe({
         next: () => {
-          this.notificationService.showMessage(
-            'Activity deleted successfully.'
-          );
+          this.notificationService.showMessage('Activity deleted successfully.');
           this.loadUserActivities(); // Refresh the activities list
         },
         error: (error) => {
@@ -289,9 +257,7 @@ export class ActivitiesComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error fetching recommended users:', error);
-          this.notificationService.showMessage(
-            'Failed to fetch recommended users.'
-          );
+          this.notificationService.showMessage('Failed to fetch recommended users.');
         },
       });
   }
@@ -310,12 +276,10 @@ export class ActivitiesComponent implements OnInit {
       selected: false,
     }));
 
-    this.excludedUsers = []; // Clear excluded users when fetching new recommendations
-    // Initialize the top 10 users as visible
+    this.excludedUsers = []; 
     this.visibleUsers = this.recommendedUsers.slice(0, 10);
     this.isRecommendedUsersModalVisible = true;
 
-    // Store the current activity ID for sending invitations later
     this.currentActivityForInvitations = activityId;
   }
 
@@ -336,42 +300,34 @@ export class ActivitiesComponent implements OnInit {
       return;
     }
 
-    // Instead of using this.createdActivityId, use the stored activity ID
     if (!this.currentActivityForInvitations) {
-      this.notificationService.showMessage(
-        'Activity ID is missing. Cannot send invitations.'
-      );
+      this.notificationService.showMessage('Activity ID is missing. Cannot send invitations.');
       return;
     }
 
-    this.activityService
-      .sendInvitations(this.currentActivityForInvitations, receiverIds)
-      .subscribe({
-        next: () => {
-          this.isRecommendedUsersModalVisible = false;
-          // Trigger success animation
-          this.showInvitationSuccess = true;
-          setTimeout(() => {
-            this.showInvitationSuccess = false;
-          }, 3000);
-        },
-        error: (error) => {
-          console.error('Error sending invitations:', error);
-          this.notificationService.showMessage(
-            'Failed to send invitations. See console for details.'
-          );
-        },
-      });
+    this.activityService.sendInvitations(this.currentActivityForInvitations, receiverIds).subscribe({
+      next: () => {
+        this.isRecommendedUsersModalVisible = false;
+        this.showInvitationSuccess = true;
+        setTimeout(() => {
+          this.showInvitationSuccess = false;
+        }, 3000);
+      },
+      error: (error) => {
+        console.error('Error sending invitations:', error);
+        this.notificationService.showMessage(
+          'Failed to send invitations. See console for details.'
+        );
+      },
+    });
   }
 
   excludeUser(index: number, event: MouseEvent): void {
-    event.preventDefault(); // Prevent the default context menu
+    event.preventDefault();
 
-    // Remove the excluded user from the visible list
     const excludedUser = this.visibleUsers.splice(index, 1)[0];
-    this.excludedUsers.push(excludedUser); // Add to excluded users list
+    this.excludedUsers.push(excludedUser);
 
-    // Find the next user from the full list who is not currently visible or excluded
     const remainingUsers = this.recommendedUsers.filter(
       (user) =>
         !this.visibleUsers.includes(user) && !this.excludedUsers.includes(user)
