@@ -1,7 +1,7 @@
-// activity.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment'; // Adjust path as needed
 
 interface Activity {
   id: number;
@@ -25,8 +25,10 @@ interface ActivityRequestWithCoordinates {
   providedIn: 'root',
 })
 export class ActivityService {
-  private apiActivityUrl = 'https://localhost:7276/api/Activities';
-  private apiUrl = 'https://localhost:7276/api';
+  private apiBaseUrl = environment.apiUrl;         
+  private flaskApiUrl = environment.flaskApiUrl; 
+  private apiActivityUrl = `${this.apiBaseUrl}/api/Activities`;
+  private apiUrl = `${this.apiBaseUrl}/api`;
 
   constructor(private http: HttpClient) {}
 
@@ -36,22 +38,25 @@ export class ActivityService {
       Authorization: `Bearer ${token}`
     });
   }
+
   getNearbyPlaces(latitude: number, longitude: number, userInput: string): Observable<any> {
-    const url = `https://localhost:7276/api/places/nearby-all`;
+    const url = `${this.apiUrl}/places/nearby-all`;
     const body = { Latitude: latitude, Longitude: longitude, UserInput: userInput, Radius: 5000 };
     return this.http.post(url, body, { headers: this.getAuthHeaders() });
   }
-  
+
   getAllActivities(): Observable<Activity[]> {
     return this.http.get<Activity[]>(`${this.apiActivityUrl}`, { headers: this.getAuthHeaders() });
   }
+
   requestApproval(request: { ActivityId: number }): Observable<any> {
     return this.http.post(`${this.apiUrl}/Matching/request-approval`, request, { headers: this.getAuthHeaders() });
   }
+
   refreshData(): Observable<any> {
-    return this.http.post('http://localhost:5000/refresh_data', {}); 
+    return this.http.post(`${this.flaskApiUrl}/refresh_data`, {});
   }
-  
+
   createActivityWithCoordinates(request: ActivityRequestWithCoordinates): Observable<any> {
     return this.http.post(`${this.apiActivityUrl}/create-with-coordinates`, request, { headers: this.getAuthHeaders() });
   }
@@ -74,22 +79,25 @@ export class ActivityService {
   addUsersToActivity(activityId: number, userIds: number[]): Observable<any> {
     return this.http.post(`${this.apiActivityUrl}/${activityId}/addUsers`, userIds, { headers: this.getAuthHeaders() });
   }
+
   getRecommendedUsersForActivity(activityId: number, createdById: number, topN: number = 100): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/Matching/recommend-users?activityId=${activityId}&createdById=${createdById}&topN=${topN}`, { headers: this.getAuthHeaders() });
+    return this.http.get<any[]>(
+      `${this.apiUrl}/Matching/recommend-users?activityId=${activityId}&createdById=${createdById}&topN=${topN}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
   addUser(activityId: number, userId: number): Observable<void> {
-    return this.http.post<void>(`${this.apiActivityUrl}/${activityId}/addUser`, userId);
+    return this.http.post<void>(`${this.apiActivityUrl}/${activityId}/addUser`, userId, { headers: this.getAuthHeaders() });
   }
 
   removeUser(activityId: number, userId: number): Observable<any> {
-    const url = `${this.apiUrl}/Activities/${activityId}/removeUser`;
+    const url = `${this.apiActivityUrl}/${activityId}/removeUser`;
     return this.http.delete(url, {
       body: userId,
       headers: this.getAuthHeaders(),
     });
   }
-  
 
   sendInvitations(activityId: number, receiverIds: number[]): Observable<any> {
     const payload = { activityId, receiverIds };
@@ -97,9 +105,9 @@ export class ActivityService {
       headers: this.getAuthHeaders(),
     });
   }
-  
+
   getRecommendedActivities(userId: number, topN: number = 100): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/Matching/recommend-activities?userId=${userId}&topN=${topN}`, { headers: this.getAuthHeaders() });
   }
-  
 }
+

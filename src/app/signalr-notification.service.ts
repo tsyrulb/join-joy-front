@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../environments/environment'; 
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class SignalRNotificationService {
 
   startConnection(token: string): Promise<void> {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7276/notificationHub', {
+    .withUrl(environment.apiUrl + '/notificationHub', {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
