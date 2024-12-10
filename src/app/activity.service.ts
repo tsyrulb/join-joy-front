@@ -78,12 +78,6 @@ export class ActivityService {
     return this.http.get<any[]>(`${this.apiUrl}/Matching/recommend-users?activityId=${activityId}&createdById=${createdById}&topN=${topN}`, { headers: this.getAuthHeaders() });
   }
 
-  fetchRecommendedUsers(activityId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/Matching/recommend-users?activityId=${activityId}&topN=100`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
   addUser(activityId: number, userId: number): Observable<void> {
     return this.http.post<void>(`${this.apiActivityUrl}/${activityId}/addUser`, userId);
   }
