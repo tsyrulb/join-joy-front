@@ -538,6 +538,11 @@ export class ActivityMapComponent implements OnDestroy {
       return;
     }
 
+    if (!this.selectedMarker) {
+      this.notificationService.showMessage('Firstly, choose your place on the map');
+      return;
+    }
+
     if (!this.searchInput) {
       this.notificationService.showMessage('Please enter a search term.');
       return;
