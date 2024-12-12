@@ -12,7 +12,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-user-matches',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatExpansionModule, MatTabsModule, MatIconModule, MatSnackBarModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    MatExpansionModule,
+    MatTabsModule,
+    MatIconModule,
+    MatSnackBarModule,
+  ],
   templateUrl: './user-matches.component.html',
   styleUrls: ['./user-matches.component.css'],
 })
@@ -26,9 +33,12 @@ export class UserMatchesComponent implements OnInit {
   receivedSearch: string = '';
 
   // Add this line to define selectedTab
-  selectedTab: string = 'created';  // default tab can be 'created' or 'received'
+  selectedTab: string = 'created'; // default tab can be 'created' or 'received'
 
-  constructor(private matchingService: MatchingService, private notificationService: NotificationService) {}
+  constructor(
+    private matchingService: MatchingService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     try {
@@ -40,7 +50,9 @@ export class UserMatchesComponent implements OnInit {
       this.fetchUserMatches();
     } catch (error: any) {
       console.error('Initialization failed:', error.message);
-      this.notificationService.showMessage('User is not authenticated. Please log in again.');
+      this.notificationService.showMessage(
+        'User is not authenticated. Please log in again.'
+      );
     }
   }
 
@@ -48,8 +60,12 @@ export class UserMatchesComponent implements OnInit {
     this.matchingService.getUserMatches().subscribe({
       next: (matches: Match[]) => {
         const userIdNumber = Number(this.nameid);
-        this.createdMatches = matches.filter((match) => match.userId1 === userIdNumber);
-        this.receivedMatches = matches.filter((match) => match.user2Id === userIdNumber);
+        this.createdMatches = matches.filter(
+          (match) => match.userId1 === userIdNumber
+        );
+        this.receivedMatches = matches.filter(
+          (match) => match.user2Id === userIdNumber
+        );
 
         this.filteredCreatedMatches = [...this.createdMatches];
         this.filteredReceivedMatches = [...this.receivedMatches];
@@ -63,12 +79,16 @@ export class UserMatchesComponent implements OnInit {
   acceptInvitation(matchId: number): void {
     this.matchingService.acceptInvitation(matchId).subscribe({
       next: () => {
-        this.notificationService.showMessage('Invitation accepted successfully.');
+        this.notificationService.showMessage(
+          'Invitation accepted successfully.'
+        );
         this.fetchUserMatches();
       },
       error: (error) => {
         console.error('Error accepting invitation:', error);
-        this.notificationService.showMessage('Failed to accept invitation. Please try again.');
+        this.notificationService.showMessage(
+          'Failed to accept invitation. Please try again.'
+        );
       },
     });
   }
@@ -76,27 +96,41 @@ export class UserMatchesComponent implements OnInit {
   cancelInvitation(matchId: number): void {
     this.matchingService.cancelInvitation(matchId).subscribe({
       next: () => {
-        this.notificationService.showMessage('Invitation canceled successfully.');
+        this.notificationService.showMessage(
+          'Invitation canceled successfully.'
+        );
         this.fetchUserMatches(); // Refresh the list after canceling
       },
       error: (error) => {
         console.error('Error canceling invitation:', error);
-        this.notificationService.showMessage('Failed to cancel invitation. Please try again.');
+        this.notificationService.showMessage(
+          'Failed to cancel invitation. Please try again.'
+        );
       },
     });
   }
 
   filterCreatedMatches(): void {
-    this.filteredCreatedMatches = this.createdMatches.filter((match) =>
-      match.activity?.name?.toLowerCase().includes(this.createdSearch.toLowerCase()) ||
-      match.user2?.name?.toLowerCase().includes(this.createdSearch.toLowerCase())
+    this.filteredCreatedMatches = this.createdMatches.filter(
+      (match) =>
+        match.activity?.name
+          ?.toLowerCase()
+          .includes(this.createdSearch.toLowerCase()) ||
+        match.user2?.name
+          ?.toLowerCase()
+          .includes(this.createdSearch.toLowerCase())
     );
   }
 
   filterReceivedMatches(): void {
-    this.filteredReceivedMatches = this.receivedMatches.filter((match) =>
-      match.activity?.name?.toLowerCase().includes(this.receivedSearch.toLowerCase()) ||
-      match.user1?.name?.toLowerCase().includes(this.receivedSearch.toLowerCase())
+    this.filteredReceivedMatches = this.receivedMatches.filter(
+      (match) =>
+        match.activity?.name
+          ?.toLowerCase()
+          .includes(this.receivedSearch.toLowerCase()) ||
+        match.user1?.name
+          ?.toLowerCase()
+          .includes(this.receivedSearch.toLowerCase())
     );
   }
 

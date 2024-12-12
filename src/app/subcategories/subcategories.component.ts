@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './subcategories.component.html',
   styleUrls: ['./subcategories.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule,  FormsModule],
 })
 export class SubcategoriesComponent implements OnInit {
   categories: Category[] = [];

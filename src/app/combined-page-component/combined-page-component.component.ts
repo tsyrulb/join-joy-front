@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router } from '@angular/router'; // Import Router
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-combined-page-component',
@@ -15,7 +15,8 @@ import { Router } from '@angular/router'; // Import Router
             FormsModule,
             CommonModule,
             MatIconModule,
-            MatTooltipModule],
+            MatTooltipModule,
+            RouterModule],
   templateUrl: './combined-page-component.component.html',
   styleUrls: ['./combined-page-component.component.css']
 })

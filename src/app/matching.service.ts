@@ -6,7 +6,7 @@ import { environment } from '../environments/environment';
   providedIn: 'root',
 })
 export class MatchingService {
-  private apiUrl = '${environment.apiUrl}/api/matching';
+  private apiUrl = `${environment.apiUrl}/api/matching`;
 
   constructor(private http: HttpClient) {}
 

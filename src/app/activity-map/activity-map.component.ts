@@ -9,6 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { NotificationService } from '../notification.service';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 @Component({
   selector: 'app-activity-map',
   standalone: true,
@@ -22,6 +23,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   templateUrl: './activity-map.component.html',
   styleUrls: ['./activity-map.component.css'],
 })
+
+
 export class ActivityMapComponent implements OnDestroy {
   @Output() locationSelected = new EventEmitter<{
     latitude: number;
