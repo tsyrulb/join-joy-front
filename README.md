@@ -31,6 +31,8 @@ The frontend provides a modern, responsive user interface that allows users to:
 - Interact with other participants via conversation feeds.
 - Suggest activities based on user-submitted criteria and location data.
 
+![Description of GIF](JoinJoy4.gif)
+
 ## Key Features
 
 - **JWT Authentication:** Secure login and signup flows that integrate with the backend's JWT authentication.
