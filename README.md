@@ -1,3 +1,5 @@
+[![Matching API](https://img.shields.io/badge/GitHub-Matching%20API-yellow?style=for-the-badge)](https://github.com/tsyrulb/joinjoy-matching)
+[![Backend](https://img.shields.io/badge/GitHub-Backend-blue?style=for-the-badge)](https://github.com/tsyrulb/joinjoy)
 ---
 
 # JoinJoy Frontend
@@ -16,10 +18,7 @@ Welcome to the **JoinJoy** frontend repository! This is the Angular-based single
 - [Build & Deployment](#build--deployment)
 - [Environment Configuration](#environment-configuration)
 - [Integration with Backend Services](#integration-with-backend-services)
-- [Testing](#testing)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+
 
 ## About the Project
 
@@ -123,14 +122,6 @@ ng e2e
 ```
 
 Adjust configurations in `karma.conf.js` and `angular.json` as needed.
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request to propose changes. Before contributing, ensure your code adheres to existing coding styles and that all tests pass.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE.md). Feel free to modify and use it according to your needs.
 
 
 ---
